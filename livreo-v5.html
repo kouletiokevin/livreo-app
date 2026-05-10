@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Livreo</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --cream:#f7f4ef;--cream2:#f0ece4;--white:#fff;
+  --ink:#0e1a10;--ink2:#1e3322;
+  --g600:#156534;--g500:#1a8044;--g400:#22a857;
+  --g300:#3dcf72;--g200:#8eeaae;--g100:#d4f5e2;--g50:#edfaf3;
+  --muted:#6b7e70;--muted2:#9ab0a0;--border:#dde8e0;
+  --warn:#e8840a;--danger:#dc2626;
+  --sans:'Outfit',sans-serif;--serif:'Instrument Serif',Georgia,serif;
+  --r:14px;--rl:22px;--rxl:28px;
+  --sh:0 2px 16px rgba(14,26,16,.07);--shl:0 8px 40px rgba(14,26,16,.13);
+  --nav:60px;--bot:68px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--g200);border-radius:2px;}
+
+/* TOAST */
+#toasts{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;width:90%;max-width:360px;}
+.toast{background:var(--ink);color:#fff;padding:9px 18px;border-radius:50px;font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:var(--shl);animation:tIn .3s cubic-bezier(.34,1.56,.64,1);text-align:center;}
+.toast.s{background:var(--g500);}.toast.e{background:var(--danger);}
+@keyframes tIn{from{opacity:0;transform:translateY(-8px)scale(.9)}to{opacity:1;transform:translateY(0)scale(1)}}
+
+/* PERMISSIONS */
+#perm-ov{position:fixed;inset:0;background:var(--ink);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.perm-card{background:var(--white);border-radius:var(--rxl);padding:28px;max-width:360px;width:100%;}
+.perm-logo{font-family:var(--serif);font-size:1.8rem;font-style:italic;color:var(--g600);text-align:center;margin-bottom:14px;}
+.perm-logo em{font-style:normal;color:var(--ink);}
+.perm-title{font-size:1rem;font-weight:800;text-align:center;margin-bottom:5px;}
+.perm-sub{font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:20px;line-height:1.6;}
+.perm-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.pi{display:flex;align-items:center;gap:10px;padding:11px;background:var(--cream);border-radius:var(--r);}
+.pi-icon{font-size:1.2rem;width:32px;text-align:center;}
+.pi-name{font-size:.82rem;font-weight:700;}
+.pi-why{font-size:.68rem;color:var(--muted);margin-top:1px;}
+.pi-state{margin-left:auto;font-size:.68rem;font-weight:700;color:var(--muted2);}
+.perm-btn{width:100%;padding:13px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.92rem;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(26,128,68,.3);}
+
+/* SHEET */
+.ov{position:fixed;inset:0;background:rgba(14,26,16,.5);backdrop-filter:blur(6px);z-index:2000;display:none;align-items:flex-end;justify-content:center;}
+.ov.open{display:flex;animation:ovIn .2s ease;}
+.sheet{background:var(--white);border-radius:24px 24px 0 0;padding:6px 22px calc(24px + env(safe-area-inset-bottom));width:100%;max-width:560px;max-height:88vh;overflow-y:auto;animation:shIn .3s cubic-bezier(.34,1.4,.64,1);}
+.sh{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 18px;}
+@keyframes ovIn{from{opacity:0}to{opacity:1}}
+@keyframes shIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:var(--nav);background:rgba(247,244,239,.95);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:8px;}
+.logo{font-family:var(--serif);font-size:1.4rem;font-style:italic;color:var(--g600);cursor:pointer;}
+.logo em{font-style:normal;color:var(--ink);}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:7px;}
+.nav-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--g300),var(--g500));display:flex;align-items:center;justify-content:center;font-size:.76rem;font-weight:900;color:#fff;cursor:pointer;border:2px solid var(--g100);display:none;}
+.nav-login{padding:7px 14px;border-radius:50px;border:1.5px solid var(--border);background:var(--white);font-family:var(--sans);font-size:.76rem;font-weight:700;cursor:pointer;color:var(--ink);}
+.nav-post{padding:7px 14px;border-radius:50px;background:var(--g500);color:#fff;border:none;font-family:var(--sans);font-size:.76rem;font-weight:700;cursor:pointer;display:none;}
+
+/* CONTENT */
+.content{position:fixed;top:var(--nav);left:0;right:0;bottom:var(--bot);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+
+/* BOTTOM NAV */
+.bot-nav{position:fixed;bottom:0;left:0;right:0;z-index:500;height:var(--bot);background:rgba(247,244,239,.96);backdrop-filter:blur(18px);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom);}
+.bn-row{display:flex;justify-content:space-around;align-items:center;height:100%;}
+.bni{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:5px 12px;border-radius:12px;transition:.15s;position:relative;}
+.bni:active{background:var(--g50);}
+.bni-icon{font-size:1.2rem;line-height:1;}
+.bni-lbl{font-size:.56rem;font-weight:700;color:var(--muted);letter-spacing:.2px;white-space:nowrap;}
+.bni.on .bni-lbl{color:var(--g500);}
+.bni.on .bni-icon{filter:drop-shadow(0 0 5px rgba(34,168,87,.45));}
+.bni-pip{position:absolute;top:3px;right:8px;width:6px;height:6px;background:var(--danger);border-radius:50%;border:1.5px solid var(--white);display:none;}
+
+/* SCREEN */
+.screen{display:none;padding:20px 16px 16px;animation:fadeUp .22s ease;}
+.screen.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* TYPE */
+.s-lbl{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--g500);margin-bottom:5px;}
+.s-h{font-size:1.5rem;font-weight:900;letter-spacing:-.8px;line-height:1.1;margin-bottom:5px;}
+.s-h em{font-family:var(--serif);font-style:italic;color:var(--g500);}
+.s-sub{font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:18px;}
+
+/* HERO */
+.hero{min-height:calc(100vh - var(--nav) - var(--bot));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 16px;position:relative;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(50px);opacity:.4;pointer-events:none;}
+.b1{width:320px;height:320px;background:radial-gradient(circle,var(--g100),transparent);top:-40px;right:-60px;animation:bF 8s ease-in-out infinite;}
+.b2{width:260px;height:260px;background:radial-gradient(circle,#d8f5e5,transparent);bottom:-30px;left:-50px;animation:bF 10s ease-in-out infinite reverse;}
+@keyframes bF{0%,100%{transform:translate(0,0)}50%{transform:translate(12px,-10px)}}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--white);border:1px solid var(--border);padding:5px 12px;border-radius:50px;font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:18px;box-shadow:var(--sh);}
+.bdot{width:5px;height:5px;border-radius:50%;background:var(--g400);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:clamp(2.2rem,6.5vw,3.6rem);font-weight:900;letter-spacing:-1.8px;line-height:1.0;margin-bottom:12px;}
+.hero h1 em{font-family:var(--serif);font-style:italic;color:var(--g500);}
+.hero p{font-size:.88rem;color:var(--muted);max-width:320px;margin:0 auto 24px;line-height:1.7;}
+.hbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.hbtn{padding:12px 22px;border-radius:50px;font-family:var(--sans);font-size:.86rem;font-weight:700;cursor:pointer;border:none;transition:.2s;}
+.hbtn.g{background:var(--g500);color:#fff;box-shadow:0 4px 16px rgba(26,128,68,.32);}
+.hbtn.g:hover{background:var(--g600);}
+.hbtn.o{background:var(--white);color:var(--ink);border:1.5px solid var(--border);}
+.trust{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:22px;}
+.ti{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.ti strong{color:var(--ink);}
+
+/* STEPS */
+.how-card{background:var(--white);border-radius:var(--rl);padding:18px;margin-bottom:12px;}
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.step:last-child{border-bottom:none;}
+.sn{width:30px;height:30px;border-radius:9px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.82rem;flex-shrink:0;}
+.si-icon{font-size:1.2rem;width:24px;text-align:center;flex-shrink:0;margin-top:2px;}
+.s-stitle{font-size:.84rem;font-weight:800;margin-bottom:2px;}
+.s-stxt{font-size:.72rem;color:var(--muted);line-height:1.55;}
+
+/* TARIFS */
+.tarif-dark{background:var(--ink);border-radius:var(--rl);padding:18px;margin-bottom:12px;}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:13px;}
+.tc2{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);padding:12px;cursor:pointer;transition:.15s;}
+.tc2:hover{background:rgba(255,255,255,.09);}
+.tc2.pop{background:var(--g500);border-color:var(--g400);}
+.tico{font-size:1.1rem;margin-bottom:6px;}
+.tname{font-size:.74rem;font-weight:800;color:#fff;margin-bottom:1px;}
+.tdesc{font-size:.62rem;color:rgba(255,255,255,.38);margin-bottom:6px;line-height:1.4;}
+.tprice{font-size:1.2rem;font-weight:900;color:var(--g300);}
+.tc2.pop .tprice{color:#fff;}
+.tvs{font-size:.58rem;color:rgba(255,255,255,.2);text-decoration:line-through;}
+
+/* COLIS CARDS */
+.frow-filter{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px;margin-bottom:14px;scrollbar-width:none;}
+.frow-filter::-webkit-scrollbar{display:none;}
+.ftag{padding:6px 13px;border-radius:50px;border:1.5px solid var(--border);background:var(--white);color:var(--muted);font-family:var(--sans);font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s;}
+.ftag.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+.cgrid{display:flex;flex-direction:column;gap:10px;}
+.cc{background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);overflow:hidden;cursor:pointer;transition:.2s;}
+.cc:active{transform:scale(.98);}
+.cc-img{width:100%;height:130px;background:linear-gradient(135deg,var(--cream),var(--g50));display:flex;align-items:center;justify-content:center;font-size:2.8rem;position:relative;}
+.cc-bdg{position:absolute;top:8px;left:8px;padding:2px 8px;border-radius:50px;font-size:.62rem;font-weight:900;}
+.cc-bdg.new{background:var(--ink);color:#fff;}
+.cc-bdg.urg{background:var(--warn);color:#fff;}
+.cc-body{padding:12px;}
+.cc-route{display:flex;align-items:center;gap:5px;margin-bottom:7px;}
+.cc-city{font-size:.68rem;font-weight:900;color:var(--g600);text-transform:uppercase;letter-spacing:.5px;}
+.cc-arr{color:var(--muted2);font-size:.75rem;}
+.cc-title{font-size:.9rem;font-weight:800;margin-bottom:6px;}
+.cc-meta{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;}
+.cc-tag{background:var(--cream);color:var(--muted);font-size:.64rem;font-weight:600;padding:2px 7px;border-radius:50px;}
+.cc-foot{display:flex;align-items:center;justify-content:space-between;}
+.cc-price{font-size:1rem;font-weight:900;color:var(--g500);}
+.cc-price span{font-size:.66rem;font-weight:400;color:var(--muted);}
+.cav{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--g200),var(--g400));display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:900;color:var(--g700);}
+.pname{font-size:.7rem;color:var(--muted);}
+
+/* POSTER FORM */
+.fcard{background:var(--white);border-radius:var(--rl);padding:18px;border:1.5px solid var(--border);margin-bottom:10px;}
+.fc-lbl{font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--g500);margin-bottom:12px;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:.66rem;font-weight:700;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+.field input,.field select,.field textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:.88rem;color:var(--ink);background:var(--cream);outline:none;transition:.16s;-webkit-appearance:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--g400);background:var(--white);}
+.field textarea{resize:vertical;min-height:68px;}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.fhint{font-size:.66rem;color:var(--muted2);margin-top:3px;line-height:1.5;}
+.upz{border:2px dashed var(--border);border-radius:var(--rl);padding:18px;text-align:center;cursor:pointer;transition:.18s;background:var(--cream);}
+.upz:hover{border-color:var(--g300);background:var(--g50);}
+.upz-icon{font-size:1.6rem;margin-bottom:5px;}
+.upz-txt{font-size:.8rem;font-weight:700;color:var(--ink);margin-bottom:1px;}
+.upz-sub{font-size:.66rem;color:var(--muted);}
+.prev-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.prev-item{width:56px;height:56px;border-radius:9px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:var(--cream);}
+.prev-locked{width:56px;height:56px;border-radius:9px;background:var(--ink2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:2px solid #2d4a35;}
+.prev-locked span{font-size:.8rem;}
+.prev-locked small{font-size:.4rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.4px;}
+.pp-box{background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--rl);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;margin:14px 0;}
+.pp-l{font-size:.76rem;color:var(--muted);}
+.pp-n{font-size:.64rem;color:var(--g500);font-weight:700;margin-top:1px;}
+.pp-a{font-size:1.7rem;font-weight:900;color:var(--g500);}
+
+/* BTN */
+.btn{padding:11px 20px;border-radius:50px;font-family:var(--sans);font-size:.84rem;font-weight:700;cursor:pointer;border:none;transition:.18s;display:inline-flex;align-items:center;gap:6px;}
+.btn.p{background:var(--g500);color:#fff;}
+.btn.p:hover{background:var(--g600);}
+.btn.s{background:var(--white);color:var(--ink);border:1.5px solid var(--border);}
+.btn.full{width:100%;justify-content:center;padding:13px;}
+.btn.lg{font-size:.9rem;padding:14px;}
+
+/* SUIVI */
+.srch-bar{display:flex;gap:7px;margin-bottom:16px;}
+.srch-bar input{flex:1;padding:11px 15px;border:1.5px solid var(--border);border-radius:50px;font-family:var(--sans);font-size:.88rem;outline:none;background:var(--white);}
+.srch-bar input:focus{border-color:var(--g400);}
+.srch-bar button{padding:11px 18px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+
+/* TRACK CARD */
+.tcard{background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);overflow:hidden;box-shadow:var(--sh);margin-bottom:10px;}
+.thead{background:var(--ink);padding:15px 18px;display:flex;justify-content:space-between;align-items:flex-start;}
+.tref{font-family:var(--serif);font-style:italic;font-size:1.15rem;color:#fff;}
+.troute{color:var(--g200);font-size:.72rem;margin-top:2px;}
+.tpill{padding:3px 10px;border-radius:50px;font-size:.64rem;font-weight:800;}
+.pill-tr{background:rgba(56,189,248,.2);color:#7dd3fc;border:1px solid rgba(56,189,248,.28);}
+.pill-ok{background:rgba(34,197,94,.2);color:var(--g300);border:1px solid rgba(34,197,94,.28);}
+.train-row{background:var(--g50);border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:10px;}
+.tr-icon{font-size:1.3rem;}
+.tr-num{font-size:.82rem;font-weight:800;}
+.tr-st{font-size:.68rem;color:var(--muted);margin-top:1px;}
+.tr-eta{margin-left:auto;text-align:right;}
+.eta-t{font-size:.95rem;font-weight:900;color:var(--g500);}
+.eta-l{font-size:.62rem;color:var(--muted);}
+.livr-row{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.lav{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--g300),var(--g500));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#fff;}
+.lname{font-size:.8rem;font-weight:700;}
+.lnote{font-size:.66rem;color:var(--muted);}
+.lmsg{margin-left:auto;padding:5px 11px;background:var(--g50);color:var(--g600);border-radius:50px;font-size:.68rem;font-weight:700;cursor:pointer;border:1px solid var(--g100);}
+.tl-wrap{padding:16px 18px;}
+.timeline{position:relative;padding-left:22px;}
+.timeline::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(to bottom,var(--g200),var(--border) 85%);}
+.tli{position:relative;margin-bottom:15px;}
+.tli:last-child{margin-bottom:0;}
+.tld{position:absolute;left:-18px;top:4px;width:13px;height:13px;border-radius:50%;background:var(--border);border:2px solid var(--white);box-shadow:0 0 0 2px var(--border);}
+.tld.done{background:var(--g500);box-shadow:0 0 0 3px var(--g100);}
+.tld.active{background:var(--g400);box-shadow:0 0 0 4px rgba(34,168,87,.2);animation:pd 2s infinite;}
+@keyframes pd{0%,100%{box-shadow:0 0 0 4px rgba(34,168,87,.2)}50%{box-shadow:0 0 0 7px rgba(34,168,87,.07)}}
+.tl-time{font-size:.64rem;color:var(--muted2);font-weight:600;margin-bottom:1px;}
+.tl-txt{font-size:.82rem;font-weight:700;}
+.tl-txt.faded{color:var(--muted);font-weight:400;}
+.tl-sub{font-size:.68rem;color:var(--muted);margin-top:2px;line-height:1.4;}
+
+/* QR */
+.qr-card{background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);overflow:hidden;box-shadow:var(--sh);margin-bottom:10px;}
+.qr-head{background:linear-gradient(135deg,var(--ink2),var(--ink));padding:15px 18px;}
+.qr-ht{font-family:var(--serif);font-style:italic;font-size:1.1rem;color:#fff;margin-bottom:2px;}
+.qr-hs{color:rgba(255,255,255,.4);font-size:.7rem;}
+.qr-body{padding:18px;display:flex;flex-direction:column;align-items:center;}
+.qr-ref{font-family:var(--serif);font-style:italic;font-size:.95rem;color:var(--ink);margin-bottom:2px;}
+.qr-rt{font-size:.7rem;color:var(--muted);margin-bottom:13px;}
+.qr-box{background:var(--white);border-radius:14px;padding:12px;box-shadow:0 4px 24px rgba(14,26,16,.09);border:1.5px solid var(--border);position:relative;}
+.qr-box::before,.qr-box::after,.qr-box-b::before,.qr-box-b::after{content:'';position:absolute;width:16px;height:16px;border-color:var(--g500);border-style:solid;}
+.qr-box::before{top:5px;left:5px;border-width:2.5px 0 0 2.5px;border-radius:2px 0 0 0;}
+.qr-box::after{top:5px;right:5px;border-width:2.5px 2.5px 0 0;border-radius:0 2px 0 0;}
+.qr-box-b::before{bottom:5px;left:5px;border-width:0 0 2.5px 2.5px;border-radius:0 0 0 2px;}
+.qr-box-b::after{bottom:5px;right:5px;border-width:0 2.5px 2.5px 0;border-radius:0 0 2px 0;}
+#qr-canvas img,#qr-canvas canvas{border-radius:5px;display:block;}
+.warn-box{background:#fffbeb;border:1.5px solid #fde68a;border-radius:var(--r);padding:12px 14px;display:flex;gap:9px;width:100%;max-width:280px;margin-top:12px;}
+.wb-icon{font-size:1.1rem;flex-shrink:0;}
+.wb-title{font-size:.74rem;font-weight:800;color:#92400e;margin-bottom:2px;}
+.wb-txt{font-size:.66rem;color:#78350f;line-height:1.5;}
+.qr-acts{display:flex;gap:6px;margin-top:10px;width:100%;max-width:280px;}
+.qa{flex:1;padding:8px 6px;border-radius:9px;border:1.5px solid var(--border);background:var(--white);font-family:var(--sans);font-size:.68rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;color:var(--ink);transition:.15s;}
+.qa:hover{background:var(--cream);}
+.qa.g{background:var(--g500);color:#fff;border-color:var(--g500);}
+
+/* LIVRAISONS (dashboard livreur) */
+.livr-item{background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:14px;display:flex;align-items:center;gap:11px;margin-bottom:8px;cursor:pointer;transition:.18s;}
+.livr-item:hover{border-color:var(--g300);box-shadow:var(--sh);}
+.li-icon{font-size:1.8rem;}
+.li-ref{font-size:.86rem;font-weight:800;}
+.li-detail{font-size:.7rem;color:var(--muted);margin-top:2px;}
+.li-price{margin-left:auto;font-size:1.1rem;font-weight:900;color:var(--g500);}
+.li-arrow{font-size:1rem;color:var(--muted2);}
+
+/* STEPS LIVREUR */
+.lstep{background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);overflow:hidden;margin-bottom:8px;transition:.2s;}
+.lstep.active{border-color:var(--g400);box-shadow:0 0 0 3px rgba(26,128,68,.09);}
+.lstep.done{border-color:var(--g200);background:var(--g50);}
+.lstep.locked{opacity:.42;pointer-events:none;}
+.lsh{display:flex;align-items:center;gap:9px;padding:13px 15px;}
+.ls-n{width:26px;height:26px;border-radius:7px;background:var(--cream2);color:var(--muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.76rem;flex-shrink:0;transition:.2s;}
+.lstep.active .ls-n{background:var(--ink);color:#fff;}
+.lstep.done .ls-n{background:var(--g500);color:#fff;}
+.ls-title{font-size:.84rem;font-weight:800;}
+.ls-body{padding:0 15px 14px;}
+.photo-z{background:var(--cream);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;border:2px dashed var(--border);transition:.16s;}
+.photo-z:hover{border-color:var(--g300);background:var(--g50);}
+.pz-icon{font-size:1.5rem;margin-bottom:4px;}
+.pz-txt{font-size:.78rem;font-weight:700;}
+.pz-sub{font-size:.65rem;color:var(--muted);margin-top:1px;}
+.photo-ok{background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:10px;text-align:center;}
+.check-list{display:flex;flex-direction:column;gap:7px;margin-top:2px;}
+.ci{display:flex;align-items:center;gap:7px;cursor:pointer;}
+.ci input[type=checkbox]{width:15px;height:15px;accent-color:var(--g500);}
+.ci label{font-size:.76rem;color:var(--ink);cursor:pointer;}
+.scan-vp{width:100%;max-width:230px;aspect-ratio:1;border-radius:14px;background:var(--ink2);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+.scan-line{position:absolute;left:8%;right:8%;height:2px;background:linear-gradient(to right,transparent,var(--g400),transparent);animation:sa 2s ease-in-out infinite;}
+@keyframes sa{0%{top:12%;opacity:0}8%{opacity:1}92%{opacity:1}100%{top:88%;opacity:0}}
+.sc{position:absolute;width:18px;height:18px;border-color:var(--g400);border-style:solid;}
+.sc.tl{top:9px;left:9px;border-width:2.5px 0 0 2.5px;border-radius:2px 0 0 0;}
+.sc.tr{top:9px;right:9px;border-width:2.5px 2.5px 0 0;border-radius:0 2px 0 0;}
+.sc.bl{bottom:9px;left:9px;border-width:0 0 2.5px 2.5px;border-radius:0 0 0 2px;}
+.sc.br{bottom:9px;right:9px;border-width:0 2.5px 2.5px 0;border-radius:0 0 2px 0;}
+.scan-ph{text-align:center;color:rgba(255,255,255,.28);font-size:.7rem;}
+.div-or{display:flex;align-items:center;gap:8px;color:var(--muted2);font-size:.68rem;margin:10px 0;}
+.div-or::before,.div-or::after{content:'';flex:1;height:1px;background:var(--border);}
+.man-scan{display:flex;gap:7px;}
+.man-scan input{flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:50px;font-family:var(--sans);font-size:.84rem;outline:none;background:var(--cream);text-transform:uppercase;}
+.man-scan button{padding:9px 16px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.76rem;font-weight:700;cursor:pointer;}
+
+/* SUCCESS */
+.suc-wrap{text-align:center;padding:14px 0;}
+.suc-circle{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,var(--g400),var(--g600));display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 14px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 6px 24px rgba(26,128,68,.3);}
+@keyframes popIn{from{transform:scale(0)rotate(-15deg)}to{transform:scale(1)rotate(0)}}
+.suc-title{font-family:var(--serif);font-size:1.6rem;font-style:italic;color:var(--g500);margin-bottom:4px;}
+.suc-sub{font-size:.8rem;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.dm{background:var(--white);border-radius:var(--r);border:1.5px solid var(--border);padding:12px 14px;margin-bottom:14px;text-align:left;}
+.dm-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.78rem;}
+.dm-row:last-child{border-bottom:none;}
+.dm-row span:first-child{color:var(--muted);}
+.dm-row span:last-child{font-weight:800;}
+
+/* RATING */
+.rb{background:var(--white);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;margin-bottom:10px;}
+.rb-title{font-size:.63rem;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px;}
+.stars{display:flex;gap:5px;justify-content:center;margin-bottom:8px;}
+.star{font-size:1.8rem;cursor:pointer;transition:.15s;filter:grayscale(1)opacity(.3);}
+.star.on{filter:none;}
+.rtags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;}
+.rtag{padding:4px 10px;border-radius:50px;border:1.5px solid var(--border);background:var(--white);font-size:.68rem;font-weight:700;cursor:pointer;color:var(--muted);}
+.rtag.on{background:var(--g50);border-color:var(--g300);color:var(--g600);}
+.rcmt{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:.8rem;resize:none;outline:none;background:var(--cream);min-height:62px;}
+
+/* DASHBOARD */
+.krow{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+.kpi{background:var(--white);border-radius:var(--r);padding:14px;border:1.5px solid var(--border);}
+.kl{font-size:.62rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+.kv{font-size:1.5rem;font-weight:900;letter-spacing:-.8px;}
+.kv.g{color:var(--g500);}
+.kt{font-size:.65rem;color:var(--g500);font-weight:700;margin-top:1px;}
+.tc-table{background:var(--white);border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;margin-bottom:10px;}
+.tc-top{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.tc-top h3{font-size:.84rem;font-weight:800;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:8px 12px;font-size:.6rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.5px;background:var(--cream);border-bottom:1px solid var(--border);}
+td{padding:10px 12px;font-size:.76rem;border-bottom:1px solid var(--border);color:var(--muted);}
+tr:last-child td{border-bottom:none;}
+td strong{color:var(--ink);}
+.pok{background:var(--g100);color:var(--g600);font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:50px;display:inline-block;}
+.pwt{background:#fef3c7;color:#92400e;font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:50px;display:inline-block;}
+.prt{background:#dbeafe;color:#1e40af;font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:50px;display:inline-block;}
+
+/* AUTH */
+.auth-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - var(--nav) - var(--bot));padding:16px;}
+.acard{background:var(--white);border-radius:var(--rxl);padding:28px;width:100%;max-width:360px;border:1.5px solid var(--border);box-shadow:var(--shl);}
+.alogo{font-family:var(--serif);font-style:italic;font-size:1.5rem;color:var(--g600);text-align:center;margin-bottom:3px;}
+.alogo em{font-style:normal;color:var(--ink);}
+.asub{text-align:center;color:var(--muted);font-size:.76rem;margin-bottom:18px;line-height:1.6;}
+.atabs{display:flex;background:var(--cream);border-radius:50px;padding:3px;margin-bottom:18px;}
+.atab{flex:1;padding:7px;border-radius:50px;border:none;background:transparent;font-family:var(--sans);font-size:.76rem;font-weight:700;cursor:pointer;color:var(--muted);transition:.15s;}
+.atab.on{background:var(--white);color:var(--ink);box-shadow:var(--sh);}
+.soc{width:100%;padding:9px;border-radius:9px;border:1.5px solid var(--border);background:var(--white);font-family:var(--sans);font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--ink);transition:.15s;margin-bottom:6px;}
+.soc:hover{background:var(--cream);}
+.div{display:flex;align-items:center;gap:7px;color:var(--muted2);font-size:.7rem;margin:10px 0;}
+.div::before,.div::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* TOGGLE */
+.tog{width:42px;height:24px;background:var(--border);border-radius:50px;cursor:pointer;position:relative;transition:.2s;flex-shrink:0;}
+.tog.on{background:var(--g500);}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+.tog.on::after{left:21px;}
+
+/* PARAM ROW */
+.param-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s;}
+.param-row:last-child{border-bottom:none;}
+.param-row:hover{color:var(--g500);}
+.param-row span{color:var(--muted2);font-size:1rem;}
+
+@media(max-width:380px){.f2{grid-template-columns:1fr;}.tg{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<div id="toasts"></div>
+
+<!-- ════ PERMISSIONS ════ -->
+<div id="perm-ov">
+  <div class="perm-card">
+    <div class="perm-logo">Livr<em>eo</em></div>
+    <div class="perm-title">Autorisations nécessaires</div>
+    <div class="perm-sub">Pour fonctionner correctement, Livreo a besoin des autorisations suivantes.</div>
+    <div class="perm-list">
+      <div class="pi"><div class="pi-icon">📷</div><div><div class="pi-name">Caméra</div><div class="pi-why">Scanner QR Codes · Photo de remise</div></div><div class="pi-state" id="ps-cam">—</div></div>
+      <div class="pi"><div class="pi-icon">🎤</div><div><div class="pi-name">Microphone</div><div class="pi-why">Messages vocaux livreur/expéditeur</div></div><div class="pi-state" id="ps-mic">—</div></div>
+      <div class="pi"><div class="pi-icon">📍</div><div><div class="pi-name">Localisation</div><div class="pi-why">Gare la plus proche · Suivi de trajet</div></div><div class="pi-state" id="ps-loc">—</div></div>
+      <div class="pi"><div class="pi-icon">🔔</div><div><div class="pi-name">Notifications</div><div class="pi-why">Alertes livraison · Confirmation paiement</div></div><div class="pi-state" id="ps-notif">—</div></div>
+    </div>
+    <button class="perm-btn" onclick="askPerms()">Autoriser et continuer →</button>
+  </div>
+</div>
+
+<!-- ════ SHEET ════ -->
+<div class="ov" id="ov" onclick="cov(event)">
+  <div class="sheet" id="sh-content"><div class="sh"></div></div>
+</div>
+
+<!-- ════ NAV ════ -->
+<nav>
+  <div class="logo" onclick="goNav('home')">Livr<em>eo</em></div>
+  <div class="nav-r">
+    <button class="nav-post" id="nav-post" onclick="goPost()">+ Poster</button>
+    <button class="nav-login" id="nav-login" onclick="goNav('auth')">Connexion</button>
+    <div class="nav-av" id="nav-av" onclick="goNav('dashboard')">K</div>
+  </div>
+</nav>
+
+<!-- ════ CONTENT ════ -->
+<div class="content" id="content">
+
+<!-- ── HOME : LANDING (non connecté) + TABLEAU DE BORD (connecté) ── -->
+<div class="screen on" id="s-home">
+
+  <!-- LANDING : visible quand non connecté -->
+  <div id="home-landing">
+    <div class="hero">
+      <div class="blob b1"></div><div class="blob b2"></div>
+      <div class="hero-badge"><div class="bdot"></div>Livraison entre particuliers · Par train</div>
+      <h1>Envoyer,<br><em>sans se ruiner.</em></h1>
+      <p>Quelqu'un fait votre trajet. Il prend votre colis. −40% vs La Poste.</p>
+      <div class="hbtns">
+        <button class="hbtn g" onclick="goNav('explorer')">📦 Voir les colis</button>
+        <button class="hbtn o" onclick="goPost()">Envoyer →</button>
+      </div>
+      <div class="trust">
+        <div class="ti">🔒 Paiement <strong>sécurisé</strong></div>
+        <div class="ti">📸 Photo <strong>obligatoire</strong></div>
+        <div class="ti">🎉 <strong>Gratuit</strong> 1 an</div>
+      </div>
+    </div>
+    <div style="padding:0 0 12px;">
+      <div class="how-card">
+        <div class="s-lbl">Comment ça marche</div>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="si-icon">📦</div><div><div class="s-stitle">Postez votre colis</div><div class="s-stxt">Photo emballée publique, contenu privé. Gare A → Gare B.</div></div></div>
+          <div class="step"><div class="sn">2</div><div class="si-icon">🙋</div><div><div class="s-stitle">Un livreur accepte</div><div class="s-stxt">Un code unique (ex: LVR-452) est généré et envoyé automatiquement au destinataire par SMS.</div></div></div>
+          <div class="step"><div class="sn">3</div><div class="si-icon">📱</div><div><div class="s-stitle">Le destinataire génère son QR Code</div><div class="s-stxt">Il entre son code dans Suivi et affiche son QR Code personnel sur son téléphone.</div></div></div>
+          <div class="step"><div class="sn">4</div><div class="si-icon">📷</div><div><div class="s-stitle">Photo + Scan = Paiement libéré</div><div class="s-stxt">Le livreur photographie la remise en main propre PUIS scanne le QR Code. Paiement automatique.</div></div></div>
+        </div>
+      </div>
+      <div class="tarif-dark">
+        <div class="s-lbl" style="color:var(--g300);">Tarifs</div>
+        <div style="font-size:1.2rem;font-weight:900;letter-spacing:-.8px;color:#fff;">Jusqu'à <span style="font-family:var(--serif);font-style:italic;color:var(--g300);">−45%</span> vs La Poste</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-top:2px;">0% commission · Gratuit 1 an</div>
+        <div class="tg">
+          <div class="tc2"><div class="tico">✉️</div><div class="tname">Pochette S</div><div class="tdesc">≤500g</div><div class="tprice">3,50€</div><div class="tvs">~7€</div></div>
+          <div class="tc2"><div class="tico">📬</div><div class="tname">Pochette M</div><div class="tdesc">≤1kg</div><div class="tprice">5€</div><div class="tvs">~9€</div></div>
+          <div class="tc2 pop"><div class="tico">📦</div><div class="tname">Colis S ⭐</div><div class="tdesc">≤2kg</div><div class="tprice">7€</div><div class="tvs">~11€</div></div>
+          <div class="tc2"><div class="tico">🗃️</div><div class="tname">Colis M</div><div class="tdesc">2–5kg</div><div class="tprice">11€</div><div class="tvs">~15€</div></div>
+        </div>
+      </div>
+      <div style="background:var(--white);border-radius:var(--rl);padding:18px;border:1.5px solid var(--border);text-align:center;">
+        <div style="font-size:.82rem;font-weight:800;margin-bottom:4px;">Rejoignez Livreo gratuitement</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:12px;">Expéditeur ou livreur, tout le monde peut participer.</div>
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button class="btn p" onclick="goNav('auth')">Créer un compte</button>
+          <button class="btn s" onclick="goNav('auth')">Se connecter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD ACCUEIL : visible quand connecté -->
+  <div id="home-dash" style="display:none;">
+    <div style="margin-bottom:16px;">
+      <div class="s-lbl">Mon espace</div>
+      <div class="s-h" id="dash-h">Bonjour <em>Kevin</em> 👋</div>
+    </div>
+
+    <!-- ACTIONS RAPIDES -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:var(--g500);border-radius:var(--rl);padding:16px;cursor:pointer;transition:.18s;" onclick="goPost()">
+        <div style="font-size:1.6rem;margin-bottom:6px;">📦</div>
+        <div style="font-size:.82rem;font-weight:800;color:#fff;">Poster un colis</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.6);margin-top:1px;">Envoyer quelque chose</div>
+      </div>
+      <div style="background:var(--ink);border-radius:var(--rl);padding:16px;cursor:pointer;transition:.18s;" onclick="goNav('explorer')">
+        <div style="font-size:1.6rem;margin-bottom:6px;">🔍</div>
+        <div style="font-size:.82rem;font-weight:800;color:#fff;">Explorer les colis</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.5);margin-top:1px;">Gagner de l'argent</div>
+      </div>
+    </div>
+
+    <!-- SOLDE PORTEFEUILLE -->
+    <div style="background:linear-gradient(135deg,var(--ink2),var(--ink));border-radius:var(--rl);padding:18px;margin-bottom:12px;position:relative;overflow:hidden;">
+      <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(34,168,87,.12);"></div>
+      <div style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--g200);margin-bottom:6px;">Mon portefeuille</div>
+      <div style="font-size:2.2rem;font-weight:900;letter-spacing:-1.5px;color:#fff;position:relative;">312,50€</div>
+      <div style="font-size:.68rem;color:rgba(255,255,255,.4);margin-top:3px;">Dont 18€ en attente de validation</div>
+      <button onclick="t('Retrait initié 💸','s')" style="margin-top:14px;padding:8px 18px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:50px;font-family:var(--sans);font-size:.74rem;font-weight:700;cursor:pointer;">Retirer des fonds →</button>
+    </div>
+
+    <!-- LIVRAISONS EN COURS -->
+    <div style="font-size:.74rem;font-weight:800;color:var(--ink);margin-bottom:8px;">🚆 Mes livraisons en cours</div>
+    <div class="livr-item" onclick="openLivrFlow('LVR-48291','Paris GDL → Lyon PDieu','TGV INOUI 6605','Marie Dupont','18')">
+      <div class="li-icon">📦</div>
+      <div style="flex:1;">
+        <div class="li-ref">LVR-48291</div>
+        <div class="li-detail">Paris GDL → Lyon PDieu · TGV INOUI 6605</div>
+        <div style="margin-top:3px;"><span class="prt">🚆 En transit</span></div>
+      </div>
+      <div class="li-price">+18€</div>
+      <div class="li-arrow">›</div>
+    </div>
+    <div class="livr-item" onclick="openLivrFlow('LVR-47850','Paris Nord → Lille Europe','TGV INOUI 7112','Sophie B.','7')">
+      <div class="li-icon">🎁</div>
+      <div style="flex:1;">
+        <div class="li-ref">LVR-47850</div>
+        <div class="li-detail">Paris Nord → Lille Europe · TGV 7112</div>
+        <div style="margin-top:3px;"><span class="pwt">⏳ En attente départ</span></div>
+      </div>
+      <div class="li-price">+7€</div>
+      <div class="li-arrow">›</div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="krow" style="margin-top:12px;">
+      <div class="kpi"><div class="kl">Colis envoyés</div><div class="kv g">14</div><div class="kt">↑ 3 ce mois</div></div>
+      <div class="kpi"><div class="kl">Livraisons</div><div class="kv g">38</div><div class="kt">↑ 8 ce mois</div></div>
+      <div class="kpi"><div class="kl">Gains totaux</div><div class="kv g">312€</div></div>
+      <div class="kpi"><div class="kl">Ma note</div><div class="kv">4.9⭐</div></div>
+    </div>
+
+    <!-- ACTIVITÉ RÉCENTE -->
+    <div class="tc-table">
+      <div class="tc-top"><h3>Activité récente</h3><button style="font-size:.7rem;color:var(--g500);background:none;border:none;cursor:pointer;font-weight:700;">Tout voir →</button></div>
+      <table><thead><tr><th>Réf.</th><th>Rôle</th><th>Trajet</th><th>€</th><th>Statut</th></tr></thead>
+      <tbody>
+        <tr><td><strong>LVR-7821</strong></td><td>Livreur</td><td>Paris→Lyon</td><td style="color:var(--g500);font-weight:800;">+18€</td><td><span class="pok">✓ Livré</span></td></tr>
+        <tr><td><strong>LVR-7809</strong></td><td>Expéditeur</td><td>Paris→Lille</td><td>-7€</td><td><span class="prt">🚆 Route</span></td></tr>
+        <tr><td><strong>LVR-7795</strong></td><td>Livreur</td><td>Paris→Bordeaux</td><td style="color:var(--g500);font-weight:800;">+24€</td><td><span class="pok">✓ Livré</span></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── EXPLORER ── -->
+<div class="screen" id="s-explorer">
+  <div class="s-lbl">Marketplace</div>
+  <div class="s-h">Colis à <em>transporter</em></div>
+  <div class="s-sub" style="margin-bottom:10px;">Acceptez un colis sur votre trajet et gagnez de l'argent.</div>
+  <div class="frow-filter">
+    <button class="ftag on" onclick="flt('all',this)">Tous</button>
+    <button class="ftag" onclick="flt('lyon',this)">→ Lyon</button>
+    <button class="ftag" onclick="flt('bordeaux',this)">→ Bordeaux</button>
+    <button class="ftag" onclick="flt('lille',this)">→ Lille</button>
+    <button class="ftag" onclick="flt('caen',this)">→ Caen</button>
+    <button class="ftag" onclick="flt('rennes',this)">→ Rennes</button>
+    <button class="ftag" onclick="flt('tours',this)">→ Tours</button>
+    <button class="ftag" onclick="flt('nantes',this)">→ Nantes</button>
+    <button class="ftag" onclick="flt('marseille',this)">→ Marseille</button>
+  </div>
+  <div class="cgrid" id="cgrid"></div>
+</div>
+
+<!-- ── POSTER ── -->
+<div class="screen" id="s-poster">
+  <div class="s-lbl">Nouvelle annonce</div>
+  <div class="s-h">Poster <em>un colis</em></div>
+  <div class="s-sub">Seule la photo emballée est publique.</div>
+  <div id="poster-form">
+    <div class="fcard">
+      <div class="fc-lbl">📷 Photos</div>
+      <div class="field">
+        <label>Photo colis emballé <span style="color:var(--g500)">*</span></label>
+        <div class="upz" onclick="fakeUp('em')"><div class="upz-icon">📷</div><div class="upz-txt">Photo emballée (publique)</div><div class="upz-sub">Visible par tous</div></div>
+        <div class="prev-row" id="prev-em"></div>
+        <div class="fhint">🔒 Seule photo visible avant acceptation.</div>
+      </div>
+      <div class="field">
+        <label>Photos du contenu (privé) <span style="color:var(--g500)">*</span></label>
+        <div class="upz" onclick="fakeUp('co')"><div class="upz-icon">🔒</div><div class="upz-txt">Photos contenu (privées)</div><div class="upz-sub">Visibles par le livreur après acceptation</div></div>
+        <div class="prev-row" id="prev-co"></div>
+      </div>
+    </div>
+    <div class="fcard">
+      <div class="fc-lbl">🚉 Trajet gare à gare</div>
+      <div class="f2">
+        <div class="field"><label>Gare de départ</label>
+          <select id="pf-dep">
+            <option value="">Choisir une gare...</option>
+            <optgroup label="Île-de-France">
+              <option>Paris Gare de Lyon</option><option>Paris Montparnasse</option>
+              <option>Paris Nord</option><option>Paris Est</option><option>Paris Saint-Lazare</option>
+              <option>Versailles Chantiers</option><option>Massy TGV</option>
+            </optgroup>
+            <optgroup label="Nord">
+              <option>Lille-Flandres</option><option>Lille-Europe</option><option>Arras</option>
+              <option>Amiens</option><option>Lens</option><option>Douai</option><option>Calais-Ville</option>
+              <option>Dunkerque</option><option>Valenciennes</option>
+            </optgroup>
+            <optgroup label="Normandie / Calvados">
+              <option>Caen</option><option>Rouen-Rive-Droite</option><option>Le Havre</option>
+              <option>Lisieux</option><option>Bayeux</option><option>Cherbourg</option>
+              <option>Saint-Lô</option><option>Évreux</option><option>Alençon</option>
+            </optgroup>
+            <optgroup label="Bretagne / Pays de Loire">
+              <option>Rennes</option><option>Nantes</option><option>Brest</option>
+              <option>Quimper</option><option>Saint-Malo</option><option>Vannes</option>
+              <option>Lorient</option><option>Le Mans</option><option>Angers</option>
+              <option>Saint-Nazaire</option><option>Laval</option>
+            </optgroup>
+            <optgroup label="Centre / Val de Loire">
+              <option>Tours</option><option>Orléans</option><option>Blois</option>
+              <option>Bourges</option><option>Chartres</option><option>Vendôme TGV</option>
+            </optgroup>
+            <optgroup label="Est">
+              <option>Strasbourg</option><option>Metz</option><option>Nancy</option>
+              <option>Reims</option><option>Mulhouse</option><option>Colmar</option>
+              <option>Troyes</option><option>Châlons-en-Champagne</option>
+            </optgroup>
+            <optgroup label="Bourgogne / Franche-Comté">
+              <option>Dijon</option><option>Besançon Viotte</option><option>Belfort</option>
+              <option>Auxerre</option><option>Nevers</option><option>Mâcon</option>
+            </optgroup>
+            <optgroup label="Auvergne-Rhône-Alpes">
+              <option>Lyon Part-Dieu</option><option>Lyon Perrache</option><option>Grenoble</option>
+              <option>Clermont-Ferrand</option><option>Saint-Étienne</option><option>Chambéry</option>
+              <option>Annecy</option><option>Bourg-en-Bresse</option><option>Valence TGV</option>
+            </optgroup>
+            <optgroup label="Occitanie">
+              <option>Toulouse Matabiau</option><option>Montpellier Saint-Roch</option>
+              <option>Nîmes</option><option>Perpignan</option><option>Carcassonne</option>
+              <option>Béziers</option><option>Albi</option><option>Tarbes</option>
+            </optgroup>
+            <optgroup label="Nouvelle-Aquitaine">
+              <option>Bordeaux Saint-Jean</option><option>Poitiers</option><option>La Rochelle</option>
+              <option>Limoges</option><option>Bayonne</option><option>Pau</option>
+              <option>Angoulême</option><option>Périgueux</option><option>Saintes</option>
+            </optgroup>
+            <optgroup label="PACA">
+              <option>Marseille Saint-Charles</option><option>Nice</option><option>Toulon</option>
+              <option>Avignon TGV</option><option>Aix-en-Provence TGV</option><option>Cannes</option>
+              <option>Antibes</option><option>Arles</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field"><label>Gare d'arrivée</label>
+          <select id="pf-arr">
+            <option value="">Choisir une gare...</option>
+            <optgroup label="Île-de-France"><option>Paris Gare de Lyon</option><option>Paris Montparnasse</option><option>Paris Nord</option><option>Paris Est</option><option>Paris Saint-Lazare</option><option>Versailles Chantiers</option><option>Massy TGV</option></optgroup>
+            <optgroup label="Nord"><option>Lille-Flandres</option><option>Lille-Europe</option><option>Arras</option><option>Amiens</option><option>Lens</option><option>Douai</option><option>Calais-Ville</option><option>Dunkerque</option><option>Valenciennes</option></optgroup>
+            <optgroup label="Normandie / Calvados"><option>Caen</option><option>Rouen-Rive-Droite</option><option>Le Havre</option><option>Lisieux</option><option>Bayeux</option><option>Cherbourg</option><option>Saint-Lô</option><option>Évreux</option><option>Alençon</option></optgroup>
+            <optgroup label="Bretagne / Pays de Loire"><option>Rennes</option><option>Nantes</option><option>Brest</option><option>Quimper</option><option>Saint-Malo</option><option>Vannes</option><option>Lorient</option><option>Le Mans</option><option>Angers</option><option>Saint-Nazaire</option><option>Laval</option></optgroup>
+            <optgroup label="Centre / Val de Loire"><option>Tours</option><option>Orléans</option><option>Blois</option><option>Bourges</option><option>Chartres</option><option>Vendôme TGV</option></optgroup>
+            <optgroup label="Est"><option>Strasbourg</option><option>Metz</option><option>Nancy</option><option>Reims</option><option>Mulhouse</option><option>Colmar</option><option>Troyes</option><option>Châlons-en-Champagne</option></optgroup>
+            <optgroup label="Bourgogne / Franche-Comté"><option>Dijon</option><option>Besançon Viotte</option><option>Belfort</option><option>Auxerre</option><option>Nevers</option><option>Mâcon</option></optgroup>
+            <optgroup label="Auvergne-Rhône-Alpes"><option>Lyon Part-Dieu</option><option>Lyon Perrache</option><option>Grenoble</option><option>Clermont-Ferrand</option><option>Saint-Étienne</option><option>Chambéry</option><option>Annecy</option><option>Bourg-en-Bresse</option><option>Valence TGV</option></optgroup>
+            <optgroup label="Occitanie"><option>Toulouse Matabiau</option><option>Montpellier Saint-Roch</option><option>Nîmes</option><option>Perpignan</option><option>Carcassonne</option><option>Béziers</option><option>Albi</option><option>Tarbes</option></optgroup>
+            <optgroup label="Nouvelle-Aquitaine"><option>Bordeaux Saint-Jean</option><option>Poitiers</option><option>La Rochelle</option><option>Limoges</option><option>Bayonne</option><option>Pau</option><option>Angoulême</option><option>Périgueux</option><option>Saintes</option></optgroup>
+            <optgroup label="PACA"><option>Marseille Saint-Charles</option><option>Nice</option><option>Toulon</option><option>Avignon TGV</option><option>Aix-en-Provence TGV</option><option>Cannes</option><option>Antibes</option><option>Arles</option></optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Titre de l'annonce</label><input type="text" id="pf-title" placeholder="Ex: Livres scolaires, vêtements..."></div>
+      <div class="field"><label>Description du contenu (privée)</label><textarea id="pf-desc" placeholder="Visible uniquement par le livreur..."></textarea></div>
+      <div class="f2">
+        <div class="field"><label>Format</label>
+          <select id="pf-fmt" onchange="calcP()">
+            <option value="3.5">Pochette S — ≤500g</option><option value="5">Pochette M — ≤1kg</option>
+            <option value="7" selected>Colis S — ≤2kg</option><option value="11">Colis M — 2–5kg</option>
+            <option value="16">Colis L — 5–10kg</option><option value="24">Colis XL — 10–20kg</option>
+          </select>
+        </div>
+        <div class="field"><label>Date souhaitée</label><input type="date" id="pf-date"></div>
+      </div>
+    </div>
+    <div class="fcard">
+      <div class="fc-lbl">📞 Destinataire</div>
+      <div class="f2">
+        <div class="field"><label>Nom</label><input type="text" id="pf-rname" placeholder="Prénom Nom"></div>
+        <div class="field"><label>Téléphone</label><input type="tel" id="pf-rphone" placeholder="06 xx xx xx xx"></div>
+      </div>
+      <div class="fhint">🔒 Ces informations sont strictement confidentielles. Le destinataire recevra automatiquement son code de suivi unique par SMS dès qu'un livreur accepte. Ce code est généré par le système — personne ne peut en créer un soi-même.</div>
+    </div>
+    <div class="pp-box">
+      <div><div class="pp-l">Prix proposé au livreur</div><div class="pp-n">✅ 0% commission · Gratuit</div></div>
+      <div class="pp-a" id="pf-price">7,00€</div>
+    </div>
+    <button class="btn p full lg" onclick="publishColis()">🚀 Publier l'annonce</button>
+  </div>
+  <div id="poster-suc" style="display:none;">
+    <div class="suc-wrap">
+      <div class="suc-circle">🚀</div>
+      <div class="suc-title">Colis publié !</div>
+      <div class="suc-sub">Dès qu'un livreur accepte, le destinataire recevra automatiquement son code de suivi par SMS. Ce code est unique et sécurisé — il ne peut pas être deviné ou inventé.</div>
+      <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:14px;margin-bottom:18px;text-align:left;">
+        <div style="font-size:.64rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Votre référence</div>
+        <div style="font-family:var(--serif);font-style:italic;font-size:1.4rem;color:var(--ink);" id="suc-ref">LVR-452</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:2px;">Le destinataire entrera ce code dans Suivi pour afficher son QR Code</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+        <button class="btn p" onclick="goNav('suivi')">Suivre mon colis →</button>
+        <button class="btn s" onclick="resetPoster()">Nouveau colis</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SUIVI ── -->
+<div class="screen" id="s-suivi">
+  <div class="s-lbl">Suivi</div>
+  <div class="s-h">Suivre <em>mon colis</em></div>
+  <div class="s-sub">Expéditeur ou destinataire : entrez le code reçu par SMS. Le destinataire verra directement son QR Code.</div>
+  <div class="srch-bar">
+    <input type="text" id="sv-input" placeholder="Ex: LVR-452" value="LVR-48291">
+    <button onclick="loadSuivi()">Suivre →</button>
+  </div>
+  <!-- VUE EXPÉDITEUR -->
+  <div id="sv-exp" style="display:none;">
+    <div class="tcard">
+      <div class="thead">
+        <div><div class="tref" id="sv-ref">LVR-48291</div><div class="troute">Paris GDL → Lyon Part-Dieu · Colis S · 1,8kg</div></div>
+        <div class="tpill pill-tr" id="sv-pill">🚆 Transit</div>
+      </div>
+      <div class="train-row">
+        <div class="tr-icon">🚄</div>
+        <div><div class="tr-num">TGV INOUI 6605</div><div class="tr-st">Paris GDL → Lyon PDieu · <span style="color:var(--g500);font-weight:700;">À l'heure ✓</span></div></div>
+        <div class="tr-eta"><div class="eta-t">11h05</div><div class="eta-l">Arrivée prévue</div></div>
+      </div>
+      <div class="livr-row">
+        <div class="lav">K</div>
+        <div><div class="lname">Kevin A.</div><div class="lnote">⭐ 4,9 · 38 livraisons</div></div>
+        <button class="lmsg" onclick="t('Message envoyé 📱','s')">📱 Contacter</button>
+      </div>
+      <div class="tl-wrap">
+        <div class="timeline" id="sv-tl">
+          <div class="tli"><div class="tld done"></div><div class="tl-time">08:30</div><div class="tl-txt">📦 Colis collecté — Paris Gare de Lyon</div></div>
+          <div class="tli"><div class="tld done"></div><div class="tl-time">09:04</div><div class="tl-txt">🚄 Départ TGV 6605 — Paris GDL</div><div class="tl-sub">Aucun retard</div></div>
+          <div class="tli"><div class="tld active"></div><div class="tl-time">En cours</div><div class="tl-txt">📍 En route vers Lyon Part-Dieu</div></div>
+          <div class="tli" id="tl-a"><div class="tld"></div><div class="tl-time">~11h30</div><div class="tl-txt faded">🏠 Livraison à domicile</div></div>
+          <div class="tli" id="tl-b"><div class="tld"></div><div class="tl-time">—</div><div class="tl-txt faded">✅ QR scanné — Livraison confirmée</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--white);border-radius:var(--r);border:1.5px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:9px;margin-bottom:12px;">
+      <div style="font-size:1.1rem;">📬</div>
+      <div><div style="font-size:.78rem;font-weight:800;">Destinataire notifié</div><div style="font-size:.66rem;color:var(--muted);margin-top:1px;">Le code LVR-48291 a été envoyé par SMS. QR Code généré automatiquement.</div></div>
+      <div style="margin-left:auto;"><span class="pok" style="font-size:.6rem;">✓ Envoyé</span></div>
+    </div>
+    <!-- Bouton démo : voir vue destinataire -->
+    <button class="btn s full" style="font-size:.74rem;" onclick="switchToDestView()">🔄 Démo : voir vue destinataire →</button>
+  </div>
+  <!-- VUE DESTINATAIRE -->
+  <div id="sv-dest" style="display:none;">
+    <div class="tcard" style="margin-bottom:10px;">
+      <div class="thead">
+        <div><div class="tref">LVR-48291</div><div class="troute">Paris → Lyon · Expédié par Jean M.</div></div>
+        <div class="tpill pill-tr">🚆 Transit</div>
+      </div>
+      <div class="train-row">
+        <div class="tr-icon">🚄</div>
+        <div><div class="tr-num">TGV INOUI 6605</div><div class="tr-st"><span style="color:var(--g500);font-weight:700;">À l'heure</span> · Arrivée 11h05</div></div>
+        <div class="tr-eta"><div class="eta-t">~11h30</div><div class="eta-l">Livraison prévue</div></div>
+      </div>
+    </div>
+    <!-- NOTIF DESTINATAIRE -->
+    <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:9px;">
+      <div style="font-size:1.1rem;">🔔</div>
+      <div>
+        <div style="font-size:.78rem;font-weight:800;color:var(--g600);">Votre colis arrive aujourd'hui</div>
+        <div style="font-size:.66rem;color:var(--muted);margin-top:1px;line-height:1.5;">Marie Dupont · Livraison prévue avant 12h · Paris → Lyon Part-Dieu<br>Ce QR Code vous a été envoyé par SMS au <strong>06 12 ·· ·· ··</strong> enregistré sur votre compte.</div>
+      </div>
+    </div>
+    <!-- QR CARD -->
+    <div class="qr-card" id="qr-main">
+      <div class="qr-head">
+        <div class="qr-ht">Votre QR Code de réception</div>
+        <div class="qr-hs">À présenter au livreur · Ne partagez pas ce code</div>
+      </div>
+      <div class="qr-body">
+        <div class="qr-ref">LVR-48291</div>
+        <div class="qr-rt">Paris → Lyon · Marie Dupont</div>
+        <div class="qr-box qr-box-b" id="qr-wrap" style="position:relative;">
+          <div id="qr-canvas"></div>
+        </div>
+        <div class="warn-box">
+          <div class="wb-icon">⚠️</div>
+          <div>
+            <div class="wb-title">Vérifiez votre colis avant de faire scanner</div>
+            <div class="wb-txt">Inspectez l'emballage et le contenu <strong>avant</strong> de montrer ce QR Code. Une fois scanné, la livraison est confirmée et le paiement libéré. En cas de dommage, refusez la livraison et contactez Livreo.</div>
+          </div>
+        </div>
+        <div class="qr-acts">
+          <button class="qa" onclick="t('QR Code sauvegardé 📥','s')">📥 Sauvegarder</button>
+          <button class="qa" onclick="t('Envoyé par SMS 📱','s')">📱 SMS</button>
+          <button class="qa g" onclick="t('Envoyé par email ✅','s')">📧 Email</button>
+        </div>
+      </div>
+    </div>
+    <!-- APRÈS SCAN : SUCCESS + NOTATIONS -->
+    <div id="dest-suc" style="display:none;">
+      <div class="suc-wrap">
+        <div class="suc-circle">✅</div>
+        <div class="suc-title">Colis reçu !</div>
+        <div class="suc-sub">QR Code scanné par Kevin A. Le paiement a été déclenché automatiquement.</div>
+        <div class="dm">
+          <div class="dm-row"><span>Référence</span><span>LVR-48291</span></div>
+          <div class="dm-row"><span>Livré par</span><span>Kevin A. ⭐ 4,9</span></div>
+          <div class="dm-row"><span>Heure</span><span>07/05 · 11h47</span></div>
+          <div class="dm-row"><span>Statut</span><span style="color:var(--g500);">✅ Confirmé</span></div>
+        </div>
+        <div class="rb">
+          <div class="rb-title">Notez votre livreur — Kevin A.</div>
+          <div class="stars" id="st-livr"><span class="star" onclick="rate('livr',1)">⭐</span><span class="star" onclick="rate('livr',2)">⭐</span><span class="star" onclick="rate('livr',3)">⭐</span><span class="star on" onclick="rate('livr',4)">⭐</span><span class="star on" onclick="rate('livr',5)">⭐</span></div>
+          <div class="rtags"><div class="rtag on" onclick="tt(this)">Ponctuel</div><div class="rtag on" onclick="tt(this)">Colis intact</div><div class="rtag" onclick="tt(this)">Souriant</div><div class="rtag" onclick="tt(this)">Recommandé</div></div>
+        </div>
+        <div class="rb">
+          <div class="rb-title">Notez l'application Livreo</div>
+          <div class="stars" id="st-app"><span class="star" onclick="rate('app',1)">⭐</span><span class="star" onclick="rate('app',2)">⭐</span><span class="star on" onclick="rate('app',3)">⭐</span><span class="star on" onclick="rate('app',4)">⭐</span><span class="star on" onclick="rate('app',5)">⭐</span></div>
+          <div class="rtags"><div class="rtag on" onclick="tt(this)">Simple</div><div class="rtag on" onclick="tt(this)">Prix compétitif</div><div class="rtag" onclick="tt(this)">Je recommande</div></div>
+          <textarea class="rcmt" placeholder="Un commentaire ? (optionnel)" style="margin-top:8px;"></textarea>
+        </div>
+        <button class="btn p full lg" onclick="t('🙏 Merci pour votre avis ! Cela aide toute la communauté.','s')">Envoyer mes avis →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<!-- ── MOI : PARAMÈTRES & PROFIL ── -->
+<div class="screen" id="s-dashboard">
+
+  <!-- PROFIL BANNER -->
+  <div style="background:linear-gradient(135deg,var(--ink2),var(--ink));border-radius:var(--rl);padding:18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
+    <div id="moi-av" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--g300),var(--g500));display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:#fff;border:2px solid rgba(255,255,255,.15);flex-shrink:0;">K</div>
+    <div>
+      <div id="moi-name" style="font-size:1rem;font-weight:900;color:#fff;letter-spacing:-.3px;">Kevin Martin</div>
+      <div id="moi-email" style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:1px;">kevin@email.com</div>
+      <div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;">
+        <span style="background:rgba(34,168,87,.2);border:1px solid rgba(34,168,87,.3);color:var(--g200);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;">✅ Vérifié</span>
+        <span style="background:rgba(34,168,87,.2);border:1px solid rgba(34,168,87,.3);color:var(--g200);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;">⭐ 4,9 · 38 livraisons</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION : INFORMATIONS PERSONNELLES -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">👤 Informations personnelles</div>
+    <div class="f2">
+      <div class="field"><label>Prénom</label><input type="text" id="m-pn" value="Kevin"></div>
+      <div class="field"><label>Nom</label><input type="text" id="m-nm" value="Martin"></div>
+    </div>
+    <div class="field"><label>Email</label><input type="email" id="m-em" value="kevin@email.com"></div>
+    <div class="field"><label>Téléphone</label><input type="tel" id="m-ph" value="06 12 34 56 78"></div>
+    <button class="btn p" onclick="saveProfil()" style="margin-top:4px;">Sauvegarder</button>
+  </div>
+
+  <!-- SECTION : MOT DE PASSE -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">🔒 Mot de passe</div>
+    <div class="field"><label>Mot de passe actuel</label><input type="password" id="pw-old" placeholder="••••••••"></div>
+    <div class="field"><label>Nouveau mot de passe</label><input type="password" id="pw-new" placeholder="8 caractères minimum"></div>
+    <div class="field"><label>Confirmer le nouveau mot de passe</label><input type="password" id="pw-conf" placeholder="••••••••"></div>
+    <button class="btn p" onclick="changePw()" style="margin-top:4px;">Changer le mot de passe</button>
+  </div>
+
+  <!-- SECTION : PAIEMENT -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">💳 Moyens de paiement</div>
+    <div class="field"><label>Numéro de carte bancaire</label><input type="text" placeholder="4242 4242 4242 4242" oninput="fmtCard(this)" maxlength="19"></div>
+    <div class="f2">
+      <div class="field"><label>Expiration</label><input type="text" placeholder="MM/AA" maxlength="5"></div>
+      <div class="field"><label>CVV</label><input type="text" placeholder="•••" maxlength="3"></div>
+    </div>
+    <div class="field"><label>IBAN (recevoir vos gains)</label><input type="text" placeholder="FR76 3000 6000 01..."></div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:.66rem;color:var(--muted2);margin-top:4px;margin-bottom:12px;">🔒 Sécurisé par Stripe · SSL 256 bits</div>
+    <button class="btn p" onclick="t('Paiement mis à jour ✅','s')">Sauvegarder</button>
+  </div>
+
+  <!-- SECTION : NOTIFICATIONS -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">🔔 Notifications</div>
+    <div style="display:flex;flex-direction:column;gap:0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div><div style="font-size:.82rem;font-weight:700;">Livraison acceptée</div><div style="font-size:.68rem;color:var(--muted);margin-top:1px;">Quand un livreur prend votre colis</div></div>
+        <div class="tog on" id="tog1" onclick="toggle('tog1')"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div><div style="font-size:.82rem;font-weight:700;">Colis livré</div><div style="font-size:.68rem;color:var(--muted);margin-top:1px;">Confirmation de réception</div></div>
+        <div class="tog on" id="tog2" onclick="toggle('tog2')"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div><div style="font-size:.82rem;font-weight:700;">Paiement reçu</div><div style="font-size:.68rem;color:var(--muted);margin-top:1px;">Crédit sur votre portefeuille</div></div>
+        <div class="tog on" id="tog3" onclick="toggle('tog3')"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+        <div><div style="font-size:.82rem;font-weight:700;">Notifications SMS</div><div style="font-size:.68rem;color:var(--muted);margin-top:1px;">Recevoir les alertes par SMS</div></div>
+        <div class="tog on" id="tog4" onclick="toggle('tog4')"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION : PARAMÈTRES COMPTE -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">⚙️ Paramètres du compte</div>
+    <div style="display:flex;flex-direction:column;gap:2px;">
+      <div class="param-row" onclick="t('CGU ouvertes','')">
+        <div><div style="font-size:.82rem;font-weight:700;">Conditions générales d'utilisation</div></div>
+        <span>›</span>
+      </div>
+      <div class="param-row" onclick="t('Politique de confidentialité ouverte','')">
+        <div><div style="font-size:.82rem;font-weight:700;">Politique de confidentialité</div></div>
+        <span>›</span>
+      </div>
+      <div class="param-row" onclick="t('Aide ouverte','')">
+        <div><div style="font-size:.82rem;font-weight:700;">Centre d'aide</div></div>
+        <span>›</span>
+      </div>
+      <div class="param-row" onclick="t('Rapport envoyé ✅','s')">
+        <div><div style="font-size:.82rem;font-weight:700;">Signaler un problème</div></div>
+        <span>›</span>
+      </div>
+      <div class="param-row" onclick="t('Version 1.0.0 · Livreo','')">
+        <div><div style="font-size:.82rem;font-weight:700;">Version de l'application</div><div style="font-size:.68rem;color:var(--muted);">1.0.0</div></div>
+        <span>›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DÉCONNEXION / SUPPRESSION -->
+  <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:8px;">
+    <button class="btn full" style="background:#fee2e2;color:var(--danger);font-size:.84rem;" onclick="doLogout()">Se déconnecter</button>
+    <button class="btn full" style="background:transparent;color:var(--muted);font-size:.76rem;border:1.5px solid var(--border);" onclick="t('Contactez support@livreo.fr pour supprimer votre compte','')">Supprimer mon compte</button>
+  </div>
+
+</div>
+
+<!-- ── AUTH ── -->
+<div class="screen" id="s-auth">
+  <div class="auth-wrap">
+    <div class="acard">
+      <div class="alogo">Livr<em>eo</em></div>
+      <div class="asub">Envoyer et livrer des colis entre particuliers.<br>Inscription 100% gratuite.</div>
+      <div class="atabs"><button class="atab on" onclick="atab('l',this)">Connexion</button><button class="atab" onclick="atab('r',this)">Inscription</button></div>
+      <div id="at-l">
+        <button class="soc">🍎 Continuer avec Apple</button>
+        <button class="soc">🔵 Continuer avec Google</button>
+        <div class="div">ou par email</div>
+        <div class="field"><label>Email</label><input type="email" placeholder="vous@email.com" id="l-em"></div>
+        <div class="field"><label>Mot de passe</label><input type="password" placeholder="••••••••" id="l-pw"></div>
+        <button class="btn p full" onclick="doLogin()" style="margin-top:6px;">Se connecter</button>
+      </div>
+      <div id="at-r" style="display:none;">
+        <button class="soc">🍎 S'inscrire avec Apple</button>
+        <button class="soc">🔵 S'inscrire avec Google</button>
+        <div class="div">ou par email</div>
+        <div class="f2">
+          <div class="field"><label>Prénom</label><input type="text" placeholder="Kevin" id="r-pn"></div>
+          <div class="field"><label>Nom</label><input type="text" placeholder="Martin" id="r-nm"></div>
+        </div>
+        <div class="field"><label>Email</label><input type="email" placeholder="vous@email.com" id="r-em"></div>
+        <div class="field"><label>Téléphone</label><input type="tel" placeholder="06 xx xx xx xx" id="r-ph"></div>
+        <div class="field"><label>Mot de passe</label><input type="password" placeholder="8 caractères min." id="r-pw"></div>
+        <div class="fhint" style="margin-bottom:12px;">En créant un compte vous acceptez les <a style="color:var(--g500)">CGU</a> et la <a style="color:var(--g500)">politique de confidentialité</a>.</div>
+        <button class="btn p full" onclick="doReg()">Créer mon compte gratuitement</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end content -->
+
+<!-- ════ BOTTOM NAV ════ -->
+<div class="bot-nav">
+  <div class="bn-row">
+    <div class="bni on" id="bn-home" onclick="goNav('home')"><div class="bni-icon">🏠</div><div class="bni-lbl">Accueil</div></div>
+    <div class="bni" id="bn-explorer" onclick="goNav('explorer')"><div class="bni-icon">🔍</div><div class="bni-lbl">Explorer</div></div>
+    <div class="bni" id="bn-poster" onclick="goPost()"><div class="bni-icon">➕</div><div class="bni-lbl">Poster</div></div>
+    <div class="bni" id="bn-suivi" onclick="goNav('suivi')"><div class="bni-icon">📍</div><div class="bni-lbl">Suivi</div></div>
+    <div class="bni" id="bn-dashboard" onclick="navDash()"><div class="bni-icon">👤</div><div class="bni-lbl">Moi</div></div>
+  </div>
+</div>
+
+<script>
+/* ── DATA ── */
+const D=[
+  {id:'LVR-7844',title:'Livres scolaires',from:'Paris GDL',to:'Lyon PDieu',fmt:'Colis S',w:'1.8kg',price:7,date:'09/05',poster:'Marie D.',pi:'M',em:'📦',badge:'new',urg:false},
+  {id:'LVR-7840',title:'Vêtements été',from:'Paris Montparnasse',to:'Bordeaux St-Jean',fmt:'Colis M',w:'3.5kg',price:11,date:'10/05',poster:'Thomas L.',pi:'T',em:'👕',badge:'',urg:false},
+  {id:'LVR-7838',title:'Cadeau anniversaire',from:'Paris Nord',to:'Lille-Flandres',fmt:'Colis S',w:'1.2kg',price:7,date:'08/05',poster:'Amina K.',pi:'A',em:'🎁',badge:'urg',urg:true},
+  {id:'LVR-7836',title:'Matériel scolaire',from:'Paris St-Lazare',to:'Caen',fmt:'Colis M',w:'3kg',price:11,date:'10/05',poster:'Julie D.',pi:'J',em:'🎒',badge:'new',urg:false},
+  {id:'LVR-7835',title:'Documents urgents',from:'Paris Montparnasse',to:'Rennes',fmt:'Pochette M',w:'0.4kg',price:5,date:'09/05',poster:'Pierre M.',pi:'P',em:'📄',badge:'',urg:true},
+  {id:'LVR-7833',title:'Vêtements bébé',from:'Paris Est',to:'Strasbourg',fmt:'Colis S',w:'1.5kg',price:7,date:'11/05',poster:'Emma T.',pi:'E',em:'👶',badge:'',urg:false},
+  {id:'LVR-7830',title:'Chaussures sport',from:'Paris GDL',to:'Marseille St-Charles',fmt:'Colis M',w:'2.8kg',price:11,date:'11/05',poster:'Laura C.',pi:'L',em:'👟',badge:'new',urg:false},
+  {id:'LVR-7827',title:'Livre rare',from:'Paris GDL',to:'Tours',fmt:'Pochette S',w:'0.6kg',price:5,date:'09/05',poster:'Maxime R.',pi:'M',em:'📚',badge:'',urg:false},
+];
+
+let user=null, emUp=false, coUp=false, qrLoaded=false;
+let livrPhoto=false, livrChecksOk=false;
+
+/* ── PERMISSIONS ── */
+async function askPerms(){
+  async function trySet(id,fn){
+    try{const r=await fn();document.getElementById(id).textContent=r?'✅ Accordé':'Refusé';if(r)document.getElementById(id).style.color='var(--g500)';}
+    catch(e){document.getElementById(id).textContent='Refusé';}
+  }
+  await trySet('ps-cam',async()=>{const s=await navigator.mediaDevices.getUserMedia({video:true});s.getTracks().forEach(t=>t.stop());return true;});
+  await trySet('ps-mic',async()=>{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());return true;});
+  await trySet('ps-loc',async()=>new Promise((res)=>navigator.geolocation.getCurrentPosition(()=>res(true),()=>res(false))));
+  await trySet('ps-notif',async()=>{const r=await Notification.requestPermission();return r==='granted';});
+  setTimeout(()=>{const o=document.getElementById('perm-ov');o.style.opacity='0';o.style.transition='opacity .4s';setTimeout(()=>o.style.display='none',420);},1000);
+}
+
+/* ── NAV ── */
+function goNav(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
+  document.getElementById('s-'+id)?.classList.add('on');
+  document.getElementById('bn-'+id)?.classList.add('on');
+  document.getElementById('content').scrollTop=0;
+}
+function navDash(){user?goNav('dashboard'):goNav('auth');}
+function goPost(){user?goNav('poster'):(t('Connectez-vous pour poster 🔒','e'),goNav('auth'));}
+
+// Bascule accueil selon connexion
+function refreshHome(){
+  const landing=document.getElementById('home-landing');
+  const dash=document.getElementById('home-dash');
+  if(user){landing.style.display='none';dash.style.display='block';}
+  else{landing.style.display='block';dash.style.display='none';}
+}
+
+/* ── TOAST ── */
+function t(msg,type=''){
+  const c=document.getElementById('toasts'),d=document.createElement('div');
+  d.className=`toast ${type}`;d.textContent=msg;c.appendChild(d);
+  setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';},2800);
+  setTimeout(()=>d.remove(),3200);
+}
+
+/* ── SHEET ── */
+function openSheet(html){
+  document.getElementById('sh-content').innerHTML=`<div class="sh"></div>${html}`;
+  document.getElementById('ov').classList.add('open');
+}
+function cov(e){if(e.target===document.getElementById('ov'))closeSheet();}
+function closeSheet(){document.getElementById('ov').classList.remove('open');}
+
+/* ── TOGGLE NOTIFICATIONS ── */
+function toggle(id){
+  const el=document.getElementById(id);
+  el.classList.toggle('on');
+  t(el.classList.contains('on')?'Notification activée ✅':'Notification désactivée','');
+}
+
+/* ── PROFIL ── */
+function saveProfil(){
+  const pn=document.getElementById('m-pn').value;
+  const nm=document.getElementById('m-nm').value;
+  if(pn){
+    document.getElementById('moi-av').textContent=pn[0].toUpperCase();
+    document.getElementById('moi-name').textContent=pn+' '+nm;
+    document.getElementById('dash-h').innerHTML=`Bonjour <em>${pn}</em> 👋`;
+    if(user)user.prenom=pn;
+  }
+  t('Profil mis à jour ✅','s');
+}
+
+function changePw(){
+  const old=document.getElementById('pw-old').value;
+  const nw=document.getElementById('pw-new').value;
+  const cf=document.getElementById('pw-conf').value;
+  if(!old||!nw){t('Remplissez tous les champs','e');return;}
+  if(nw.length<8){t('Le mot de passe doit faire 8 caractères min.','e');return;}
+  if(nw!==cf){t('Les mots de passe ne correspondent pas','e');return;}
+  document.getElementById('pw-old').value='';
+  document.getElementById('pw-new').value='';
+  document.getElementById('pw-conf').value='';
+  t('Mot de passe modifié avec succès 🔒','s');
+}
+
+function fmtCard(input){let v=input.value.replace(/\D/g,'').substring(0,16);input.value=v.replace(/(.{4})/g,'$1 ').trim();}
+
+/* ── LOGOUT ── */
+function doLogout(){
+  user=null;
+  document.getElementById('nav-login').style.display='block';
+  document.getElementById('nav-av').style.display='none';
+  document.getElementById('nav-post').style.display='none';
+  refreshHome();
+  goNav('home');
+  t('Vous êtes déconnecté · À bientôt !','');
+}
+
+/* ── CARDS ── */
+function cardHTML(c){
+  return `<div class="cc" onclick="openDetail('${c.id}')">
+    <div class="cc-img">${c.urg?'<div class="cc-bdg urg">URGENT</div>':c.badge==='new'?'<div class="cc-bdg new">NOUVEAU</div>':''}${c.em}</div>
+    <div class="cc-body">
+      <div class="cc-route"><div class="cc-city">${c.from}</div><div class="cc-arr">→</div><div class="cc-city">${c.to}</div></div>
+      <div class="cc-title">${c.title}</div>
+      <div class="cc-meta"><div class="cc-tag">${c.fmt}</div><div class="cc-tag">${c.w}</div><div class="cc-tag">📅 ${c.date}</div></div>
+      <div class="cc-foot">
+        <div><div class="cc-price">${c.price}€ <span>pour le livreur</span></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="cav">${c.pi}</div><div class="pname">${c.poster}</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+function loadCards(){document.getElementById('cgrid').innerHTML=D.map(cardHTML).join('');}
+function flt(dest,el){
+  document.querySelectorAll('.ftag').forEach(b=>b.classList.remove('on'));el.classList.add('on');
+  const g=document.getElementById('cgrid');
+  const f=dest==='all'?D:D.filter(c=>c.to.toLowerCase().includes(dest));
+  g.innerHTML=f.length?f.map(cardHTML).join(''):'<div style="text-align:center;padding:32px;color:var(--muted);">Aucun colis sur ce trajet.</div>';
+}
+
+/* ── DETAIL ── */
+function openDetail(id){
+  const c=D.find(x=>x.id===id);if(!c)return;
+  const logged=user!==null;
+  openSheet(`
+    <div style="font-size:1.1rem;font-weight:900;letter-spacing:-.5px;margin-bottom:3px;">${c.title}</div>
+    <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">${c.from} → ${c.to} · ${c.fmt} · ${c.w}</div>
+    <div style="background:var(--cream);border-radius:var(--r);padding:20px;text-align:center;font-size:3.5rem;margin-bottom:12px;">${c.em}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
+      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Format</div><div style="font-weight:800;font-size:.84rem;">${c.fmt}</div></div>
+      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Poids</div><div style="font-weight:800;font-size:.84rem;">${c.w}</div></div>
+      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Date</div><div style="font-weight:800;font-size:.84rem;">${c.date}</div></div>
+      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${c.price}€</div></div>
+    </div>
+    ${logged?`
+      <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px;margin-bottom:11px;">
+        <div style="font-size:.66rem;font-weight:800;color:var(--g600);margin-bottom:6px;">📸 Contenu du colis</div>
+        <div style="display:flex;gap:5px;margin-bottom:5px;"><div class="prev-item">📦</div><div class="prev-item">📸</div></div>
+        <div style="font-size:.7rem;color:var(--muted);">Détails complets visibles après acceptation.</div>
+      </div>
+      <div style="background:var(--cream);border-radius:var(--r);padding:11px;margin-bottom:12px;">
+        <div style="font-size:.64rem;font-weight:800;color:var(--muted);margin-bottom:3px;">📞 Contact expéditeur (après acceptation)</div>
+        <div style="font-size:.82rem;font-weight:700;">${c.poster} · <span style="color:var(--g500);">06 ·· ·· ·· ··</span></div>
+      </div>
+      <button class="btn p full" onclick="accepterC('${c.id}')">🤝 Accepter de livrer ce colis</button>
+    `:`
+      <div style="background:var(--ink);border-radius:var(--r);padding:16px;text-align:center;margin-bottom:11px;">
+        <div style="font-size:1.5rem;margin-bottom:6px;">🔒</div>
+        <div style="color:#fff;font-size:.84rem;font-weight:700;margin-bottom:2px;">Connectez-vous pour voir les détails</div>
+        <div style="color:rgba(255,255,255,.38);font-size:.68rem;">Coordonnées et contenu privés jusqu'à l'acceptation.</div>
+      </div>
+      <button class="btn p full" onclick="closeSheet();goNav('auth')">Se connecter →</button>
+    `}
+  `);
+}
+function accepterC(id){closeSheet();t(`Colis ${id} accepté ! Coordonnées débloquées ✅`,'s');setTimeout(()=>goNav('dashboard'),800);}
+
+/* ── LIVREUR FLOW ── */
+function openLivrFlow(ref,trajet,train,dest,prix){
+  livrPhoto=false;livrChecksOk=false;
+  openSheet(`
+    <div style="font-size:1rem;font-weight:900;letter-spacing:-.4px;margin-bottom:2px;">Livraison ${ref}</div>
+    <div style="font-size:.74rem;color:var(--muted);margin-bottom:16px;">${trajet} · ${train} · ${dest} · <span style="color:var(--g500);font-weight:800;">+${prix}€</span></div>
+    <div class="livr-steps" id="ls-wrap">
+
+      <!-- ÉTAPE 1 : PHOTO OBLIGATOIRE -->
+      <div class="lstep active" id="ls1">
+        <div class="lsh"><div class="ls-n">1</div><div class="ls-title">📸 Photographier la remise</div></div>
+        <div class="ls-body">
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:9px;line-height:1.5;">Prenez une photo du colis <strong>en main du destinataire</strong>. C'est la preuve de livraison. Sans cette photo, vous ne pouvez pas passer à l'étape suivante.</div>
+          <div class="photo-z" id="pz" onclick="doPhoto()">
+            <div class="pz-icon">📷</div>
+            <div class="pz-txt">Prendre la photo</div>
+            <div class="pz-sub">Colis en main de ${dest}</div>
+          </div>
+          <div class="photo-ok" id="photo-ok" style="display:none;">
+            <span style="color:var(--g500);font-weight:800;font-size:.8rem;">📸 Photo prise avec succès ✅</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 2 : CHECKLIST -->
+      <div class="lstep locked" id="ls2">
+        <div class="lsh"><div class="ls-n">2</div><div class="ls-title">✅ Vérification avant scan</div></div>
+        <div class="ls-body" id="ls2-body" style="display:none;">
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:9px;">Cochez chaque point avant de scanner le QR Code.</div>
+          <div class="check-list">
+            <div class="ci"><input type="checkbox" id="c1" onchange="checkAll()"><label for="c1">Le destinataire est bien ${dest}</label></div>
+            <div class="ci"><input type="checkbox" id="c2" onchange="checkAll()"><label for="c2">L'emballage est intact, aucun dommage visible</label></div>
+            <div class="ci"><input type="checkbox" id="c3" onchange="checkAll()"><label for="c3">Le colis correspond bien à la référence ${ref}</label></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 3 : SCAN QR CODE -->
+      <div class="lstep locked" id="ls3">
+        <div class="lsh"><div class="ls-n">3</div><div class="ls-title">📱 Scanner le QR Code</div></div>
+        <div class="ls-body" id="ls3-body" style="display:none;">
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Demandez à ${dest} d'afficher son QR Code dans l'onglet <strong>Suivi</strong> de son téléphone, puis scannez-le.</div>
+          <div class="scan-vp">
+            <div class="sc tl"></div><div class="sc tr"></div><div class="sc bl"></div><div class="sc br"></div>
+            <div class="scan-line"></div>
+            <div class="scan-ph"><div style="font-size:1.6rem;margin-bottom:5px;">📷</div>Pointez vers le QR Code<br>du destinataire</div>
+          </div>
+          <div class="div-or">ou entrer manuellement</div>
+          <div class="man-scan">
+            <input type="text" id="qr-man" placeholder="${ref}" value="${ref}">
+            <button onclick="doScan('${ref}','${dest}','${prix}')">Scanner ▶</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  `);
+}
+
+function doPhoto(){
+  livrPhoto=true;
+  document.getElementById('pz').style.display='none';
+  document.getElementById('photo-ok').style.display='block';
+  document.getElementById('ls1').classList.remove('active');document.getElementById('ls1').classList.add('done');
+  document.getElementById('ls2').classList.remove('locked');document.getElementById('ls2').classList.add('active');
+  document.getElementById('ls2-body').style.display='block';
+  t('📸 Photo prise ! Cochez les cases.','s');
+}
+
+function checkAll(){
+  const cs=document.querySelectorAll('#ls-wrap .check-list input[type=checkbox]');
+  let ok=true;cs.forEach(c=>{if(!c.checked)ok=false;});
+  if(ok){
+    livrChecksOk=true;
+    document.getElementById('ls2').classList.remove('active');document.getElementById('ls2').classList.add('done');
+    document.getElementById('ls3').classList.remove('locked');document.getElementById('ls3').classList.add('active');
+    document.getElementById('ls3-body').style.display='block';
+    t('Checklist complète ✅ Scannez le QR Code.','s');
+  }
+}
+
+function doScan(ref,dest,prix){
+  if(!livrPhoto){t('Prenez la photo en étape 1 d\'abord 📸','e');return;}
+  if(!livrChecksOk){t('Cochez toutes les cases en étape 2 ✅','e');return;}
+  document.getElementById('ls3').classList.remove('active');document.getElementById('ls3').classList.add('done');
+  setTimeout(()=>{
+    closeSheet();
+    t(`🎉 QR Code scanné ! Paiement de ${prix}€ déclenché automatiquement.`,'s');
+    // Mettre à jour le suivi expéditeur
+    document.getElementById('sv-pill').className='tpill pill-ok';
+    document.getElementById('sv-pill').textContent='✅ Livré';
+    document.querySelectorAll('#sv-tl .tld').forEach(d=>{d.classList.remove('active');d.classList.add('done');});
+    document.querySelectorAll('#sv-tl .tl-txt.faded').forEach(el=>el.classList.remove('faded'));
+    // Afficher page succès destinataire
+    document.getElementById('qr-main').style.display='none';
+    document.getElementById('dest-suc').style.display='block';
+    // Notif push
+    if(Notification.permission==='granted')new Notification('Livreo — Colis livré ✅',{body:`Votre colis ${ref} a été remis à ${dest}. Paiement déclenché.`,icon:'https://via.placeholder.com/48/1a8044/fff?text=L'});
+  },700);
+}
+
+/* ── SUIVI ── */
+function loadSuivi(){
+  const val=document.getElementById('sv-input').value.trim();
+  if(!val){t('Entrez votre numéro de suivi','e');return;}
+  // En prod : l'API vérifie si c'est l'expéditeur ou le destinataire connecté
+  // Ici : affiche d'abord la vue expéditeur
+  document.getElementById('sv-ref').textContent=val;
+  document.getElementById('sv-exp').style.display='block';
+  document.getElementById('sv-dest').style.display='none';
+  t('Colis trouvé ✅','s');
+  document.getElementById('content').scrollTop=100;
+}
+function switchToDestView(){
+  document.getElementById('sv-exp').style.display='none';
+  document.getElementById('sv-dest').style.display='block';
+  loadQR('LVR-48291');
+  document.getElementById('content').scrollTop=0;
+}
+function loadQR(ref){
+  if(qrLoaded)return;qrLoaded=true;
+  const d=document.getElementById('qr-canvas');d.innerHTML='';
+  try{
+    new QRCode(d,{text:`LIVREO|${ref}|DEST:MARIE-DUPONT|${Date.now()}`,width:170,height:170,colorDark:'#0e1a10',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+    setTimeout(()=>{const img=d.querySelector('img,canvas');if(img){img.style.borderRadius='4px';img.style.display='block';}},120);
+  }catch(e){d.innerHTML=`<div style="width:170px;height:170px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--muted);text-align:center;padding:12px;background:var(--cream);border-radius:8px;">QR Code sécurisé<br>${ref}</div>`;}
+}
+
+/* ── POSTER ── */
+function calcP(){const v=parseFloat(document.getElementById('pf-fmt').value)||7;document.getElementById('pf-price').textContent=v.toFixed(2).replace('.',',')+' €';}
+function fakeUp(type){
+  if(type==='em'){document.getElementById('prev-em').innerHTML='<div class="prev-item">📦</div>';emUp=true;t('Photo emballage ajoutée ✅','s');}
+  else{document.getElementById('prev-co').innerHTML='<div class="prev-locked"><span>📸</span><small>PRIVÉ</small></div><div class="prev-locked"><span>🔒</span><small>PRIVÉ</small></div>';coUp=true;t('Photos contenu (privées) 🔒','s');}
+}
+function publishColis(){
+  if(!user){t('Connectez-vous d\'abord','e');goNav('auth');return;}
+  if(!document.getElementById('pf-dep').value||!document.getElementById('pf-arr').value||!document.getElementById('pf-title').value){t('Remplissez tous les champs requis','e');return;}
+  if(!emUp){t('Ajoutez la photo emballée','e');return;}
+  // Code généré par le système — format sécurisé non devinable
+  const ref='LVR-'+Math.floor(100+Math.random()*900);
+  document.getElementById('suc-ref').textContent=ref;
+  document.getElementById('poster-form').style.display='none';
+  document.getElementById('poster-suc').style.display='block';
+  document.getElementById('content').scrollTop=0;
+}
+function resetPoster(){
+  document.getElementById('poster-form').style.display='block';
+  document.getElementById('poster-suc').style.display='none';
+  emUp=false;coUp=false;
+  document.getElementById('prev-em').innerHTML='';document.getElementById('prev-co').innerHTML='';
+}
+
+/* ── AUTH ── */
+function atab(tab,el){
+  document.querySelectorAll('.atab').forEach(a=>a.classList.remove('on'));el.classList.add('on');
+  document.getElementById('at-l').style.display=tab==='l'?'block':'none';
+  document.getElementById('at-r').style.display=tab==='r'?'block':'none';
+}
+function doLogin(){
+  const e=document.getElementById('l-em').value;if(!e){t('Renseignez votre email','e');return;}
+  user={prenom:'Kevin',email:e};
+  document.getElementById('nav-login').style.display='none';
+  document.getElementById('nav-av').style.display='flex';
+  document.getElementById('nav-post').style.display='block';
+  document.getElementById('moi-email').textContent=e;
+  refreshHome();
+  t('Bienvenue Kevin ! 👋','s');goNav('home');
+}
+function doReg(){
+  const pn=document.getElementById('r-pn').value,em=document.getElementById('r-em').value;
+  if(!pn||!em){t('Champs requis manquants','e');return;}
+  user={prenom:pn,email:em};
+  document.getElementById('nav-login').style.display='none';
+  document.getElementById('nav-av').style.display='flex';
+  document.getElementById('nav-post').style.display='block';
+  document.getElementById('nav-av').textContent=pn[0].toUpperCase();
+  document.getElementById('moi-av').textContent=pn[0].toUpperCase();
+  document.getElementById('moi-name').textContent=pn+' '+(document.getElementById('r-nm').value||'');
+  document.getElementById('moi-email').textContent=em;
+  document.getElementById('dash-h').innerHTML=`Bonjour <em>${pn}</em> 👋`;
+  document.getElementById('m-pn').value=pn;
+  document.getElementById('m-nm').value=document.getElementById('r-nm').value||'';
+  document.getElementById('m-em').value=em;
+  refreshHome();
+  t(`Compte créé ! Bienvenue ${pn} 🎉`,'s');goNav('home');
+}
+
+/* ── RATING ── */
+function rate(type,n){document.querySelectorAll(`#st-${type} .star`).forEach((s,i)=>s.classList.toggle('on',i<n));}
+function tt(el){el.classList.toggle('on');}
+
+/* ── INIT ── */
+document.getElementById('pf-date').min=new Date(Date.now()+86400000).toISOString().split('T')[0];
+document.getElementById('sv-exp').style.display='none';
+document.getElementById('sv-dest').style.display='none';
+document.getElementById('poster-suc').style.display='none';
+document.getElementById('dest-suc').style.display='none';
+loadCards();
+refreshHome();
+</script>
+</body>
+</html>
