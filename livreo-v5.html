@@ -351,6 +351,12 @@ td strong{color:var(--ink);}
 .atab.on{background:var(--white);color:var(--ink);box-shadow:var(--sh);}
 .soc{width:100%;padding:9px;border-radius:9px;border:1.5px solid var(--border);background:var(--white);font-family:var(--sans);font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--ink);transition:.15s;margin-bottom:6px;}
 .soc:hover{background:var(--cream);}
+/* Vrai bouton Google */
+.soc-google{width:100%;padding:11px;border-radius:10px;border:1.5px solid #dadce0;background:#fff;font-family:var(--sans);font-size:.84rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;color:#3c4043;transition:.18s;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.soc-google:hover{background:#f8f9fa;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+/* Vrai bouton Apple */
+.soc-apple{width:100%;padding:11px;border-radius:10px;border:none;background:#000;font-family:var(--sans);font-size:.84rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;color:#fff;transition:.18s;margin-bottom:8px;}
+.soc-apple:hover{background:#1a1a1a;}
 .div{display:flex;align-items:center;gap:7px;color:var(--muted2);font-size:.7rem;margin:10px 0;}
 .div::before,.div::after{content:'';flex:1;height:1px;background:var(--border);}
 
@@ -930,31 +936,124 @@ td strong{color:var(--ink);}
 <div class="screen" id="s-auth">
   <div class="auth-wrap">
     <div class="acard">
+
+      <!-- LOGO -->
       <div class="alogo">Livr<em>eo</em></div>
-      <div class="asub">Envoyer et livrer des colis entre particuliers.<br>Inscription 100% gratuite.</div>
-      <div class="atabs"><button class="atab on" onclick="atab('l',this)">Connexion</button><button class="atab" onclick="atab('r',this)">Inscription</button></div>
-      <div id="at-l">
-        <button class="soc">🍎 Continuer avec Apple</button>
-        <button class="soc">🔵 Continuer avec Google</button>
-        <div class="div">ou par email</div>
-        <div class="field"><label>Email</label><input type="email" placeholder="vous@email.com" id="l-em"></div>
-        <div class="field"><label>Mot de passe</label><input type="password" placeholder="••••••••" id="l-pw"></div>
-        <button class="btn p full" onclick="doLogin()" style="margin-top:6px;">Se connecter</button>
+      <div class="asub">Livraison entre particuliers par train.<br>Inscription 100% gratuite.</div>
+
+      <!-- TABS -->
+      <div class="atabs">
+        <button class="atab on" onclick="authTab('login',this)">Connexion</button>
+        <button class="atab" onclick="authTab('register',this)">Inscription</button>
       </div>
-      <div id="at-r" style="display:none;">
-        <button class="soc">🍎 S'inscrire avec Apple</button>
-        <button class="soc">🔵 S'inscrire avec Google</button>
+
+      <!-- ── CONNEXION ── -->
+      <div id="at-login">
+        <!-- Bouton Google VRAI logo -->
+        <button class="soc-google" onclick="loginGoogle()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+          Continuer avec Google
+        </button>
+
+        <!-- Bouton Apple VRAI logo -->
+        <button class="soc-apple" onclick="loginApple()">
+          <svg width="17" height="17" viewBox="0 0 814 1000"><path fill="#fff" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 465.1 0 324.4 0 193.7 0 82.5 66.7 24.7 165.5 24.7c63.8 0 116.5 43.3 155.5 43.3 37.2 0 98.3-45.6 168.6-45.6 68.6 0 128.3 29.9 173.1 79.5zm-68.7-40.8C676 230 605.7 195.2 555.4 195.2c-73.8 0-131.5 48.5-175.5 48.5-45.7 0-100.5-46.1-168.6-46.1-81.1 0-161.5 52.6-196.8 151.5C2.8 371.5 0 402.9 0 434.4c0 135.8 52.6 279.2 131.9 372.2 68.1 81.1 124.7 127.7 198.5 127.7 77.7 0 117.4-45.4 196.1-45.4 80.5 0 114.1 45.4 196.9 45.4 75.3 0 134.4-52 199.3-132.1 47.4-57.4 80.6-128.8 80.6-131.1 0-1.9-2.6-2.6-3.2-2.6z"/></svg>
+          Continuer avec Apple
+        </button>
+
+        <div class="div">ou par email</div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" placeholder="vous@email.com" id="l-em" autocomplete="email">
+        </div>
+        <div class="field" style="position:relative;">
+          <label>Mot de passe</label>
+          <input type="password" placeholder="••••••••" id="l-pw" autocomplete="current-password">
+          <span onclick="togglePw('l-pw',this)" style="position:absolute;right:14px;top:34px;cursor:pointer;font-size:1rem;color:var(--muted2);">👁️</span>
+        </div>
+
+        <div style="text-align:right;margin-top:-6px;margin-bottom:14px;">
+          <span onclick="authTab('forgot',null)" style="font-size:.74rem;color:var(--g500);font-weight:700;cursor:pointer;">Mot de passe oublié ?</span>
+        </div>
+
+        <button class="btn p full" onclick="doLogin()">Se connecter</button>
+
+        <div style="text-align:center;margin-top:14px;font-size:.76rem;color:var(--muted);">
+          Pas encore de compte ? <span onclick="authTab('register',null)" style="color:var(--g500);font-weight:700;cursor:pointer;">S'inscrire gratuitement</span>
+        </div>
+      </div>
+
+      <!-- ── INSCRIPTION ── -->
+      <div id="at-register" style="display:none;">
+        <button class="soc-google" onclick="loginGoogle()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          S'inscrire avec Google
+        </button>
+        <button class="soc-apple" onclick="loginApple()">
+          <svg width="17" height="17" viewBox="0 0 814 1000"><path fill="#fff" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 465.1 0 324.4 0 193.7 0 82.5 66.7 24.7 165.5 24.7c63.8 0 116.5 43.3 155.5 43.3 37.2 0 98.3-45.6 168.6-45.6 68.6 0 128.3 29.9 173.1 79.5zm-68.7-40.8C676 230 605.7 195.2 555.4 195.2c-73.8 0-131.5 48.5-175.5 48.5-45.7 0-100.5-46.1-168.6-46.1-81.1 0-161.5 52.6-196.8 151.5C2.8 371.5 0 402.9 0 434.4c0 135.8 52.6 279.2 131.9 372.2 68.1 81.1 124.7 127.7 198.5 127.7 77.7 0 117.4-45.4 196.1-45.4 80.5 0 114.1 45.4 196.9 45.4 75.3 0 134.4-52 199.3-132.1 47.4-57.4 80.6-128.8 80.6-131.1 0-1.9-2.6-2.6-3.2-2.6z"/></svg>
+          S'inscrire avec Apple
+        </button>
         <div class="div">ou par email</div>
         <div class="f2">
-          <div class="field"><label>Prénom</label><input type="text" placeholder="Kevin" id="r-pn"></div>
-          <div class="field"><label>Nom</label><input type="text" placeholder="Martin" id="r-nm"></div>
+          <div class="field"><label>Prénom</label><input type="text" placeholder="Kevin" id="r-pn" autocomplete="given-name"></div>
+          <div class="field"><label>Nom</label><input type="text" placeholder="Martin" id="r-nm" autocomplete="family-name"></div>
         </div>
-        <div class="field"><label>Email</label><input type="email" placeholder="vous@email.com" id="r-em"></div>
-        <div class="field"><label>Téléphone</label><input type="tel" placeholder="06 xx xx xx xx" id="r-ph"></div>
-        <div class="field"><label>Mot de passe</label><input type="password" placeholder="8 caractères min." id="r-pw"></div>
-        <div class="fhint" style="margin-bottom:12px;">En créant un compte vous acceptez les <a style="color:var(--g500)">CGU</a> et la <a style="color:var(--g500)">politique de confidentialité</a>.</div>
+        <div class="field"><label>Email</label><input type="email" placeholder="vous@email.com" id="r-em" autocomplete="email"></div>
+        <div class="field"><label>Téléphone</label><input type="tel" placeholder="06 xx xx xx xx" id="r-ph" autocomplete="tel"></div>
+        <div class="field" style="position:relative;">
+          <label>Mot de passe</label>
+          <input type="password" placeholder="8 caractères minimum" id="r-pw" autocomplete="new-password">
+          <span onclick="togglePw('r-pw',this)" style="position:absolute;right:14px;top:34px;cursor:pointer;font-size:1rem;color:var(--muted2);">👁️</span>
+        </div>
+        <div class="fhint" style="margin-bottom:14px;line-height:1.6;">
+          En créant un compte vous acceptez les <a style="color:var(--g500);cursor:pointer;">CGU</a> et la <a style="color:var(--g500);cursor:pointer;">politique de confidentialité</a> de Livreo.
+        </div>
         <button class="btn p full" onclick="doReg()">Créer mon compte gratuitement</button>
+        <div style="text-align:center;margin-top:14px;font-size:.76rem;color:var(--muted);">
+          Déjà un compte ? <span onclick="authTab('login',null)" style="color:var(--g500);font-weight:700;cursor:pointer;">Se connecter</span>
+        </div>
       </div>
+
+      <!-- ── MOT DE PASSE OUBLIÉ ── -->
+      <div id="at-forgot" style="display:none;">
+        <div style="text-align:center;margin-bottom:18px;">
+          <div style="font-size:2rem;margin-bottom:8px;">🔐</div>
+          <div style="font-size:1rem;font-weight:800;margin-bottom:4px;">Mot de passe oublié ?</div>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.6;">Entrez votre email. Vous recevrez un code à 6 chiffres par SMS pour réinitialiser votre mot de passe.</div>
+        </div>
+        <div class="field"><label>Email de votre compte</label><input type="email" placeholder="vous@email.com" id="forgot-em"></div>
+        <button class="btn p full" onclick="sendResetCode()" id="forgot-btn">Envoyer le code par SMS</button>
+        <div style="text-align:center;margin-top:12px;">
+          <span onclick="authTab('login',null)" style="font-size:.74rem;color:var(--muted);cursor:pointer;">← Retour à la connexion</span>
+        </div>
+      </div>
+
+      <!-- ── VÉRIFICATION CODE RESET ── -->
+      <div id="at-verify-code" style="display:none;">
+        <div style="text-align:center;margin-bottom:18px;">
+          <div style="font-size:2rem;margin-bottom:8px;">📱</div>
+          <div style="font-size:1rem;font-weight:800;margin-bottom:4px;">Code envoyé !</div>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.6;">Entrez le code à 6 chiffres reçu par SMS et votre nouveau mot de passe.</div>
+        </div>
+        <div class="field"><label>Code reçu par SMS</label>
+          <input type="text" placeholder="123456" id="reset-code" maxlength="6" style="letter-spacing:4px;font-size:1.2rem;text-align:center;font-weight:800;">
+        </div>
+        <div class="field" style="position:relative;">
+          <label>Nouveau mot de passe</label>
+          <input type="password" placeholder="8 caractères minimum" id="reset-pw">
+          <span onclick="togglePw('reset-pw',this)" style="position:absolute;right:14px;top:34px;cursor:pointer;font-size:1rem;color:var(--muted2);">👁️</span>
+        </div>
+        <div class="field">
+          <label>Confirmer le mot de passe</label>
+          <input type="password" placeholder="••••••••" id="reset-pw2">
+        </div>
+        <button class="btn p full" onclick="verifyResetCode()">Réinitialiser le mot de passe</button>
+        <div style="text-align:center;margin-top:12px;">
+          <span onclick="authTab('forgot',null)" style="font-size:.74rem;color:var(--muted);cursor:pointer;">← Renvoyer le code</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1295,39 +1394,77 @@ function resetPoster(){
 }
 
 /* ── AUTH ── */
-function atab(tab,el){
-  document.querySelectorAll('.atab').forEach(a=>a.classList.remove('on'));el.classList.add('on');
-  document.getElementById('at-l').style.display=tab==='l'?'block':'none';
-  document.getElementById('at-r').style.display=tab==='r'?'block':'none';
+function authTab(tab, el) {
+  ['at-login','at-register','at-forgot','at-verify-code'].forEach(id => {
+    const e2 = document.getElementById(id);
+    if(e2) e2.style.display = 'none';
+  });
+  document.querySelectorAll('.atab').forEach(a => a.classList.remove('on'));
+  const target = document.getElementById('at-'+tab);
+  if(target) target.style.display = 'block';
+  if(el) el.classList.add('on');
+  if(tab==='login')    document.querySelector('.atab:first-child')?.classList.add('on');
+  if(tab==='register') document.querySelector('.atab:last-child')?.classList.add('on');
 }
-function doLogin(){
-  const e=document.getElementById('l-em').value;if(!e){t('Renseignez votre email','e');return;}
-  user={prenom:'Kevin',email:e};
-  document.getElementById('nav-login').style.display='none';
-  document.getElementById('nav-av').style.display='flex';
-  document.getElementById('nav-post').style.display='block';
-  document.getElementById('moi-email').textContent=e;
-  refreshHome();
-  t('Bienvenue Kevin ! 👋','s');goNav('home');
+function atab(tab,el){ authTab(tab==='l'?'login':'register', el); }
+
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  if(!inp) return;
+  inp.type = inp.type==='password' ? 'text' : 'password';
+  btn.textContent = inp.type==='password' ? '👁️' : '🙈';
 }
-function doReg(){
-  const pn=document.getElementById('r-pn').value,em=document.getElementById('r-em').value;
-  if(!pn||!em){t('Champs requis manquants','e');return;}
-  user={prenom:pn,email:em};
-  document.getElementById('nav-login').style.display='none';
-  document.getElementById('nav-av').style.display='flex';
-  document.getElementById('nav-post').style.display='block';
-  document.getElementById('nav-av').textContent=pn[0].toUpperCase();
-  document.getElementById('moi-av').textContent=pn[0].toUpperCase();
-  document.getElementById('moi-name').textContent=pn+' '+(document.getElementById('r-nm').value||'');
-  document.getElementById('moi-email').textContent=em;
-  document.getElementById('dash-h').innerHTML=`Bonjour <em>${pn}</em> 👋`;
-  document.getElementById('m-pn').value=pn;
-  document.getElementById('m-nm').value=document.getElementById('r-nm').value||'';
-  document.getElementById('m-em').value=em;
-  refreshHome();
-  t(`Compte créé ! Bienvenue ${pn} 🎉`,'s');goNav('home');
+
+function loginGoogle(){
+  t('Connexion Google disponible après mise en ligne sur Netlify 🌐','');
 }
+function loginApple(){
+  t('Connexion Apple disponible après mise en ligne sur Netlify 🌐','');
+}
+
+async function sendResetCode() {
+  const email = document.getElementById('forgot-em')?.value.trim();
+  if(!email){t('Entrez votre email','e');return;}
+  const btn = document.getElementById('forgot-btn');
+  btn.textContent='Envoi...';btn.disabled=true;
+  try{
+    await fetch(`${SUPA_URL}/functions/v1/reset-password`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email})
+    });
+    window._resetEmail = email;
+    authTab('verify-code', null);
+    t('Code envoyé par SMS ✅','s');
+  }catch(e){t('Erreur lors de l\'envoi','e');}
+  finally{btn.textContent='Envoyer le code par SMS';btn.disabled=false;}
+}
+
+async function verifyResetCode() {
+  const code  = document.getElementById('reset-code')?.value.trim();
+  const pw    = document.getElementById('reset-pw')?.value;
+  const pw2   = document.getElementById('reset-pw2')?.value;
+  const email = window._resetEmail;
+  if(!code||code.length!==6){t('Code à 6 chiffres requis','e');return;}
+  if(!pw||pw.length<8){t('8 caractères minimum','e');return;}
+  if(pw!==pw2){t('Les mots de passe ne correspondent pas','e');return;}
+  if(!email){t('Session expirée, recommencez','e');authTab('forgot',null);return;}
+  try{
+    const res = await fetch(`${SUPA_URL}/functions/v1/verify-reset-code`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,code,nouveau_mdp:pw})
+    });
+    const data = await res.json();
+    if(!res.ok){t(data.error||'Code incorrect','e');return;}
+    t('Mot de passe réinitialisé ! 🎉 Connectez-vous.','s');
+    window._resetEmail=null;
+    authTab('login',null);
+  }catch(e){t('Erreur : '+e.message,'e');}
+}
+
+function doLogin(){t('Chargement...','');}
+function doReg(){t('Chargement...','');}
 
 /* ── RATING ── */
 function rate(type,n){document.querySelectorAll(`#st-${type} .star`).forEach((s,i)=>s.classList.toggle('on',i<n));}
@@ -1342,5 +1479,243 @@ document.getElementById('dest-suc').style.display='none';
 loadCards();
 refreshHome();
 </script>
+
+<!-- ═══════════════════════════════════════════════
+     SUPABASE — Base de données connectée
+═══════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── Connexion Supabase ──────────────────────────
+const SUPA_URL  = 'https://wqhuaylfytdmhzjauvmv.supabase.co';
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaHVheWxmeXRkbWh6amF1dm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODk5ODksImV4cCI6MjA5Mzk2NTk4OX0.rTo0Q7h3WnjL9LJ01RGQjq0blaxNtrq5JKvq6U0udLc';
+const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ── INSCRIPTION ─────────────────────────────────
+async function doLogin(){
+  const email = document.getElementById('l-em').value.trim();
+  const mdp   = document.getElementById('l-pw').value;
+  if(!email||!mdp){t('Renseignez email et mot de passe','e');return;}
+
+  const {data,error} = await db.auth.signInWithPassword({email,password:mdp});
+  if(error){t('Email ou mot de passe incorrect ❌','e');return;}
+
+  // Récupérer le profil
+  const {data:profil} = await db.from('users').select('*').eq('email',email).single();
+  if(profil){
+    user = {prenom:profil.prenom, nom:profil.nom, email:profil.email, id:data.user.id};
+    document.getElementById('nav-av').textContent = profil.prenom[0].toUpperCase();
+    document.getElementById('moi-av').textContent  = profil.prenom[0].toUpperCase();
+    document.getElementById('moi-name').textContent = profil.prenom+' '+profil.nom;
+    document.getElementById('moi-email').textContent = profil.email;
+    document.getElementById('dash-h').innerHTML = `Bonjour <em>${profil.prenom}</em> 👋`;
+    document.getElementById('m-pn').value = profil.prenom;
+    document.getElementById('m-nm').value = profil.nom;
+    document.getElementById('m-em').value = profil.email;
+    document.getElementById('m-ph').value = profil.telephone||'';
+  }
+  document.getElementById('nav-login').style.display='none';
+  document.getElementById('nav-av').style.display='flex';
+  document.getElementById('nav-post').style.display='block';
+  refreshHome();
+  t(`Bienvenue ! 👋`,'s');
+  goNav('home');
+}
+
+// ── INSCRIPTION ─────────────────────────────────
+async function doReg(){
+  const pn  = document.getElementById('r-pn').value.trim();
+  const nm  = document.getElementById('r-nm').value.trim();
+  const em  = document.getElementById('r-em').value.trim();
+  const ph  = document.getElementById('r-ph').value.trim();
+  const pw  = document.getElementById('r-pw').value;
+  if(!pn||!nm||!em||!ph||!pw){t('Remplissez tous les champs','e');return;}
+  if(pw.length<8){t('Mot de passe : 8 caractères minimum','e');return;}
+
+  // Créer le compte auth Supabase
+  const {data,error} = await db.auth.signUp({email:em,password:pw});
+  if(error){t('Erreur : '+error.message,'e');return;}
+
+  // Créer le profil dans la table users
+  await db.from('users').insert({
+    id: data.user?.id,
+    email:em, prenom:pn, nom:nm, telephone:ph
+  });
+
+  user = {prenom:pn, nom:nm, email:em, id:data.user?.id};
+  document.getElementById('nav-login').style.display='none';
+  document.getElementById('nav-av').style.display='flex';
+  document.getElementById('nav-post').style.display='block';
+  document.getElementById('nav-av').textContent = pn[0].toUpperCase();
+  document.getElementById('moi-av').textContent  = pn[0].toUpperCase();
+  document.getElementById('moi-name').textContent = pn+' '+nm;
+  document.getElementById('moi-email').textContent = em;
+  document.getElementById('dash-h').innerHTML = `Bonjour <em>${pn}</em> 👋`;
+  document.getElementById('m-pn').value=pn;
+  document.getElementById('m-nm').value=nm;
+  document.getElementById('m-em').value=em;
+  document.getElementById('m-ph').value=ph;
+  refreshHome();
+  t(`Compte créé ! Bienvenue ${pn} 🎉`,'s');
+  goNav('home');
+}
+
+// ── DÉCONNEXION ─────────────────────────────────
+async function doLogout(){
+  await db.auth.signOut();
+  user=null;
+  document.getElementById('nav-login').style.display='block';
+  document.getElementById('nav-av').style.display='none';
+  document.getElementById('nav-post').style.display='none';
+  refreshHome();
+  goNav('home');
+  t('Vous êtes déconnecté · À bientôt !','');
+}
+
+// ── POSTER UN COLIS (sauvegarde en base) ─────────
+async function publishColis(){
+  if(!user){t('Connectez-vous d\'abord','e');goNav('auth');return;}
+  const dep   = document.getElementById('pf-dep').value;
+  const arr   = document.getElementById('pf-arr').value;
+  const titre = document.getElementById('pf-title').value.trim();
+  const desc  = document.getElementById('pf-desc').value.trim();
+  const fmt   = document.getElementById('pf-fmt').options[document.getElementById('pf-fmt').selectedIndex].text.split(' —')[0];
+  const prix  = parseFloat(document.getElementById('pf-fmt').value);
+  const dated = document.getElementById('pf-date').value;
+  const rnom  = document.getElementById('pf-rname').value.trim();
+  const rtel  = document.getElementById('pf-rphone').value.trim();
+
+  if(!dep||!arr||!titre||!rnom||!rtel){t('Remplissez tous les champs requis','e');return;}
+  if(!emUp){t('Ajoutez la photo emballée 📷','e');return;}
+
+  // Insérer en base — le trigger génère le code LVR automatiquement
+  const {data,error} = await db.from('colis').insert({
+    titre, description:desc,
+    gare_depart:dep, gare_arrivee:arr,
+    format:fmt, prix,
+    date_souhaitee: dated||null,
+    destinataire_nom:rnom, destinataire_tel:rtel,
+    expediteur_id: user.id,
+    statut:'en_attente'
+  }).select().single();
+
+  if(error){t('Erreur lors de la publication : '+error.message,'e');console.error(error);return;}
+
+  const ref = data.code_lvr;
+  document.getElementById('suc-ref').textContent = ref;
+  document.getElementById('poster-form').style.display='none';
+  document.getElementById('poster-suc').style.display='block';
+  document.getElementById('content').scrollTop=0;
+  t(`Colis publié ! Code : ${ref} 🚀`,'s');
+
+  // Envoyer SMS au destinataire via Edge Function
+  envoyerSMS(rtel,
+    `Bonjour ${rnom} ! Un colis vous est envoyé via Livreo. ` +
+    `Votre code de suivi est : ${ref}. ` +
+    `Ouvrez Livreo → Suivi → entrez ce code pour voir votre QR Code. 🚆`
+  );
+}
+
+// ── SAUVEGARDER LE PROFIL ───────────────────────
+async function saveProfil(){
+  if(!user){t('Non connecté','e');return;}
+  const pn = document.getElementById('m-pn').value.trim();
+  const nm = document.getElementById('m-nm').value.trim();
+  const ph = document.getElementById('m-ph').value.trim();
+  const {error} = await db.from('users').update({prenom:pn,nom:nm,telephone:ph}).eq('id',user.id);
+  if(error){t('Erreur : '+error.message,'e');return;}
+  document.getElementById('moi-name').textContent=pn+' '+nm;
+  document.getElementById('moi-av').textContent=pn[0].toUpperCase();
+  document.getElementById('nav-av').textContent=pn[0].toUpperCase();
+  document.getElementById('dash-h').innerHTML=`Bonjour <em>${pn}</em> 👋`;
+  t('Profil mis à jour ✅','s');
+}
+
+// ── CHANGER MOT DE PASSE ────────────────────────
+async function changePw(){
+  const nw = document.getElementById('pw-new').value;
+  const cf = document.getElementById('pw-conf').value;
+  if(!nw||nw.length<8){t('8 caractères minimum','e');return;}
+  if(nw!==cf){t('Les mots de passe ne correspondent pas','e');return;}
+  const {error} = await db.auth.updateUser({password:nw});
+  if(error){t('Erreur : '+error.message,'e');return;}
+  document.getElementById('pw-old').value='';
+  document.getElementById('pw-new').value='';
+  document.getElementById('pw-conf').value='';
+  t('Mot de passe modifié ✅','s');
+}
+
+// ── SUIVI COLIS (depuis la base) ────────────────
+async function loadSuivi(){
+  const val = document.getElementById('sv-input').value.trim().toUpperCase();
+  if(!val){t('Entrez votre numéro de suivi','e');return;}
+
+  const {data:colis,error} = await db.from('colis').select('*').eq('code_lvr',val).single();
+  if(error||!colis){t('Code introuvable. Vérifiez le numéro.','e');return;}
+
+  document.getElementById('sv-ref').textContent = colis.code_lvr;
+
+  // Détermine si c'est l'expéditeur ou le destinataire qui consulte
+  const isExp = user && user.id === colis.expediteur_id;
+  const isDest = !isExp; // si pas l'expéditeur → on montre le QR
+
+  if(isExp){
+    document.getElementById('sv-exp').style.display='block';
+    document.getElementById('sv-dest').style.display='none';
+  } else {
+    document.getElementById('sv-exp').style.display='none';
+    document.getElementById('sv-dest').style.display='block';
+    loadQR(colis.code_lvr);
+  }
+  t('Colis trouvé ✅','s');
+  document.getElementById('content').scrollTop=100;
+}
+
+// ── SMS via Supabase Edge Function ──────────────
+async function envoyerSMS(telephone, message){
+  try {
+    await fetch(`${SUPA_URL}/functions/v1/send-sms`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},
+      body:JSON.stringify({telephone, message})
+    });
+  } catch(e){ console.log('SMS non envoyé (Edge Function pas encore déployée):', e); }
+}
+
+// ── VÉRIFIER SESSION AU CHARGEMENT ──────────────
+(async()=>{
+  const {data:{session}} = await db.auth.getSession();
+  if(session){
+    const {data:profil} = await db.from('users').select('*').eq('email',session.user.email).single();
+    if(profil){
+      user = {prenom:profil.prenom,nom:profil.nom,email:profil.email,id:session.user.id};
+      document.getElementById('nav-login').style.display='none';
+      document.getElementById('nav-av').style.display='flex';
+      document.getElementById('nav-post').style.display='block';
+      document.getElementById('nav-av').textContent=profil.prenom[0].toUpperCase();
+      document.getElementById('moi-av').textContent=profil.prenom[0].toUpperCase();
+      document.getElementById('moi-name').textContent=profil.prenom+' '+profil.nom;
+      document.getElementById('moi-email').textContent=profil.email;
+      document.getElementById('dash-h').innerHTML=`Bonjour <em>${profil.prenom}</em> 👋`;
+      document.getElementById('m-pn').value=profil.prenom;
+      document.getElementById('m-nm').value=profil.nom;
+      document.getElementById('m-em').value=profil.email;
+      document.getElementById('m-ph').value=profil.telephone||'';
+      refreshHome();
+    }
+  }
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════
+     STRIPE — Paiements sécurisés
+     ⚠️ Remplace la clé ci-dessous par ta nouvelle
+     clé Stripe après l'avoir régénérée sur stripe.com
+═══════════════════════════════════════════════ -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  // Clé Stripe intégrée
+  const stripe = Stripe('pk_live_51QLFSSFQ0erFJFSmQsXFjgC9CcH1CCKfyL0KueBKHZ9Dy34QD2zVjtWxiqngJDFaOBjzFfpklvE6PJCOXDb8bzpL00peOcylDb');
+</script>
+
 </body>
 </html>
