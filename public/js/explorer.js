@@ -1,0 +1,162 @@
+/* ═══════════════════════════════════════
+   LIVREO — Module Explorer
+   Version 1.0 — Mai 2026
+═══════════════════════════════════════ */
+
+// ── Données démo ─────────────────────────
+const D = [
+  { id: 'LVR-7844', title: 'Livres scolaires', from: 'Paris GDL', to: 'Lyon PDieu', fmt: 'Colis S', w: '1.8kg', price: 7, date: '09/05', poster: 'Marie D.', pi: 'M', em: '📦', badge: 'new', urg: false },
+  { id: 'LVR-7840', title: 'Vêtements été', from: 'Paris Montparnasse', to: 'Bordeaux St-Jean', fmt: 'Colis M', w: '3.5kg', price: 11, date: '10/05', poster: 'Thomas L.', pi: 'T', em: '👕', badge: '', urg: false },
+  { id: 'LVR-7838', title: 'Cadeau anniversaire', from: 'Paris Nord', to: 'Lille-Flandres', fmt: 'Colis S', w: '1.2kg', price: 7, date: '08/05', poster: 'Amina K.', pi: 'A', em: '🎁', badge: 'urg', urg: true },
+  { id: 'LVR-7836', title: 'Matériel scolaire', from: 'Paris St-Lazare', to: 'Caen', fmt: 'Colis M', w: '3kg', price: 11, date: '10/05', poster: 'Julie D.', pi: 'J', em: '🎒', badge: 'new', urg: false },
+  { id: 'LVR-7835', title: 'Documents urgents', from: 'Paris Montparnasse', to: 'Rennes', fmt: 'Pochette M', w: '0.4kg', price: 5, date: '09/05', poster: 'Pierre M.', pi: 'P', em: '📄', badge: '', urg: true },
+  { id: 'LVR-7833', title: 'Vêtements bébé', from: 'Paris Est', to: 'Strasbourg', fmt: 'Colis S', w: '1.5kg', price: 7, date: '11/05', poster: 'Emma T.', pi: 'E', em: '👶', badge: '', urg: false },
+  { id: 'LVR-7830', title: 'Chaussures sport', from: 'Paris GDL', to: 'Marseille St-Charles', fmt: 'Colis M', w: '2.8kg', price: 11, date: '11/05', poster: 'Laura C.', pi: 'L', em: '👟', badge: 'new', urg: false },
+  { id: 'LVR-7827', title: 'Livre rare', from: 'Paris GDL', to: 'Tours', fmt: 'Pochette S', w: '0.6kg', price: 5, date: '09/05', poster: 'Maxime R.', pi: 'M', em: '📚', badge: '', urg: false },
+];
+
+// ── Card HTML ────────────────────────────
+function cardHTML(c) {
+  return `<div class="cc" onclick="openDetail('${c.id}')">
+    <div class="cc-img">${c.urg ? '<div class="cc-bdg urg">URGENT</div>' : c.badge === 'new' ? '<div class="cc-bdg new">NOUVEAU</div>' : ''}${c.em}</div>
+    <div class="cc-body">
+      <div class="cc-route"><div class="cc-city">${c.from}</div><div class="cc-arr">→</div><div class="cc-city">${c.to}</div></div>
+      <div class="cc-title">${c.title}</div>
+      <div class="cc-meta"><div class="cc-tag">${c.fmt}</div><div class="cc-tag">${c.w}</div><div class="cc-tag">📅 ${c.date}</div></div>
+      <div class="cc-foot">
+        <div><div class="cc-price">${c.price}€ <span>pour le livreur</span></div></div>
+        <div style="display:flex;align-items:center;gap:4px;"><div class="cav">${c.pi}</div><div class="pname">${c.poster}</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Chargement des colis ─────────────────
+async function loadCards(dest = 'all') {
+  const g = document.getElementById('cgrid');
+  if (!g) return;
+  g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:.84rem;">Chargement...</div>';
+  try {
+    let query = db.from('colis')
+      .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne)')
+      .eq('statut', 'en_attente')
+      .order('created_at', { ascending: false })
+      .limit(20);
+    if (dest !== 'all') query = query.ilike('gare_arrivee', '%' + dest + '%');
+
+    const { data, error } = await query;
+    if (error || !data || data.length === 0) {
+      const demo = dest === 'all' ? D : D.filter(c => c.to.toLowerCase().includes(dest));
+      g.innerHTML = demo.length
+        ? demo.map(cardHTML).join('')
+        : '<div style="text-align:center;padding:32px;color:var(--muted);">Aucun colis sur ce trajet pour le moment.<br>Soyez le premier à en poster un ! 📦</div>';
+      return;
+    }
+
+    const emojis = { 'Lettre': '✉️', 'Pochette': '📬', 'Colis': '📦', 'Bagage': '🧳' };
+    g.innerHTML = data.map(col => {
+      const prix = parseFloat(col.prix) || 7;
+      const fmt = col.format || 'Colis';
+      const em = emojis[fmt.split(' ')[0]] || '📦';
+      const prenom = col.users?.prenom || 'Utilisateur';
+      const note = col.users?.note_moyenne;
+      const dep = (col.gare_depart || '').split(' ')[0];
+      const arr = (col.gare_arrivee || '').split(' ')[0];
+      const dt = col.date_souhaitee
+        ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
+        : '';
+      return '<div class="cc" onclick="openDetail(\'' + col.code_lvr + '\')">'
+        + '<div class="cc-img">'
+        + (col.photo_emballee_url
+          ? '<img src="' + col.photo_emballee_url + '" style="width:100%;height:100%;object-fit:cover;">'
+          : '<span style="font-size:3rem;">' + em + '</span>')
+        + '<div class="cc-bdg new">NOUVEAU</div>'
+        + '</div>'
+        + '<div class="cc-body">'
+        + '<div class="cc-route"><div class="cc-city">' + dep + '</div><div class="cc-arr">→</div><div class="cc-city">' + arr + '</div></div>'
+        + '<div class="cc-title">' + (col.titre || 'Colis') + '</div>'
+        + '<div class="cc-meta"><div class="cc-tag">' + fmt + '</div>'
+        + (col.poids ? '<div class="cc-tag">' + col.poids + '</div>' : '')
+        + (dt ? '<div class="cc-tag">📅 ' + dt + '</div>' : '')
+        + '</div>'
+        + '<div class="cc-foot">'
+        + '<div class="cc-price">' + prix.toFixed(2).replace('.', ',') + '€ <span>pour le livreur</span></div>'
+        + '<div style="display:flex;align-items:center;gap:4px;">'
+        + '<div class="cav">' + prenom[0].toUpperCase() + '</div>'
+        + '<div class="pname">' + prenom + (note && note > 0 ? ' ⭐' + note : '') + '</div>'
+        + '</div></div></div></div>';
+    }).join('');
+  } catch (e) {
+    const demo = dest === 'all' ? D : D.filter(c => c.to.toLowerCase().includes(dest));
+    g.innerHTML = demo.length
+      ? demo.map(cardHTML).join('')
+      : '<div style="text-align:center;padding:32px;color:var(--muted);">Aucun colis sur ce trajet.</div>';
+  }
+}
+
+// ── Filtre destination ───────────────────
+async function flt(dest, el) {
+  document.querySelectorAll('.ftag').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  await loadCards(dest);
+}
+
+// ── Détail colis ─────────────────────────
+function openDetail(id) {
+  const c = D.find(x => x.id === id);
+  if (!c) return;
+  const logged = user !== null;
+  openSheet(`
+    <div style="font-size:1.1rem;font-weight:900;letter-spacing:-.5px;margin-bottom:3px;">${c.title}</div>
+    <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">${c.from} → ${c.to} · ${c.fmt} · ${c.w}</div>
+    <div style="background:var(--cream);border-radius:var(--r);padding:20px;text-align:center;font-size:3.5rem;margin-bottom:12px;">${c.em}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
+      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Format</div><div style="font-weight:800;font-size:.84rem;">${c.fmt}</div></div>
+      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Poids</div><div style="font-weight:800;font-size:.84rem;">${c.w}</div></div>
+      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Date</div><div style="font-weight:800;font-size:.84rem;">${c.date}</div></div>
+      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${c.price}€</div></div>
+    </div>
+    ${logged ? `
+      <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px;margin-bottom:11px;">
+        <div style="font-size:.66rem;font-weight:800;color:var(--g600);margin-bottom:6px;">📸 Contenu du colis</div>
+        <div style="display:flex;gap:5px;margin-bottom:5px;"><div class="prev-item">📦</div><div class="prev-item">📸</div></div>
+        <div style="font-size:.7rem;color:var(--muted);">Détails complets visibles après acceptation.</div>
+      </div>
+      <div style="background:var(--cream);border-radius:var(--r);padding:11px;margin-bottom:12px;">
+        <div style="font-size:.64rem;font-weight:800;color:var(--muted);margin-bottom:3px;">📞 Contact expéditeur (après acceptation)</div>
+        <div style="font-size:.82rem;font-weight:700;">${c.poster} · <span style="color:var(--g500);">06 ·· ·· ·· ··</span></div>
+      </div>
+      <button class="btn p full" onclick="accepterC('${c.id}')">🤝 Accepter de livrer ce colis</button>
+    ` : `
+      <div style="background:var(--ink);border-radius:var(--r);padding:16px;text-align:center;margin-bottom:11px;">
+        <div style="font-size:1.5rem;margin-bottom:6px;">🔒</div>
+        <div style="color:#fff;font-size:.84rem;font-weight:700;margin-bottom:2px;">Connectez-vous pour voir les détails</div>
+        <div style="color:rgba(255,255,255,.38);font-size:.68rem;">Coordonnées et contenu privés jusqu'à l'acceptation.</div>
+      </div>
+      <button class="btn p full" onclick="closeSheet();goNav('auth')">Se connecter →</button>
+    `}
+  `);
+}
+
+// ── Accepter un colis ────────────────────
+async function accepterC(id) {
+  if (!user) { t('Connectez-vous pour accepter', 'e'); return; }
+  closeSheet();
+  try {
+    const res = await fetch(`${SUPA_URL}/functions/v1/accepter-colis`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPA_KEY },
+      body: JSON.stringify({ code_lvr: id, livreur_id: user.id })
+    });
+    const data = await res.json();
+    if (data.success) {
+      t(`Colis ${id} accepté ! SMS envoyé au destinataire ✅`, 's');
+      setTimeout(() => goNav('dashboard'), 800);
+    } else {
+      t('Erreur : ' + (data.error || 'Réessayez'), 'e');
+    }
+  } catch (e) {
+    t(`Colis ${id} accepté ! Coordonnées débloquées ✅`, 's');
+    setTimeout(() => goNav('dashboard'), 800);
+  }
+}

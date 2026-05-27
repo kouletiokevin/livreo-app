@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Livreo — Admin Dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --ink: #0e1a10; --ink2: #1e3322;
+  --g500: #1a8044; --g400: #22a857; --g300: #3dcf72;
+  --g100: #d4f5e2; --g50: #edfaf3;
+  --cream: #f7f4ef; --white: #fff;
+  --muted: #6b7e70; --border: #dde8e0;
+  --danger: #dc2626; --warn: #f59e0b;
+  --sans: system-ui, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--sans); background: var(--cream); color: var(--ink); }
+
+/* LOADING */
+#loading-screen {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; flex-direction: column; gap: 16px;
+}
+.loading-logo { font-size: 2rem; font-weight: 900; }
+.loading-logo span { color: var(--g500); }
+.loading-sub { font-size: .84rem; color: var(--muted); }
+
+/* ACCESS DENIED */
+#access-denied {
+  min-height: 100vh; display: none; align-items: center;
+  justify-content: center; padding: 20px; text-align: center;
+}
+.denied-card {
+  background: var(--white); border-radius: 20px; padding: 40px;
+  max-width: 380px; border: 1.5px solid var(--border);
+}
+.denied-icon { font-size: 3rem; margin-bottom: 12px; }
+.denied-card h2 { font-size: 1.2rem; font-weight: 900; margin-bottom: 8px; }
+.denied-card p { font-size: .82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+.btn-back { padding: 11px 24px; background: var(--ink); color: #fff; border: none; border-radius: 50px; font-family: var(--sans); font-size: .88rem; font-weight: 700; cursor: pointer; }
+
+/* DASHBOARD */
+#admin-dashboard { display: none; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0;
+  width: 240px; background: var(--ink);
+  padding: 24px 16px; z-index: 100;
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+.sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+.sidebar-logo h2 { color: #fff; font-size: 1.2rem; font-weight: 900; }
+.sidebar-logo h2 span { color: var(--g300); }
+.sidebar-logo small { color: rgba(255,255,255,.35); font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; }
+.nav-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 10px;
+  color: rgba(255,255,255,.55); text-decoration: none;
+  font-size: .84rem; font-weight: 600; margin-bottom: 4px;
+  transition: .15s; cursor: pointer; border: none; background: none;
+  width: 100%; text-align: left; font-family: var(--sans);
+}
+.nav-link:hover, .nav-link.active { background: rgba(255,255,255,.08); color: #fff; }
+.nav-link.active { background: var(--g500); color: #fff; }
+.nav-link .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+.sidebar-bottom { margin-top: auto; padding-top: 16px; }
+.admin-info { padding: 12px; background: rgba(255,255,255,.06); border-radius: 10px; margin-bottom: 8px; }
+.admin-info p { color: rgba(255,255,255,.7); font-size: .74rem; }
+.admin-info strong { color: #fff; }
+.btn-logout { width: 100%; padding: 9px; background: rgba(220,38,38,.2); color: #fca5a5; border: 1px solid rgba(220,38,38,.3); border-radius: 50px; font-family: var(--sans); font-size: .78rem; font-weight: 700; cursor: pointer; }
+.btn-back-app { width: 100%; padding: 9px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); border: none; border-radius: 50px; font-family: var(--sans); font-size: .78rem; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
+
+/* MAIN */
+.main { margin-left: 240px; padding: 28px; }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 1.6rem; font-weight: 900; letter-spacing: -.5px; }
+.page-header p { color: var(--muted); font-size: .84rem; margin-top: 3px; }
+
+/* SECTION */
+.section { display: none; }
+.section.active { display: block; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* KPI GRID */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+.kpi-card { background: var(--white); border-radius: 16px; padding: 20px; border: 1.5px solid var(--border); }
+.kpi-card .label { font-size: .68rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.kpi-card .value { font-size: 2rem; font-weight: 900; letter-spacing: -1px; color: var(--ink); }
+.kpi-card .value.green { color: var(--g500); }
+.kpi-card .trend { font-size: .72rem; color: var(--g500); font-weight: 700; margin-top: 4px; }
+
+/* TABLE */
+.table-card { background: var(--white); border-radius: 16px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+.table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.table-header h3 { font-size: .92rem; font-weight: 800; }
+.table-header .count { font-size: .74rem; color: var(--muted); background: var(--cream); padding: 3px 10px; border-radius: 50px; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 10px 16px; font-size: .64rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: .5px; background: var(--cream); border-bottom: 1px solid var(--border); }
+td { padding: 12px 16px; font-size: .82rem; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--cream); }
+td strong { color: var(--ink); }
+
+/* BADGES */
+.badge { font-size: .65rem; font-weight: 800; padding: 3px 9px; border-radius: 50px; display: inline-block; }
+.badge.green { background: var(--g100); color: var(--g500); }
+.badge.orange { background: #fef3c7; color: #92400e; }
+.badge.blue { background: #dbeafe; color: #1e40af; }
+.badge.red { background: #fee2e2; color: var(--danger); }
+.badge.grey { background: var(--cream); color: var(--muted); }
+
+/* ACTION BUTTONS */
+.action-btn { padding: 5px 12px; border-radius: 50px; font-family: var(--sans); font-size: .72rem; font-weight: 700; cursor: pointer; border: none; transition: .15s; margin-right: 4px; }
+.action-btn.green { background: var(--g50); color: var(--g500); border: 1px solid var(--g100); }
+.action-btn.red { background: #fee2e2; color: var(--danger); border: 1px solid #fecaca; }
+.action-btn.orange { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+/* SEARCH BAR */
+.search-bar { display: flex; gap: 10px; margin-bottom: 16px; }
+.search-bar input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--sans); font-size: .88rem; outline: none; background: var(--white); }
+.search-bar input:focus { border-color: var(--g400); }
+.search-bar select { padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--sans); font-size: .84rem; outline: none; background: var(--white); cursor: pointer; }
+
+/* TOAST */
+#admin-toast { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+.at { background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 10px; font-size: .82rem; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.2); animation: slideIn .3s ease; }
+.at.s { background: var(--g500); }
+.at.e { background: var(--danger); }
+@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+@media (max-width: 1024px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; padding: 16px; } }
+</style>
+</head>
+<body>
+
+<div id="admin-toast"></div>
+
+<!-- ════ LOADING ════ -->
+<div id="loading-screen">
+  <div class="loading-logo">Livr<span>eo</span></div>
+  <div class="loading-sub">Vérification des droits d'accès...</div>
+</div>
+
+<!-- ════ ACCÈS REFUSÉ ════ -->
+<div id="access-denied" style="display:none;">
+  <div class="denied-card">
+    <div class="denied-icon">🔐</div>
+    <h2>Accès refusé</h2>
+    <p>Vous n'avez pas les droits pour accéder à cet espace. Connectez-vous avec un compte administrateur sur l'application principale.</p>
+    <button class="btn-back" onclick="window.location.href='/'">← Retour à l'application</button>
+  </div>
+</div>
+
+<!-- ════ DASHBOARD ════ -->
+<div id="admin-dashboard">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div>
+        <h2>Livr<span>eo</span></h2>
+        <small>Admin Dashboard</small>
+      </div>
+    </div>
+
+    <button class="nav-link active" onclick="showSection('overview', this)">
+      <span class="icon">📊</span> Vue d'ensemble
+    </button>
+    <button class="nav-link" onclick="showSection('users', this)">
+      <span class="icon">👥</span> Utilisateurs
+    </button>
+    <button class="nav-link" onclick="showSection('colis', this)">
+      <span class="icon">📦</span> Colis
+    </button>
+    <button class="nav-link" onclick="showSection('transactions', this)">
+      <span class="icon">💳</span> Transactions
+    </button>
+    <button class="nav-link" onclick="showSection('verifications', this)">
+      <span class="icon">🛡️</span> Vérifications
+      <span id="verif-badge" style="margin-left:auto;background:var(--danger);color:#fff;font-size:.6rem;padding:1px 6px;border-radius:50px;display:none;">0</span>
+    </button>
+    <button class="nav-link" onclick="showSection('litiges', this)">
+      <span class="icon">⚖️</span> Litiges
+    </button>
+    <button class="nav-link" onclick="showSection('config', this)">
+      <span class="icon">⚙️</span> Configuration
+    </button>
+    <button class="nav-link" onclick="showSection('security', this)">
+      <span class="icon">🔐</span> Sécurité
+    </button>
+
+    <div class="sidebar-bottom">
+      <div class="admin-info">
+        <p>Connecté en tant que</p>
+        <strong id="admin-name">—</strong>
+        <p style="margin-top:2px;font-size:.65rem;color:rgba(255,255,255,.3);">👑 Administrateur</p>
+      </div>
+      <button class="btn-back-app" onclick="window.location.href='/'">← Retour à l'app</button>
+      <button class="btn-logout" onclick="adminLogout()">Se déconnecter</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- ── VUE D'ENSEMBLE ── -->
+    <div id="section-overview" class="section active">
+      <div class="page-header">
+        <h1>Vue d'ensemble</h1>
+        <p id="last-update">Chargement...</p>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="label">Utilisateurs</div><div class="value green" id="k-users">—</div><div class="trend" id="k-users-7j">— cette semaine</div></div>
+        <div class="kpi-card"><div class="label">Colis actifs</div><div class="value" id="k-colis">—</div><div class="trend" id="k-colis-livres">— livrés</div></div>
+        <div class="kpi-card"><div class="label">Revenus</div><div class="value green" id="k-revenus">—</div><div class="trend" id="k-revenus-30j">— ce mois</div></div>
+        <div class="kpi-card"><div class="label">Note plateforme</div><div class="value" id="k-note">—</div><div class="trend">Moyenne générale</div></div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="label">Paiements en attente</div><div class="value" id="k-escrow">—</div></div>
+        <div class="kpi-card"><div class="label">Paiements libérés</div><div class="value green" id="k-paiements">—</div></div>
+        <div class="kpi-card"><div class="label">Vérifications à traiter</div><div class="value" id="k-verif" style="color:var(--warn)">—</div></div>
+        <div class="kpi-card"><div class="label">Litiges ouverts</div><div class="value" id="k-litiges" style="color:var(--danger)">—</div></div>
+      </div>
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Activité récente</h3>
+          <span class="count" id="activity-count">0 colis</span>
+        </div>
+        <table>
+          <thead><tr><th>Code LVR</th><th>Expéditeur</th><th>Trajet</th><th>Livreur</th><th>Prix</th><th>Statut</th></tr></thead>
+          <tbody id="activity-table"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── UTILISATEURS ── -->
+    <div id="section-users" class="section">
+      <div class="page-header"><h1>Utilisateurs</h1><p>Gérer tous les comptes de la plateforme</p></div>
+      <div class="search-bar">
+        <input type="text" id="user-search" placeholder="Rechercher par nom, email, téléphone..." oninput="searchUsers()">
+        <select onchange="filterUsers(this.value)">
+          <option value="all">Tous les statuts</option>
+          <option value="actif">Actifs</option>
+          <option value="suspendu">Suspendus</option>
+          <option value="bloqué">Bloqués</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><h3>Liste des utilisateurs</h3><span class="count" id="users-count">0 utilisateurs</span></div>
+        <table>
+          <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Livraisons</th><th>Note</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody id="users-table"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── COLIS ── -->
+    <div id="section-colis" class="section">
+      <div class="page-header"><h1>Colis</h1><p>Suivre toutes les annonces et livraisons</p></div>
+      <div class="search-bar">
+        <input type="text" id="colis-search" placeholder="Rechercher par code LVR, gare, titre..." oninput="searchColis()">
+        <select onchange="filterColis(this.value)">
+          <option value="all">Tous les statuts</option>
+          <option value="en_attente">En attente</option>
+          <option value="livreur_accepte">Livreur assigné</option>
+          <option value="en_transit">En transit</option>
+          <option value="livre">Livré</option>
+          <option value="annule">Annulé</option>
+        </select>
+      </div>
+      <div class="table-card">
+        <div class="table-header"><h3>Tous les colis</h3><span class="count" id="colis-count">0 colis</span></div>
+        <table>
+          <thead><tr><th>Code LVR</th><th>Titre</th><th>Trajet</th><th>Prix</th><th>Expéditeur</th><th>Livreur</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody id="colis-table"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── TRANSACTIONS ── -->
+    <div id="section-transactions" class="section">
+      <div class="page-header"><h1>Transactions</h1><p>Suivi des paiements et de l'argent en circulation</p></div>
+      <div class="table-card">
+        <div class="table-header"><h3>Toutes les transactions</h3><span class="count" id="tx-count">0 transactions</span></div>
+        <table>
+          <thead><tr><th>Colis</th><th>Montant</th><th>Expéditeur</th><th>Livreur</th><th>Stripe ID</th><th>Statut</th><th>Date</th></tr></thead>
+          <tbody id="tx-table"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── VÉRIFICATIONS ── -->
+    <div id="section-verifications" class="section">
+      <div class="page-header"><h1>Vérifications d'identité</h1><p>Traiter les demandes de vérification des livreurs</p></div>
+      <div class="table-card">
+        <div class="table-header"><h3>Demandes en attente</h3><span class="count" id="verif-count">0 demandes</span></div>
+        <table>
+          <thead><tr><th>Utilisateur</th><th>Type document</th><th>Date demande</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody id="verif-table"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Aucune demande en attente ✅</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── LITIGES ── -->
+    <div id="section-litiges" class="section">
+      <div class="page-header"><h1>Litiges</h1><p>Résoudre les conflits entre utilisateurs</p></div>
+      <div class="table-card">
+        <div class="table-header"><h3>Litiges actifs</h3><span class="count" id="litiges-count">0 litiges</span></div>
+        <table>
+          <thead><tr><th>Colis</th><th>Plaignant</th><th>Motif</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="litiges-table"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Aucun litige actif ✅</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── CONFIGURATION ── -->
+    <div id="section-config" class="section">
+      <div class="page-header"><h1>Configuration</h1><p>Paramètres globaux de l'application</p></div>
+      <div class="table-card">
+        <div class="table-header"><h3>Paramètres app</h3></div>
+        <table>
+          <thead><tr><th>Clé</th><th>Valeur</th><th>Description</th><th>Action</th></tr></thead>
+          <tbody id="config-table"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── SÉCURITÉ ── -->
+    <div id="section-security" class="section">
+      <div class="page-header"><h1>Sécurité</h1><p>Logs de sécurité et tentatives suspectes</p></div>
+      <div class="table-card">
+        <div class="table-header"><h3>Logs récents</h3><span class="count" id="logs-count">0 événements</span></div>
+        <table>
+          <thead><tr><th>Type</th><th>Utilisateur</th><th>Détails</th><th>Date</th></tr></thead>
+          <tbody id="security-table"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucun événement de sécurité ✅</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SUPA_URL = 'https://wqhuaylfytdmhzjauvmv.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaHVheWxmeXRkbWh6amF1dm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODk5ODksImV4cCI6MjA5Mzk2NTk4OX0.rTo0Q7h3WnjL9LJ01RGQjq0blaxNtrq5JKvq6U0udLc';
+const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+let adminUser = null;
+
+// ── Toast ─────────────────────────────────
+function toast(msg, type = '') {
+  const c = document.getElementById('admin-toast');
+  const d = document.createElement('div');
+  d.className = 'at ' + type;
+  d.textContent = msg;
+  c.appendChild(d);
+  setTimeout(() => { d.style.opacity = '0'; d.style.transition = '.3s'; }, 3000);
+  setTimeout(() => d.remove(), 3400);
+}
+
+// ── Vérification session au chargement ───
+(async () => {
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) { showDenied(); return; }
+
+    const { data: role } = await db.from('user_roles')
+      .select('role')
+      .eq('user_id', session.user.id)
+      .single();
+
+    if (!role || role.role !== 'admin') { showDenied(); return; }
+
+    const { data: profil } = await db.from('users')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+
+    adminUser = profil;
+    document.getElementById('admin-name').textContent = (profil?.prenom || '') + ' ' + (profil?.nom || '');
+
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = 'block';
+    loadDashboard();
+  } catch (e) {
+    showDenied();
+  }
+})();
+
+function showDenied() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('access-denied').style.display = 'flex';
+}
+
+async function adminLogout() {
+  await db.auth.signOut();
+  window.location.href = '/';
+}
+
+// ── Navigation ───────────────────────────
+function showSection(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+  document.getElementById('section-' + name)?.classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  const loaders = {
+    overview: loadDashboard,
+    users: loadUsers,
+    colis: loadColis,
+    transactions: loadTransactions,
+    verifications: loadVerifications,
+    litiges: loadLitiges,
+    config: loadConfig,
+    security: loadSecurity,
+  };
+  loaders[name]?.();
+}
+
+// ── Dashboard ────────────────────────────
+async function loadDashboard() {
+  try {
+    const { data } = await db.from('admin_dashboard').select('*').single();
+    if (!data) return;
+
+    document.getElementById('k-users').textContent = data.total_users;
+    document.getElementById('k-users-7j').textContent = '+' + data.users_7j + ' cette semaine';
+    document.getElementById('k-colis').textContent = data.colis_disponibles;
+    document.getElementById('k-colis-livres').textContent = data.colis_livres + ' livrés';
+    document.getElementById('k-revenus').textContent = parseFloat(data.revenus_total || 0).toFixed(2) + '€';
+    document.getElementById('k-revenus-30j').textContent = parseFloat(data.revenus_30j || 0).toFixed(2) + '€ ce mois';
+    document.getElementById('k-note').textContent = parseFloat(data.note_moyenne_plateforme || 0).toFixed(1) + '⭐';
+    document.getElementById('k-escrow').textContent = data.paiements_en_attente;
+    document.getElementById('k-paiements').textContent = data.paiements_liberes;
+    document.getElementById('k-verif').textContent = data.verifications_a_traiter;
+    document.getElementById('k-litiges').textContent = data.litiges_ouverts || 0;
+    document.getElementById('last-update').textContent = 'Mis à jour le ' + new Date(data.derniere_maj).toLocaleString('fr-FR');
+
+    if (data.verifications_a_traiter > 0) {
+      const badge = document.getElementById('verif-badge');
+      badge.textContent = data.verifications_a_traiter;
+      badge.style.display = 'inline';
+    }
+
+    const { data: colis } = await db.from('colis_actifs').select('*').limit(10);
+    const tbody = document.getElementById('activity-table');
+    if (colis && colis.length > 0) {
+      document.getElementById('activity-count').textContent = colis.length + ' colis';
+      tbody.innerHTML = colis.map(c => `
+        <tr>
+          <td><strong>${c.code_lvr || '—'}</strong></td>
+          <td>${c.expediteur || '—'}</td>
+          <td style="font-size:.76rem;">${c.gare_depart || '?'} → ${c.gare_arrivee || '?'}</td>
+          <td>${c.livreur || '<span style="color:var(--muted);">Non assigné</span>'}</td>
+          <td style="color:var(--g500);font-weight:800;">${parseFloat(c.prix || 0).toFixed(2)}€</td>
+          <td>${statusBadge(c.statut)}</td>
+        </tr>`).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Aucun colis pour le moment</td></tr>';
+    }
+  } catch (e) { console.error('loadDashboard:', e); }
+}
+
+// ── Utilisateurs ─────────────────────────
+async function loadUsers() {
+  const { data } = await db.from('users').select('*, user_roles(role)').order('created_at', { ascending: false });
+  const tbody = document.getElementById('users-table');
+  document.getElementById('users-count').textContent = (data?.length || 0) + ' utilisateurs';
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Aucun utilisateur</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(u => `
+    <tr>
+      <td><strong>${u.prenom || ''} ${u.nom || ''}</strong><br><span style="font-size:.7rem;color:var(--muted);">${u.id?.substring(0, 8)}...</span></td>
+      <td>${u.email || '—'}</td>
+      <td>${u.telephone || '—'}</td>
+      <td>${u.nb_livraisons || 0}</td>
+      <td>${u.note_moyenne > 0 ? '⭐' + u.note_moyenne : '—'}</td>
+      <td>${statusBadge(u.statut || 'actif')}</td>
+      <td>
+        <button class="action-btn orange" onclick="suspendUser('${u.id}','${u.email}')">Suspendre</button>
+        <button class="action-btn red" onclick="blockUser('${u.id}','${u.email}')">Bloquer</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ── Colis ────────────────────────────────
+async function loadColis() {
+  const { data } = await db.from('colis_actifs').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('colis-table');
+  document.getElementById('colis-count').textContent = (data?.length || 0) + ' colis';
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Aucun colis</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td><strong>${c.code_lvr}</strong></td>
+      <td>${c.titre || '—'}</td>
+      <td style="font-size:.76rem;">${c.gare_depart || '?'} → ${c.gare_arrivee || '?'}</td>
+      <td style="color:var(--g500);font-weight:800;">${parseFloat(c.prix || 0).toFixed(2)}€</td>
+      <td>${c.expediteur || '—'}</td>
+      <td>${c.livreur || '<span style="color:var(--muted);">—</span>'}</td>
+      <td>${statusBadge(c.statut)}</td>
+      <td><button class="action-btn red" onclick="cancelColis('${c.code_lvr}')">Annuler</button></td>
+    </tr>`).join('');
+}
+
+// ── Transactions ─────────────────────────
+async function loadTransactions() {
+  const { data } = await db.from('transactions')
+    .select('*, colis(code_lvr), exp:users!transactions_expediteur_id_fkey(prenom), liv:users!transactions_livreur_id_fkey(prenom)')
+    .order('created_at', { ascending: false }).limit(50);
+  const tbody = document.getElementById('tx-table');
+  document.getElementById('tx-count').textContent = (data?.length || 0) + ' transactions';
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Aucune transaction</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(tx => `
+    <tr>
+      <td><strong>${tx.colis?.code_lvr || '—'}</strong></td>
+      <td style="color:var(--g500);font-weight:800;">${parseFloat(tx.montant || 0).toFixed(2)}€</td>
+      <td>${tx.exp?.prenom || '—'}</td>
+      <td>${tx.liv?.prenom || '—'}</td>
+      <td style="font-size:.7rem;color:var(--muted);">${tx.stripe_payment_intent?.substring(0, 20) || '—'}...</td>
+      <td>${statusBadge(tx.statut)}</td>
+      <td style="font-size:.74rem;">${new Date(tx.created_at).toLocaleDateString('fr-FR')}</td>
+    </tr>`).join('');
+}
+
+// ── Vérifications ────────────────────────
+async function loadVerifications() {
+  const { data } = await db.from('verifications_identite')
+    .select('*, users(prenom, nom, email)')
+    .order('created_at', { ascending: false });
+  const tbody = document.getElementById('verif-table');
+  document.getElementById('verif-count').textContent = (data?.length || 0) + ' demandes';
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Aucune demande en attente ✅</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(v => `
+    <tr>
+      <td><strong>${v.users?.prenom || ''} ${v.users?.nom || ''}</strong><br><span style="font-size:.7rem;color:var(--muted);">${v.users?.email || ''}</span></td>
+      <td>${v.type_document || '—'}</td>
+      <td>${new Date(v.created_at).toLocaleDateString('fr-FR')}</td>
+      <td>${statusBadge(v.statut)}</td>
+      <td>
+        <button class="action-btn green" onclick="approveVerif('${v.id}')">✅ Approuver</button>
+        <button class="action-btn red" onclick="rejectVerif('${v.id}')">❌ Refuser</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ── Litiges ──────────────────────────────
+async function loadLitiges() {
+  const { data } = await db.from('litiges')
+    .select('*, colis(code_lvr), users!litiges_plaignant_id_fkey(prenom,nom)')
+    .order('created_at', { ascending: false });
+  const tbody = document.getElementById('litiges-table');
+  document.getElementById('litiges-count').textContent = (data?.length || 0) + ' litiges';
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Aucun litige actif ✅</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(l => `
+    <tr>
+      <td><strong>${l.colis?.code_lvr || '—'}</strong></td>
+      <td>${l.users?.prenom || ''} ${l.users?.nom || ''}</td>
+      <td>${l.motif || '—'}</td>
+      <td>${statusBadge(l.statut)}</td>
+      <td>${new Date(l.created_at).toLocaleDateString('fr-FR')}</td>
+      <td><button class="action-btn orange" onclick="resolveLitige('${l.id}')">Résoudre</button></td>
+    </tr>`).join('');
+}
+
+// ── Configuration ────────────────────────
+async function loadConfig() {
+  const { data } = await db.from('app_config').select('*').order('key');
+  const tbody = document.getElementById('config-table');
+  if (!data) return;
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td><strong>${c.key}</strong></td>
+      <td><input type="text" value="${c.value || ''}" id="cfg-${c.key}" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.82rem;width:100%;"></td>
+      <td style="font-size:.74rem;color:var(--muted);">${c.description || ''}</td>
+      <td><button class="action-btn green" onclick="saveConfig('${c.key}')">Sauver</button></td>
+    </tr>`).join('');
+}
+
+async function saveConfig(key) {
+  const val = document.getElementById('cfg-' + key)?.value;
+  await db.from('app_config').update({ value: val, updated_at: new Date().toISOString() }).eq('key', key);
+  toast('Sauvegardé ✅', 's');
+}
+
+// ── Sécurité ─────────────────────────────
+async function loadSecurity() {
+  const { data } = await db.from('security_logs')
+    .select('*').order('timestamp', { ascending: false }).limit(50);
+  const tbody = document.getElementById('security-table');
+  document.getElementById('logs-count').textContent = (data?.length || 0) + ' événements';
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucun événement de sécurité ✅</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(l => `
+    <tr>
+      <td><span class="badge ${l.type?.includes('fail') ? 'red' : 'grey'}">${l.type}</span></td>
+      <td>${l.user_id?.substring(0, 8) || 'Anonyme'}...</td>
+      <td style="font-size:.74rem;">${JSON.stringify(l.details || {}).substring(0, 80)}</td>
+      <td>${new Date(l.timestamp).toLocaleString('fr-FR')}</td>
+    </tr>`).join('');
+}
+
+// ── Actions admin ────────────────────────
+async function suspendUser(id, email) {
+  if (!confirm(`Suspendre ${email} ?`)) return;
+  await db.from('users').update({ statut: 'suspendu' }).eq('id', id);
+  toast('Utilisateur suspendu', 'e');
+  loadUsers();
+}
+
+async function blockUser(id, email) {
+  if (!confirm(`⚠️ Bloquer définitivement ${email} ?`)) return;
+  await db.from('users').update({ statut: 'bloqué' }).eq('id', id);
+  toast('Utilisateur bloqué', 'e');
+  loadUsers();
+}
+
+async function cancelColis(code) {
+  if (!confirm(`Annuler le colis ${code} ?`)) return;
+  await db.from('colis').update({ statut: 'annule' }).eq('code_lvr', code);
+  toast('Colis annulé', 'e');
+  loadColis();
+}
+
+async function approveVerif(id) {
+  await db.from('verifications_identite').update({ statut: 'approuve', traite_at: new Date().toISOString() }).eq('id', id);
+  toast('Vérification approuvée ✅', 's');
+  loadVerifications();
+  loadDashboard();
+}
+
+async function rejectVerif(id) {
+  const note = prompt('Raison du refus :');
+  if (!note) return;
+  await db.from('verifications_identite').update({ statut: 'refuse', note_admin: note, traite_at: new Date().toISOString() }).eq('id', id);
+  toast('Vérification refusée', 'e');
+  loadVerifications();
+}
+
+async function resolveLitige(id) {
+  const decision = prompt('Décision (remboursement / livreur / partage) :');
+  if (!decision) return;
+  await db.from('litiges').update({ statut: 'resolu', decision }).eq('id', id);
+  toast('Litige résolu ✅', 's');
+  loadLitiges();
+}
+
+// ── Helpers ──────────────────────────────
+function statusBadge(status) {
+  const map = {
+    actif: ['green', 'Actif'], suspendu: ['orange', 'Suspendu'], 'bloqué': ['red', 'Bloqué'],
+    en_attente: ['orange', 'En attente'], livreur_accepte: ['blue', 'Assigné'],
+    en_transit: ['blue', 'En transit'], livre: ['green', 'Livré'],
+    annule: ['red', 'Annulé'], litige: ['red', 'Litige'],
+    escrow: ['orange', 'En escrow'], libere: ['green', 'Libéré'],
+    approuve: ['green', 'Approuvé'], refuse: ['red', 'Refusé'],
+    ouvert: ['orange', 'Ouvert'], resolu: ['green', 'Résolu'],
+  };
+  const [cls, label] = map[status] || ['grey', status];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function searchUsers() {
+  const q = document.getElementById('user-search').value.toLowerCase();
+  document.querySelectorAll('#users-table tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function filterUsers(status) {
+  document.querySelectorAll('#users-table tr').forEach(row => {
+    row.style.display = status === 'all' || row.textContent.toLowerCase().includes(status) ? '' : 'none';
+  });
+}
+
+function searchColis() {
+  const q = document.getElementById('colis-search').value.toLowerCase();
+  document.querySelectorAll('#colis-table tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function filterColis(status) {
+  document.querySelectorAll('#colis-table tr').forEach(row => {
+    row.style.display = status === 'all' || row.textContent.toLowerCase().includes(status) ? '' : 'none';
+  });
+}
+
+// Auto-refresh toutes les 60 secondes
+setInterval(() => {
+  const activeSection = document.querySelector('.section.active')?.id?.replace('section-', '');
+  if (activeSection === 'overview') loadDashboard();
+}, 60000);
+</script>
+</body>
+</html>

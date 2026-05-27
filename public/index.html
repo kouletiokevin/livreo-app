@@ -1,0 +1,946 @@
+<!-- Livreo v1.0 — Mai 2026 -->
+<!DOCTYPE html>
+<html lang="fr" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- ══ SEO PRIMAIRE ══ -->
+<title>Livreo — Livraison de colis par train entre particuliers</title>
+<meta name="description" content="Livreo : quelqu'un prend le train, votre colis aussi. Envoi de colis entre particuliers par TGV et train en France. Simple, sécurisé, −45% moins cher que La Poste.">
+<meta name="keywords" content="livraison colis train, envoyer colis particulier, livraison pas cher France, alternative La Poste, TGV livraison, cocolis alternative, livraison collaborative, livreo">
+<meta name="author" content="Livreo">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="language" content="French">
+<meta name="geo.region" content="FR">
+<meta name="geo.placename" content="France">
+<link rel="canonical" href="https://livreo-app.netlify.app">
+
+<!-- ══ OPEN GRAPH ══ -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Livreo">
+<meta property="og:title" content="Livreo — Quelqu'un prend le train. Votre colis aussi.">
+<meta property="og:description" content="Envoyez vos colis par train entre particuliers. −45% vs La Poste. Sécurisé, simple, rapide.">
+<meta property="og:url" content="https://livreo-app.netlify.app">
+<meta property="og:image" content="https://livreo-app.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="fr_FR">
+
+<!-- ══ TWITTER CARD ══ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Livreo — Quelqu'un prend le train. Votre colis aussi.">
+<meta name="twitter:description" content="Envoyez vos colis par train entre particuliers. −45% vs La Poste.">
+<meta name="twitter:image" content="https://livreo-app.netlify.app/og-image.png">
+<meta name="twitter:creator" content="@livreo_fr">
+
+<!-- ══ PWA ══ -->
+<meta name="theme-color" content="#0e1a10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Livreo">
+<meta name="application-name" content="Livreo">
+<meta name="msapplication-TileColor" content="#0e1a10">
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Livreo%22%2C%22short_name%22%3A%22Livreo%22%2C%22description%22%3A%22Quelqu%27un%20prend%20le%20train.%20Votre%20colis%20aussi.%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230e1a10%22%2C%22theme_color%22%3A%22%230e1a10%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20120%20120%27%3E%3Crect%20width%3D%27120%27%20height%3D%27120%27%20rx%3D%2726%27%20fill%3D%27%23141c14%27%2F%3E%3Ctext%20x%3D%2760%27%20y%3D%2782%27%20text-anchor%3D%27middle%27%20font-size%3D%2768%27%20font-weight%3D%27900%27%20fill%3D%27%232ecc71%27%20font-family%3D%27Arial%20Black%27%3EL%3C%2Ftext%3E%3Crect%20x%3D%2714%27%20y%3D%2788%27%20width%3D%2792%27%20height%3D%275%27%20rx%3D%272.5%27%20fill%3D%27%232ecc71%27%2F%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
+<!-- ══ FAVICON ══ -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%23141c14'/%3E%3Ctext x='60' y='82' text-anchor='middle' font-size='68' font-weight='900' fill='%232ecc71' font-family='Arial Black'%3EL%3C/text%3E%3Crect x='14' y='88' width='92' height='5' rx='2.5' fill='%232ecc71'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%23141c14'/%3E%3Ctext x='60' y='82' text-anchor='middle' font-size='68' font-weight='900' fill='%232ecc71' font-family='Arial Black'%3EL%3C/text%3E%3Crect x='14' y='88' width='92' height='5' rx='2.5' fill='%232ecc71'/%3E%3C/svg%3E">
+
+<!-- ══ STRUCTURED DATA ══ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://livreo-app.netlify.app/#app",
+      "name": "Livreo",
+      "url": "https://livreo-app.netlify.app",
+      "description": "Plateforme collaborative de livraison de colis par train entre particuliers en France.",
+      "slogan": "Quelqu'un prend le train. Votre colis aussi.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Web, Android, iOS",
+      "offers": { "@type": "AggregateOffer", "priceCurrency": "EUR", "lowPrice": "2.50", "highPrice": "60" },
+      "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "1" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://livreo-app.netlify.app/#org",
+      "name": "Livreo",
+      "url": "https://livreo-app.netlify.app",
+      "description": "Startup française de livraison collaborative par train",
+      "foundingDate": "2026",
+      "foundingLocation": "Paris, France",
+      "areaServed": "France",
+      "contactPoint": { "@type": "ContactPoint", "contactType": "customer support", "email": "support@livreo.fr", "availableLanguage": "French" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Comment fonctionne Livreo ?", "acceptedAnswer": { "@type": "Answer", "text": "Vous postez votre colis avec la gare de départ et d'arrivée. Un livreur qui fait le même trajet en train accepte de le transporter. À la livraison, il photographie la remise et scanne le QR Code du destinataire. Le paiement est libéré automatiquement." } },
+        { "@type": "Question", "name": "Est-ce sécurisé ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. Chaque livraison est confirmée par QR Code unique, photo de remise obligatoire, et paiement sécurisé par escrow." } },
+        { "@type": "Question", "name": "Combien ça coûte ?", "acceptedAnswer": { "@type": "Answer", "text": "Les prix varient de 2,50€ pour une lettre à 24€+ pour un grand colis. C'est en moyenne 45% moins cher que La Poste." } }
+      ]
+    }
+  ]
+}
+</script>
+
+<!-- ══ FONTS ══ -->
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<!-- ══ LIBS CDN ══ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://js.stripe.com/v3/" defer></script>
+
+<!-- ══ CONFIG SUPABASE (doit être chargé avant app.js) ══ -->
+<script src="/js/supabase.js"></script>
+
+<!-- ══ CSS EXTERNE ══ -->
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div id="toasts"></div>
+
+<!-- ════ SPLASH SCREEN ════ -->
+<div id="splash">
+  <div class="rail-wrap">
+    <div style="position:relative;height:26px;">
+      <div class="rail-top"></div>
+      <div class="rail-bot"></div>
+      <div class="sleepers">
+        <div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div><div class="sleeper"></div>
+      </div>
+    </div>
+  </div>
+  <div id="train">
+    <svg width="320" height="60" viewBox="0 0 320 60" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="8" width="100" height="42" rx="8" fill="#1a8044"/>
+      <rect x="8"  y="14" width="22" height="16" rx="4" fill="rgba(255,255,255,.85)"/>
+      <rect x="36" y="14" width="22" height="16" rx="4" fill="rgba(255,255,255,.65)"/>
+      <rect x="64" y="14" width="22" height="16" rx="4" fill="rgba(255,255,255,.45)"/>
+      <rect x="0" y="36" width="100" height="6" rx="2" fill="rgba(255,255,255,.15)"/>
+      <rect x="100" y="18" width="8" height="24" rx="2" fill="#0e1a10"/>
+      <rect x="108" y="4" width="112" height="46" rx="10" fill="#22a857"/>
+      <rect x="212" y="4" width="50" height="46" rx="10" fill="#22a857"/>
+      <ellipse cx="258" cy="27" rx="14" ry="22" fill="#22a857"/>
+      <rect x="116" y="12" width="26" height="18" rx="4" fill="rgba(255,255,255,.9)"/>
+      <rect x="148" y="12" width="26" height="18" rx="4" fill="rgba(255,255,255,.7)"/>
+      <rect x="180" y="12" width="26" height="18" rx="4" fill="rgba(255,255,255,.5)"/>
+      <rect x="108" y="38" width="154" height="5" rx="2" fill="rgba(255,255,255,.2)"/>
+      <circle cx="262" cy="18" r="7" fill="white" opacity=".95"/>
+      <circle cx="262" cy="18" r="4.5" fill="#fde68a"/>
+      <text x="155" y="32" text-anchor="middle" font-size="10" font-weight="700" fill="white" font-family="sans-serif" opacity=".5">TGV</text>
+      <circle cx="22"  cy="50" r="8" fill="#0a1209" stroke="#2ecc71" stroke-width="2"/><circle cx="22"  cy="50" r="3" fill="#2ecc71"/>
+      <circle cx="80"  cy="50" r="8" fill="#0a1209" stroke="#2ecc71" stroke-width="2"/><circle cx="80"  cy="50" r="3" fill="#2ecc71"/>
+      <circle cx="138" cy="50" r="8" fill="#0a1209" stroke="#2ecc71" stroke-width="2"/><circle cx="138" cy="50" r="3" fill="#2ecc71"/>
+      <circle cx="200" cy="50" r="8" fill="#0a1209" stroke="#2ecc71" stroke-width="2"/><circle cx="200" cy="50" r="3" fill="#2ecc71"/>
+      <circle cx="248" cy="50" r="8" fill="#0a1209" stroke="#2ecc71" stroke-width="2"/><circle cx="248" cy="50" r="3" fill="#2ecc71"/>
+      <line x1="280" y1="27" x2="308" y2="27" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round" opacity=".4"/>
+      <line x1="288" y1="20" x2="312" y2="20" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" opacity=".25"/>
+      <line x1="285" y1="34" x2="310" y2="34" stroke="#2ecc71" stroke-width="1.5" stroke-linecap="round" opacity=".15"/>
+    </svg>
+  </div>
+  <div id="colis-anim">
+    <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="6" width="48" height="42" rx="7" fill="white" opacity=".95"/>
+      <rect x="2" y="6" width="48" height="12" rx="7" fill="#e8e8e8"/>
+      <rect x="2" y="14" width="48" height="4" fill="#e8e8e8"/>
+      <rect x="22" y="6" width="8" height="42" rx="2" fill="#2ecc71" opacity=".6"/>
+      <rect x="2"  y="24" width="48" height="4" rx="2" fill="#2ecc71" opacity=".6"/>
+      <text x="26" y="20" text-anchor="middle" font-size="7" font-weight="800" fill="#1a8044" font-family="sans-serif" letter-spacing=".5">LVR</text>
+    </svg>
+  </div>
+  <div id="splash-logo">
+    <svg width="96" height="96" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="120" height="120" rx="26" fill="#1a8044"/>
+      <text x="60" y="82" text-anchor="middle" font-size="68" font-weight="900" fill="#2ecc71" font-family="Arial Black,Impact,sans-serif">L</text>
+      <rect x="14" y="88" width="92" height="5.5" rx="2.5" fill="#2ecc71"/>
+      <rect x="14" y="97" width="92" height="5.5" rx="2.5" fill="#2ecc71" opacity="0.35"/>
+    </svg>
+    <div style="font-family:'Outfit',sans-serif;font-size:2.6rem;font-weight:900;color:white;letter-spacing:-1.5px;line-height:1;">Livr<span style="color:#2ecc71;">eo</span></div>
+  </div>
+  <div id="splash-slogan">
+    <div style="font-size:.88rem;color:rgba(255,255,255,.5);font-style:italic;max-width:280px;text-align:center;line-height:1.6;">Quelqu'un prend le train.<br>Votre colis aussi.</div>
+  </div>
+  <div id="splash-enter" style="position:absolute;bottom:48px;">
+    <button onclick="closeSplash()" style="padding:13px 36px;background:#2ecc71;color:#0e1a10;border:none;border-radius:50px;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:900;cursor:pointer;letter-spacing:-.2px;">Commencer →</button>
+  </div>
+</div>
+
+<!-- ════ PERMISSIONS ════ -->
+<div id="perm-ov" style="display:none;">
+  <div class="perm-card">
+    <div style="text-align:center;margin-bottom:4px;">
+      <svg width="72" height="72" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto;display:block;">
+        <defs>
+          <linearGradient id="pb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0e1a10"/><stop offset="100%" style="stop-color:#1e3322"/></linearGradient>
+          <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#3dcf72"/><stop offset="100%" style="stop-color:#1a8044"/></linearGradient>
+        </defs>
+        <circle cx="200" cy="200" r="190" fill="url(#pb)"/>
+        <circle cx="200" cy="200" r="190" fill="none" stroke="#3dcf72" stroke-width="3" opacity="0.35"/>
+        <rect x="55" y="212" width="290" height="5" rx="2.5" fill="#3dcf72" opacity="0.5"/>
+        <rect x="55" y="228" width="290" height="5" rx="2.5" fill="#3dcf72" opacity="0.5"/>
+        <g transform="translate(90,148)">
+          <rect x="0" y="22" width="170" height="55" rx="11" fill="url(#pg)"/>
+          <ellipse cx="170" cy="49" rx="22" ry="27" fill="url(#pg)"/>
+          <rect x="18" y="30" width="30" height="22" rx="5" fill="rgba(255,255,255,.88)"/>
+          <rect x="58" y="30" width="30" height="22" rx="5" fill="rgba(255,255,255,.6)"/>
+          <rect x="98" y="30" width="30" height="22" rx="5" fill="rgba(255,255,255,.38)"/>
+          <circle cx="184" cy="40" r="7" fill="#fff"/><circle cx="184" cy="40" r="4" fill="#fde68a"/>
+        </g>
+        <text x="200" y="316" text-anchor="middle" fill="white" font-size="46" font-weight="900" font-family="Georgia,serif" font-style="italic" letter-spacing="-1">Livr<tspan fill="#3dcf72">eo</tspan></text>
+        <text x="200" y="344" text-anchor="middle" fill="#8eeaae" font-size="12" font-family="sans-serif" letter-spacing="3" opacity="0.6">LIVRAISON · PAR TRAIN</text>
+      </svg>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
+      <svg width="44" height="44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="120" height="120" rx="26" fill="#141c14"/><text x="60" y="82" text-anchor="middle" font-size="68" font-weight="900" fill="#2ecc71" font-family="Arial Black,Impact,sans-serif">L</text><rect x="14" y="88" width="92" height="5" rx="2.5" fill="#2ecc71"/><rect x="14" y="97" width="92" height="5" rx="2.5" fill="#2ecc71" opacity="0.35"/></svg>
+      <span style="font-family:var(--sans);font-size:1.6rem;font-weight:900;color:var(--ink);letter-spacing:-.5px;">Livr<span style="color:var(--g500);">eo</span></span>
+    </div>
+    <div style="font-size:.74rem;color:var(--muted);text-align:center;margin-bottom:16px;font-style:italic;">"Quelqu'un prend le train. Votre colis aussi."</div>
+    <div class="perm-title">Autorisations nécessaires</div>
+    <div class="perm-sub">Pour fonctionner correctement, Livreo a besoin des autorisations suivantes.</div>
+    <div class="perm-list">
+      <div class="pi"><div class="pi-icon">📷</div><div><div class="pi-name">Caméra</div><div class="pi-why">Scanner QR Codes · Photo de remise</div></div><div class="pi-state" id="ps-cam">—</div></div>
+      <div class="pi"><div class="pi-icon">🎤</div><div><div class="pi-name">Microphone</div><div class="pi-why">Messages vocaux livreur/expéditeur</div></div><div class="pi-state" id="ps-mic">—</div></div>
+      <div class="pi"><div class="pi-icon">📍</div><div><div class="pi-name">Localisation</div><div class="pi-why">Gare la plus proche · Suivi de trajet</div></div><div class="pi-state" id="ps-loc">—</div></div>
+      <div class="pi"><div class="pi-icon">🔔</div><div><div class="pi-name">Notifications</div><div class="pi-why">Alertes livraison · Confirmation paiement</div></div><div class="pi-state" id="ps-notif">—</div></div>
+    </div>
+    <button class="perm-btn" onclick="askPerms()">Autoriser et continuer →</button>
+  </div>
+</div>
+
+<!-- ════ SHEET ════ -->
+<div class="ov" id="ov" onclick="cov(event)">
+  <div class="sheet" id="sh-content"><div class="sh"></div></div>
+</div>
+
+<!-- ════ NAV ════ -->
+<nav>
+  <div class="logo" onclick="goNav('home')" style="display:flex;align-items:center;gap:7px;cursor:pointer;">
+    <svg width="32" height="32" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="120" height="120" rx="26" fill="#141c14"/><text x="60" y="82" text-anchor="middle" font-size="68" font-weight="900" fill="#2ecc71" font-family="Arial Black,Impact,sans-serif">L</text><rect x="14" y="88" width="92" height="5" rx="2.5" fill="#2ecc71"/><rect x="14" y="97" width="92" height="5" rx="2.5" fill="#2ecc71" opacity="0.35"/></svg>
+    <span style="font-family:var(--sans);font-size:1.2rem;font-weight:900;color:var(--ink);letter-spacing:-.5px;">Livr<span style="color:var(--g500);">eo</span></span>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+    <div id="nav-login" style="display:flex;gap:6px;">
+      <button class="btn s" style="padding:7px 14px;font-size:.76rem;" onclick="goNav('auth')">Connexion</button>
+    </div>
+    <div id="nav-av" style="display:none;width:36px;height:36px;border-radius:10px;background:var(--g500);color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;align-items:center;justify-content:center;" onclick="navDash()">K</div>
+    <div id="nav-post" style="display:none;">
+      <button class="btn p" style="padding:7px 14px;font-size:.76rem;" onclick="goPost()">+ Poster</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════ CONTENT ════ -->
+<div class="content" id="content">
+
+<!-- ── HOME ── -->
+<div class="screen on" id="s-home">
+
+  <!-- LANDING : non connecté -->
+  <div id="home-landing">
+    <div class="hero">
+      <div class="blob b1"></div><div class="blob b2"></div>
+      <div class="hero-badge"><div class="bdot"></div>Quelqu'un prend le train. Votre colis aussi.</div>
+      <h1>Envoyer,<br><em>sans se ruiner.</em></h1>
+      <p>Quelqu'un prend le train. Votre colis aussi.<br><span style="opacity:.7;">−45% vs La Poste · 0% commission</span></p>
+      <div class="hbtns">
+        <button class="hbtn g" onclick="goNav('explorer')">📦 Voir les colis</button>
+        <button class="hbtn o" onclick="goPost()">Envoyer →</button>
+      </div>
+      <div class="trust">
+        <div class="ti">🔒 Paiement <strong>sécurisé</strong></div>
+        <div class="ti">📸 Photo <strong>obligatoire</strong></div>
+        <div class="ti">🎉 <strong>Gratuit</strong> 1 an</div>
+      </div>
+    </div>
+    <div style="padding:0 0 12px;">
+      <div class="how-card">
+        <div class="s-lbl">Comment ça marche</div>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="si-icon">📦</div><div><div class="s-stitle">Postez votre colis</div><div class="s-stxt">Photo emballée publique, contenu privé. Gare A → Gare B.</div></div></div>
+          <div class="step"><div class="sn">2</div><div class="si-icon">🙋</div><div><div class="s-stitle">Un livreur accepte</div><div class="s-stxt">Un code unique (ex: LVR-452) est généré et envoyé automatiquement au destinataire par SMS.</div></div></div>
+          <div class="step"><div class="sn">3</div><div class="si-icon">📱</div><div><div class="s-stitle">Le destinataire génère son QR Code</div><div class="s-stxt">Il entre son code dans Suivi et affiche son QR Code personnel sur son téléphone.</div></div></div>
+          <div class="step"><div class="sn">4</div><div class="si-icon">📷</div><div><div class="s-stitle">Photo + Scan = Paiement libéré</div><div class="s-stxt">Le livreur photographie la remise en main propre PUIS scanne le QR Code. Paiement automatique.</div></div></div>
+        </div>
+      </div>
+      <div class="tarif-dark">
+        <div class="s-lbl" style="color:var(--g300);">Tarifs</div>
+        <div style="font-size:1.2rem;font-weight:900;letter-spacing:-.8px;color:#fff;">Jusqu'à <span style="font-family:var(--serif);font-style:italic;color:var(--g300);">−45%</span> vs La Poste</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-top:2px;">0% commission · Gratuit 1 an</div>
+        <div class="tg">
+          <div class="tc2"><div class="tico">✉️</div><div class="tname">Pochette S</div><div class="tdesc">≤500g</div><div class="tprice">3,50€</div><div class="tvs">~7€</div></div>
+          <div class="tc2"><div class="tico">📬</div><div class="tname">Pochette M</div><div class="tdesc">≤1kg</div><div class="tprice">5€</div><div class="tvs">~9€</div></div>
+          <div class="tc2 pop"><div class="tico">📦</div><div class="tname">Colis S ⭐</div><div class="tdesc">≤2kg</div><div class="tprice">7€</div><div class="tvs">~11€</div></div>
+          <div class="tc2"><div class="tico">🗃️</div><div class="tname">Colis M</div><div class="tdesc">2–5kg</div><div class="tprice">11€</div><div class="tvs">~15€</div></div>
+        </div>
+      </div>
+      <div style="background:var(--white);border-radius:var(--rl);padding:18px;border:1.5px solid var(--border);text-align:center;">
+        <div style="font-size:.82rem;font-weight:800;margin-bottom:4px;">Rejoignez Livreo gratuitement</div>
+        <div style="font-size:.74rem;color:var(--muted);font-style:italic;margin-bottom:4px;">"Quelqu'un prend le train. Votre colis aussi."</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:12px;">Expéditeur ou livreur, tout le monde peut participer.</div>
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button class="btn p" onclick="goNav('auth')">Créer un compte</button>
+          <button class="btn s" onclick="goNav('auth')">Se connecter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD : connecté -->
+  <div id="home-dash" style="display:none;">
+    <div style="margin-bottom:16px;">
+      <div class="s-lbl">Mon espace</div>
+      <div class="s-h" id="dash-h">Bonjour <em>Kevin</em> 👋</div>
+    </div>
+
+    <!-- LIEN ADMIN (visible seulement si rôle admin) -->
+    <a id="admin-link" class="admin-banner" href="/admin/" style="display:none;">
+      <div style="font-size:1.4rem;">⚙️</div>
+      <div>
+        <div style="font-size:.82rem;font-weight:800;color:#fff;">Administration Livreo</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.5);margin-top:2px;">Tableau de bord administrateur →</div>
+      </div>
+    </a>
+
+    <!-- ACTIONS RAPIDES -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:var(--g500);border-radius:var(--rl);padding:16px;cursor:pointer;transition:.18s;" onclick="goPost()">
+        <div style="font-size:1.6rem;margin-bottom:6px;">📦</div>
+        <div style="font-size:.82rem;font-weight:800;color:#fff;">Poster un colis</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.6);margin-top:1px;">Envoyer quelque chose</div>
+      </div>
+      <div style="background:var(--ink);border-radius:var(--rl);padding:16px;cursor:pointer;transition:.18s;" onclick="goNav('explorer')">
+        <div style="font-size:1.6rem;margin-bottom:6px;">🔍</div>
+        <div style="font-size:.82rem;font-weight:800;color:#fff;">Explorer les colis</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.5);margin-top:1px;">Gagner de l'argent</div>
+      </div>
+    </div>
+
+    <!-- PORTEFEUILLE -->
+    <div style="background:linear-gradient(135deg,var(--ink2),var(--ink));border-radius:var(--rl);padding:18px;margin-bottom:12px;position:relative;overflow:hidden;">
+      <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(34,168,87,.12);"></div>
+      <div style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--g200);margin-bottom:6px;">Mon portefeuille</div>
+      <div style="font-size:2.2rem;font-weight:900;letter-spacing:-1.5px;color:#fff;position:relative;" id="wallet-amount">0,00€</div>
+      <div style="font-size:.68rem;color:rgba(255,255,255,.4);margin-top:3px;" id="wallet-pending">Chargement...</div>
+      <button onclick="t('Retrait initié 💸','s')" style="margin-top:14px;padding:8px 18px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:50px;font-family:var(--sans);font-size:.74rem;font-weight:700;cursor:pointer;">Retirer des fonds →</button>
+    </div>
+
+    <!-- LIVRAISONS EN COURS -->
+    <div style="font-size:.74rem;font-weight:800;color:var(--ink);margin-bottom:8px;">🚆 Mes livraisons en cours</div>
+    <div class="livr-item" onclick="openLivrFlow('LVR-48291','Paris GDL → Lyon PDieu','TGV INOUI 6605','Marie Dupont','18')">
+      <div class="li-icon">📦</div>
+      <div style="flex:1;">
+        <div class="li-ref">LVR-48291</div>
+        <div class="li-detail">Paris GDL → Lyon PDieu · TGV INOUI 6605</div>
+        <div style="margin-top:3px;"><span class="prt">🚆 En transit</span></div>
+      </div>
+      <div class="li-price">+18€</div>
+      <div class="li-arrow">›</div>
+    </div>
+    <div class="livr-item" onclick="openLivrFlow('LVR-47850','Paris Nord → Lille Europe','TGV INOUI 7112','Sophie B.','7')">
+      <div class="li-icon">🎁</div>
+      <div style="flex:1;">
+        <div class="li-ref">LVR-47850</div>
+        <div class="li-detail">Paris Nord → Lille Europe · TGV 7112</div>
+        <div style="margin-top:3px;"><span class="pwt">⏳ En attente départ</span></div>
+      </div>
+      <div class="li-price">+7€</div>
+      <div class="li-arrow">›</div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="krow" style="margin-top:12px;">
+      <div class="kpi"><div class="kl">Colis envoyés</div><div class="kv g">14</div><div class="kt">↑ 3 ce mois</div></div>
+      <div class="kpi"><div class="kl">Livraisons</div><div class="kv g">38</div><div class="kt">↑ 8 ce mois</div></div>
+      <div class="kpi"><div class="kl">Gains totaux</div><div class="kv g">312€</div></div>
+      <div class="kpi"><div class="kl">Ma note</div><div class="kv">4.9⭐</div></div>
+    </div>
+
+    <!-- ACTIVITÉ RÉCENTE -->
+    <div class="tc-table">
+      <div class="tc-top"><h3>Activité récente</h3><button style="font-size:.7rem;color:var(--g500);background:none;border:none;cursor:pointer;font-weight:700;">Tout voir →</button></div>
+      <table><thead><tr><th>Réf.</th><th>Rôle</th><th>Trajet</th><th>€</th><th>Statut</th></tr></thead>
+      <tbody>
+        <tr><td><strong>LVR-7821</strong></td><td>Livreur</td><td>Paris→Lyon</td><td style="color:var(--g500);font-weight:800;">+18€</td><td><span class="pok">✓ Livré</span></td></tr>
+        <tr><td><strong>LVR-7809</strong></td><td>Expéditeur</td><td>Paris→Lille</td><td>-7€</td><td><span class="prt">🚆 Route</span></td></tr>
+        <tr><td><strong>LVR-7795</strong></td><td>Livreur</td><td>Paris→Bordeaux</td><td style="color:var(--g500);font-weight:800;">+24€</td><td><span class="pok">✓ Livré</span></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── EXPLORER ── -->
+<div class="screen" id="s-explorer">
+  <div class="s-lbl">Marketplace</div>
+  <div class="s-h">Colis à <em>transporter</em></div>
+  <div class="s-sub" style="margin-bottom:10px;">Acceptez un colis sur votre trajet et gagnez de l'argent.</div>
+  <div class="frow-filter">
+    <button class="ftag on" onclick="flt('all',this)">Tous</button>
+    <button class="ftag" onclick="flt('lyon',this)">→ Lyon</button>
+    <button class="ftag" onclick="flt('bordeaux',this)">→ Bordeaux</button>
+    <button class="ftag" onclick="flt('lille',this)">→ Lille</button>
+    <button class="ftag" onclick="flt('caen',this)">→ Caen</button>
+    <button class="ftag" onclick="flt('rennes',this)">→ Rennes</button>
+    <button class="ftag" onclick="flt('tours',this)">→ Tours</button>
+    <button class="ftag" onclick="flt('nantes',this)">→ Nantes</button>
+    <button class="ftag" onclick="flt('marseille',this)">→ Marseille</button>
+  </div>
+  <div class="cgrid" id="cgrid"></div>
+</div>
+
+<!-- ── POSTER ── -->
+<div class="screen" id="s-poster">
+  <div class="s-lbl">Nouvelle annonce</div>
+  <div class="s-h">Poster <em>un colis</em></div>
+  <div class="s-sub">Seule la photo emballée est publique.</div>
+  <div id="poster-form">
+    <div class="fcard">
+      <div class="fc-lbl">📷 Photos</div>
+      <div class="field">
+        <label>Photo colis emballé <span style="color:var(--g500)">*</span></label>
+        <div class="upz" onclick="fakeUp('em')"><div class="upz-icon">📷</div><div class="upz-txt">Photo emballée (publique)</div><div class="upz-sub">Visible par tous</div></div>
+        <div class="prev-row" id="prev-em"></div>
+        <div class="fhint">🔒 Seule photo visible avant acceptation.</div>
+      </div>
+      <div class="field">
+        <label>Photos du contenu (privé) <span style="color:var(--g500)">*</span></label>
+        <div class="upz" onclick="fakeUp('co')"><div class="upz-icon">🔒</div><div class="upz-txt">Photos contenu (privées)</div><div class="upz-sub">Visibles par le livreur après acceptation</div></div>
+        <div class="prev-row" id="prev-co"></div>
+      </div>
+    </div>
+    <div class="fcard">
+      <div class="fc-lbl">🚉 Trajet gare à gare</div>
+      <div class="f2">
+        <div class="field"><label>Gare de départ</label>
+          <select id="pf-dep">
+            <option value="">Choisir une gare...</option>
+            <optgroup label="Île-de-France"><option>Paris Gare de Lyon</option><option>Paris Montparnasse</option><option>Paris Nord</option><option>Paris Est</option><option>Paris Saint-Lazare</option><option>Versailles Chantiers</option><option>Massy TGV</option></optgroup>
+            <optgroup label="Nord"><option>Lille-Flandres</option><option>Lille-Europe</option><option>Arras</option><option>Amiens</option><option>Lens</option><option>Douai</option><option>Calais-Ville</option><option>Dunkerque</option><option>Valenciennes</option></optgroup>
+            <optgroup label="Normandie / Calvados"><option>Caen</option><option>Rouen-Rive-Droite</option><option>Le Havre</option><option>Lisieux</option><option>Bayeux</option><option>Cherbourg</option><option>Saint-Lô</option><option>Évreux</option><option>Alençon</option></optgroup>
+            <optgroup label="Bretagne / Pays de Loire"><option>Rennes</option><option>Nantes</option><option>Brest</option><option>Quimper</option><option>Saint-Malo</option><option>Vannes</option><option>Lorient</option><option>Le Mans</option><option>Angers</option><option>Saint-Nazaire</option><option>Laval</option></optgroup>
+            <optgroup label="Centre / Val de Loire"><option>Tours</option><option>Orléans</option><option>Blois</option><option>Bourges</option><option>Chartres</option><option>Vendôme TGV</option></optgroup>
+            <optgroup label="Est"><option>Strasbourg</option><option>Metz</option><option>Nancy</option><option>Reims</option><option>Mulhouse</option><option>Colmar</option><option>Troyes</option><option>Châlons-en-Champagne</option></optgroup>
+            <optgroup label="Bourgogne / Franche-Comté"><option>Dijon</option><option>Besançon Viotte</option><option>Belfort</option><option>Auxerre</option><option>Nevers</option><option>Mâcon</option></optgroup>
+            <optgroup label="Auvergne-Rhône-Alpes"><option>Lyon Part-Dieu</option><option>Lyon Perrache</option><option>Grenoble</option><option>Clermont-Ferrand</option><option>Saint-Étienne</option><option>Chambéry</option><option>Annecy</option><option>Bourg-en-Bresse</option><option>Valence TGV</option></optgroup>
+            <optgroup label="Occitanie"><option>Toulouse Matabiau</option><option>Montpellier Saint-Roch</option><option>Nîmes</option><option>Perpignan</option><option>Carcassonne</option><option>Béziers</option><option>Albi</option><option>Tarbes</option></optgroup>
+            <optgroup label="Nouvelle-Aquitaine"><option>Bordeaux Saint-Jean</option><option>Poitiers</option><option>La Rochelle</option><option>Limoges</option><option>Bayonne</option><option>Pau</option><option>Angoulême</option><option>Périgueux</option><option>Saintes</option></optgroup>
+            <optgroup label="PACA"><option>Marseille Saint-Charles</option><option>Nice</option><option>Toulon</option><option>Avignon TGV</option><option>Aix-en-Provence TGV</option><option>Cannes</option><option>Antibes</option><option>Arles</option></optgroup>
+          </select>
+        </div>
+        <div class="field"><label>Gare d'arrivée</label>
+          <select id="pf-arr">
+            <option value="">Choisir une gare...</option>
+            <optgroup label="Île-de-France"><option>Paris Gare de Lyon</option><option>Paris Montparnasse</option><option>Paris Nord</option><option>Paris Est</option><option>Paris Saint-Lazare</option><option>Versailles Chantiers</option><option>Massy TGV</option></optgroup>
+            <optgroup label="Nord"><option>Lille-Flandres</option><option>Lille-Europe</option><option>Arras</option><option>Amiens</option><option>Lens</option><option>Douai</option><option>Calais-Ville</option><option>Dunkerque</option><option>Valenciennes</option></optgroup>
+            <optgroup label="Normandie / Calvados"><option>Caen</option><option>Rouen-Rive-Droite</option><option>Le Havre</option><option>Lisieux</option><option>Bayeux</option><option>Cherbourg</option><option>Saint-Lô</option><option>Évreux</option><option>Alençon</option></optgroup>
+            <optgroup label="Bretagne / Pays de Loire"><option>Rennes</option><option>Nantes</option><option>Brest</option><option>Quimper</option><option>Saint-Malo</option><option>Vannes</option><option>Lorient</option><option>Le Mans</option><option>Angers</option><option>Saint-Nazaire</option><option>Laval</option></optgroup>
+            <optgroup label="Centre / Val de Loire"><option>Tours</option><option>Orléans</option><option>Blois</option><option>Bourges</option><option>Chartres</option><option>Vendôme TGV</option></optgroup>
+            <optgroup label="Est"><option>Strasbourg</option><option>Metz</option><option>Nancy</option><option>Reims</option><option>Mulhouse</option><option>Colmar</option><option>Troyes</option><option>Châlons-en-Champagne</option></optgroup>
+            <optgroup label="Bourgogne / Franche-Comté"><option>Dijon</option><option>Besançon Viotte</option><option>Belfort</option><option>Auxerre</option><option>Nevers</option><option>Mâcon</option></optgroup>
+            <optgroup label="Auvergne-Rhône-Alpes"><option>Lyon Part-Dieu</option><option>Lyon Perrache</option><option>Grenoble</option><option>Clermont-Ferrand</option><option>Saint-Étienne</option><option>Chambéry</option><option>Annecy</option><option>Bourg-en-Bresse</option><option>Valence TGV</option></optgroup>
+            <optgroup label="Occitanie"><option>Toulouse Matabiau</option><option>Montpellier Saint-Roch</option><option>Nîmes</option><option>Perpignan</option><option>Carcassonne</option><option>Béziers</option><option>Albi</option><option>Tarbes</option></optgroup>
+            <optgroup label="Nouvelle-Aquitaine"><option>Bordeaux Saint-Jean</option><option>Poitiers</option><option>La Rochelle</option><option>Limoges</option><option>Bayonne</option><option>Pau</option><option>Angoulême</option><option>Périgueux</option><option>Saintes</option></optgroup>
+            <optgroup label="PACA"><option>Marseille Saint-Charles</option><option>Nice</option><option>Toulon</option><option>Avignon TGV</option><option>Aix-en-Provence TGV</option><option>Cannes</option><option>Antibes</option><option>Arles</option></optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Titre de l'annonce</label><input type="text" id="pf-title" placeholder="Ex: Livres scolaires, vêtements..."></div>
+      <div class="field"><label>Description du contenu (privée)</label><textarea id="pf-desc" placeholder="Visible uniquement par le livreur..."></textarea></div>
+      <div class="f2">
+        <div class="field">
+          <label>Poids du colis</label>
+          <select id="pf-poids" onchange="calcP()">
+            <option value="">Choisir...</option>
+            <option value="0.1">Moins de 250g</option>
+            <option value="0.25">250g à 500g</option>
+            <option value="0.75">500g à 1kg</option>
+            <option value="1.5">1kg à 2kg</option>
+            <option value="3">2kg à 4kg</option>
+            <option value="4.5">4kg à 5kg</option>
+            <option value="7">5kg à 10kg</option>
+            <option value="15">10kg à 20kg</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Taille du colis</label>
+          <select id="pf-taille" onchange="calcP()">
+            <option value="">Choisir...</option>
+            <option value="xs">Lettre épaisse / Documents</option>
+            <option value="s">Pochette (vêtement plat, livre...)</option>
+            <option value="m">Petit colis (chaussures, jouet...)</option>
+            <option value="l">Colis moyen (vêtements, petit électro...)</option>
+            <option value="xl">Grand colis (bagage, équipement...)</option>
+          </select>
+        </div>
+      </div>
+      <div id="fmt-result" style="display:none;background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:.8rem;">
+        <strong id="fmt-label">Colis S</strong> — <span id="fmt-desc" style="color:var(--muted);">calculé selon poids et taille</span>
+      </div>
+      <input type="hidden" id="pf-fmt" value="Colis S">
+      <div class="field"><label>Date souhaitée</label><input type="date" id="pf-date"></div>
+    </div>
+    <div class="fcard">
+      <div class="fc-lbl">📞 Destinataire</div>
+      <div class="f2">
+        <div class="field"><label>Nom</label><input type="text" id="pf-rname" placeholder="Prénom Nom"></div>
+        <div class="field"><label>Téléphone</label><input type="tel" id="pf-rphone" placeholder="06 xx xx xx xx"></div>
+      </div>
+      <div class="fhint">🔒 Ces informations sont strictement confidentielles. Le destinataire recevra automatiquement son code de suivi unique par SMS dès qu'un livreur accepte.</div>
+    </div>
+    <div id="prix-slider-wrap" style="display:none;background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:18px;margin-bottom:10px;">
+      <div class="fc-lbl">💰 Votre offre au livreur</div>
+      <div id="speed-indicator" style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px 12px;border-radius:var(--r);background:var(--cream);">
+        <div id="speed-icon" style="font-size:1.2rem;">⚡</div>
+        <div>
+          <div id="speed-title" style="font-size:.8rem;font-weight:800;">Offre compétitive</div>
+          <div id="speed-sub" style="font-size:.7rem;color:var(--muted);">Un livreur acceptera probablement dans la journée</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-bottom:12px;">
+        <div style="font-size:2.8rem;font-weight:900;letter-spacing:-2px;color:var(--g500);" id="pf-price">7,00€</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">Prix suggéré · 0% commission · Gratuit</div>
+      </div>
+      <input type="range" id="prix-range" min="5" max="18" value="7" step="0.5" oninput="updateSlider(this.value)" style="width:100%;accent-color:var(--g500);height:6px;cursor:pointer;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-bottom:14px;">
+        <span id="prix-min-lbl">Min : 5€</span>
+        <span style="color:var(--g500);font-weight:700;">Recommandé : <span id="prix-suggest-lbl">7€</span></span>
+        <span id="prix-max-lbl">Max : 18€</span>
+      </div>
+      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:var(--r);padding:10px 12px;font-size:.72rem;color:var(--g700);line-height:1.6;">
+        💡 <strong>Astuce :</strong> Plus votre offre est élevée, plus vite un livreur acceptera.
+      </div>
+    </div>
+    <button class="btn p full lg" onclick="publishColis()">🚀 Publier l'annonce</button>
+  </div>
+  <div id="poster-suc" style="display:none;">
+    <div class="suc-wrap">
+      <div class="suc-circle">🚀</div>
+      <div class="suc-title">Colis publié !</div>
+      <div class="suc-sub">Dès qu'un livreur accepte, le destinataire recevra automatiquement son code de suivi par SMS.</div>
+      <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:14px;margin-bottom:18px;text-align:left;">
+        <div style="font-size:.64rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Votre référence</div>
+        <div style="font-family:var(--serif);font-style:italic;font-size:1.4rem;color:var(--ink);" id="suc-ref">LVR-452</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:2px;">Le destinataire entrera ce code dans Suivi pour afficher son QR Code</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+        <button class="btn p" onclick="goNav('suivi')">Suivre mon colis →</button>
+        <button class="btn s" onclick="resetPoster()">Nouveau colis</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SUIVI ── -->
+<div class="screen" id="s-suivi">
+  <div class="s-lbl">Suivi</div>
+  <div class="s-h">Suivre <em>mon colis</em></div>
+  <div class="s-sub">Expéditeur ou destinataire : entrez le code reçu par SMS.</div>
+  <div class="srch-bar">
+    <input type="text" id="sv-input" placeholder="Ex: LVR-452" value="LVR-48291">
+    <button onclick="loadSuivi()">Suivre →</button>
+  </div>
+  <!-- VUE EXPÉDITEUR -->
+  <div id="sv-exp" style="display:none;">
+    <div class="tcard">
+      <div class="thead">
+        <div><div class="tref" id="sv-ref">LVR-48291</div><div class="troute">Paris GDL → Lyon Part-Dieu · Colis S · 1,8kg</div></div>
+        <div class="tpill pill-tr" id="sv-pill">🚆 Transit</div>
+      </div>
+      <div class="train-row">
+        <div class="tr-icon">🚄</div>
+        <div><div class="tr-num">TGV INOUI 6605</div><div class="tr-st">Paris GDL → Lyon PDieu · <span style="color:var(--g500);font-weight:700;">À l'heure ✓</span></div></div>
+        <div class="tr-eta"><div class="eta-t">11h05</div><div class="eta-l">Arrivée prévue</div></div>
+      </div>
+      <div class="livr-row">
+        <div class="lav">K</div>
+        <div><div class="lname">Kevin A.</div><div class="lnote">⭐ 4,9 · 38 livraisons</div></div>
+        <button class="lmsg" onclick="t('Message envoyé 📱','s')">📱 Contacter</button>
+      </div>
+      <div class="tl-wrap">
+        <div class="timeline" id="sv-tl">
+          <div class="tli"><div class="tld done"></div><div class="tl-time">08:30</div><div class="tl-txt">📦 Colis collecté — Paris Gare de Lyon</div></div>
+          <div class="tli"><div class="tld done"></div><div class="tl-time">09:04</div><div class="tl-txt">🚄 Départ TGV 6605 — Paris GDL</div><div class="tl-sub">Aucun retard</div></div>
+          <div class="tli"><div class="tld active"></div><div class="tl-time">En cours</div><div class="tl-txt">📍 En route vers Lyon Part-Dieu</div></div>
+          <div class="tli" id="tl-a"><div class="tld"></div><div class="tl-time">~11h30</div><div class="tl-txt faded">🏠 Livraison à domicile</div></div>
+          <div class="tli" id="tl-b"><div class="tld"></div><div class="tl-time">—</div><div class="tl-txt faded">✅ QR scanné — Livraison confirmée</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--white);border-radius:var(--r);border:1.5px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:9px;margin-bottom:12px;">
+      <div style="font-size:1.1rem;">📬</div>
+      <div><div style="font-size:.78rem;font-weight:800;">Destinataire notifié</div><div style="font-size:.66rem;color:var(--muted);margin-top:1px;">Le code LVR-48291 a été envoyé par SMS. QR Code généré automatiquement.</div></div>
+      <div style="margin-left:auto;"><span class="pok" style="font-size:.6rem;">✓ Envoyé</span></div>
+    </div>
+    <button class="btn s full" style="font-size:.74rem;" onclick="switchToDestView()">🔄 Démo : voir vue destinataire →</button>
+  </div>
+  <!-- VUE DESTINATAIRE -->
+  <div id="sv-dest" style="display:none;">
+    <div class="tcard" style="margin-bottom:10px;">
+      <div class="thead">
+        <div><div class="tref">LVR-48291</div><div class="troute">Paris → Lyon · Expédié par Jean M.</div></div>
+        <div class="tpill pill-tr">🚆 Transit</div>
+      </div>
+      <div class="train-row">
+        <div class="tr-icon">🚄</div>
+        <div><div class="tr-num">TGV INOUI 6605</div><div class="tr-st"><span style="color:var(--g500);font-weight:700;">À l'heure</span> · Arrivée 11h05</div></div>
+        <div class="tr-eta"><div class="eta-t">~11h30</div><div class="eta-l">Livraison prévue</div></div>
+      </div>
+    </div>
+    <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:9px;">
+      <div style="font-size:1.1rem;">🔔</div>
+      <div>
+        <div style="font-size:.78rem;font-weight:800;color:var(--g600);">Votre colis arrive aujourd'hui</div>
+        <div style="font-size:.66rem;color:var(--muted);margin-top:1px;line-height:1.5;">Marie Dupont · Livraison prévue avant 12h · Paris → Lyon Part-Dieu</div>
+      </div>
+    </div>
+    <div class="qr-card" id="qr-main">
+      <div class="qr-head">
+        <div class="qr-ht">Votre QR Code de réception</div>
+        <div class="qr-hs">À présenter au livreur · Ne partagez pas ce code</div>
+      </div>
+      <div class="qr-body">
+        <div class="qr-ref">LVR-48291</div>
+        <div class="qr-rt">Paris → Lyon · Marie Dupont</div>
+        <div class="qr-box qr-box-b" id="qr-wrap" style="position:relative;">
+          <div id="qr-canvas"></div>
+        </div>
+        <div class="warn-box">
+          <div class="wb-icon">⚠️</div>
+          <div>
+            <div class="wb-title">Vérifiez votre colis avant de faire scanner</div>
+            <div class="wb-txt">Inspectez l'emballage et le contenu <strong>avant</strong> de montrer ce QR Code. Une fois scanné, la livraison est confirmée et le paiement libéré.</div>
+          </div>
+        </div>
+        <div class="qr-acts">
+          <button class="qa" onclick="t('QR Code sauvegardé 📥','s')">📥 Sauvegarder</button>
+          <button class="qa" onclick="t('Envoyé par SMS 📱','s')">📱 SMS</button>
+          <button class="qa g" onclick="t('Envoyé par email ✅','s')">📧 Email</button>
+        </div>
+      </div>
+    </div>
+    <div id="dest-suc" style="display:none;">
+      <div class="suc-wrap">
+        <div class="suc-circle">✅</div>
+        <div class="suc-title">Colis reçu !</div>
+        <div class="suc-sub">QR Code scanné par Kevin A. Le paiement a été déclenché automatiquement.</div>
+        <div class="dm">
+          <div class="dm-row"><span>Référence</span><span>LVR-48291</span></div>
+          <div class="dm-row"><span>Livré par</span><span>Kevin A. ⭐ 4,9</span></div>
+          <div class="dm-row"><span>Heure</span><span>07/05 · 11h47</span></div>
+          <div class="dm-row"><span>Statut</span><span style="color:var(--g500);">✅ Confirmé</span></div>
+        </div>
+        <div class="rb">
+          <div class="rb-title">Notez votre livreur — Kevin A.</div>
+          <div class="stars" id="st-livr"><span class="star" onclick="rate('livr',1)">⭐</span><span class="star" onclick="rate('livr',2)">⭐</span><span class="star" onclick="rate('livr',3)">⭐</span><span class="star on" onclick="rate('livr',4)">⭐</span><span class="star on" onclick="rate('livr',5)">⭐</span></div>
+          <div class="rtags"><div class="rtag on" onclick="tt(this)">Ponctuel</div><div class="rtag on" onclick="tt(this)">Colis intact</div><div class="rtag" onclick="tt(this)">Souriant</div><div class="rtag" onclick="tt(this)">Recommandé</div></div>
+        </div>
+        <div class="rb">
+          <div class="rb-title">Notez l'application Livreo</div>
+          <div class="stars" id="st-app"><span class="star" onclick="rate('app',1)">⭐</span><span class="star" onclick="rate('app',2)">⭐</span><span class="star on" onclick="rate('app',3)">⭐</span><span class="star on" onclick="rate('app',4)">⭐</span><span class="star on" onclick="rate('app',5)">⭐</span></div>
+          <div class="rtags"><div class="rtag on" onclick="tt(this)">Simple</div><div class="rtag on" onclick="tt(this)">Prix compétitif</div><div class="rtag" onclick="tt(this)">Je recommande</div></div>
+          <textarea class="rcmt" placeholder="Un commentaire ? (optionnel)" style="margin-top:8px;"></textarea>
+        </div>
+        <button class="btn p full lg" onclick="t('🙏 Merci pour votre avis !','s')">Envoyer mes avis →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MOI / DASHBOARD ── -->
+<div class="screen" id="s-dashboard">
+
+  <!-- PROFIL BANNER -->
+  <div style="background:linear-gradient(135deg,var(--ink2),var(--ink));border-radius:var(--rl);padding:18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
+    <div style="position:relative;flex-shrink:0;" onclick="changerPhoto()">
+      <div id="moi-av" style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--g300),var(--g500));display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:#fff;border:2px solid rgba(255,255,255,.15);overflow:hidden;cursor:pointer;">
+        <img id="moi-av-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
+        <span id="moi-av-txt">K</span>
+      </div>
+      <div style="position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;background:var(--g400);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;border:2px solid var(--ink);cursor:pointer;">📷</div>
+    </div>
+    <input type="file" id="photo-input" accept="image/*" style="display:none;" onchange="previewPhoto(this)">
+    <div style="flex:1;">
+      <div id="moi-name" style="font-size:1rem;font-weight:900;color:#fff;letter-spacing:-.3px;">Kevin Martin</div>
+      <div id="moi-email" style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:1px;">kevin@email.com</div>
+      <div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;">
+        <span id="badge-verif" style="background:rgba(34,168,87,.2);border:1px solid rgba(34,168,87,.3);color:var(--g200);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;">✅ Vérifié</span>
+        <span style="background:rgba(34,168,87,.2);border:1px solid rgba(34,168,87,.3);color:var(--g200);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;" id="badge-livr">⭐ 4,9 · 38 livraisons</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFOS PERSONNELLES -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">👤 Informations personnelles</div>
+    <div class="f2">
+      <div class="field"><label>Prénom</label><input type="text" id="m-pn" value="Kevin"></div>
+      <div class="field"><label>Nom <span style="color:var(--muted2);font-size:.6rem;font-weight:400;">(non modifiable sans justificatif)</span></label><input type="text" id="m-nm" value="Martin" readonly style="color:var(--muted);background:var(--cream2);"></div>
+    </div>
+    <div class="field"><label>Email</label><input type="email" id="m-em" value="kevin@email.com"></div>
+    <div class="field"><label>Téléphone</label><input type="tel" id="m-ph" value="06 12 34 56 78"></div>
+    <div class="field"><label>Date de naissance</label><input type="date" id="m-dn"></div>
+    <div class="field"><label>Adresse</label><input type="text" id="m-adr" placeholder="12 rue de la Paix"></div>
+    <div class="f2">
+      <div class="field"><label>Code postal</label><input type="text" id="m-cp" placeholder="75014" maxlength="5"></div>
+      <div class="field"><label>Ville</label><input type="text" id="m-vil" placeholder="Paris"></div>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:10px 12px;font-size:.72rem;color:#92400e;margin-bottom:10px;line-height:1.6;">
+      ⚠️ <strong>Modification du nom :</strong> Envoyez un justificatif à <strong>verification@livreo.fr</strong>. Votre nom sera mis à jour sous 48h.
+    </div>
+    <button class="btn p" onclick="saveProfil()" style="margin-top:4px;">Sauvegarder</button>
+  </div>
+
+  <!-- VÉRIFICATION D'IDENTITÉ -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">🛡️ Vérification d'identité</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--g50);border-radius:var(--r);border:1px solid var(--g100);">
+        <div style="font-size:1.2rem;">✅</div>
+        <div style="flex:1;"><div style="font-size:.82rem;font-weight:800;color:var(--g600);">Email vérifié</div><div style="font-size:.7rem;color:var(--muted);">Niveau 1 · Complété</div></div>
+        <span style="background:var(--g100);color:var(--g600);font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:50px;">✓ Actif</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--g50);border-radius:var(--r);border:1px solid var(--g100);">
+        <div style="font-size:1.2rem;">✅</div>
+        <div style="flex:1;"><div style="font-size:.82rem;font-weight:800;color:var(--g600);">Téléphone vérifié</div><div style="font-size:.7rem;color:var(--muted);">Niveau 2 · Complété</div></div>
+        <span style="background:var(--g100);color:var(--g600);font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:50px;">✓ Actif</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--cream);border-radius:var(--r);border:1.5px dashed var(--border);" id="verif-id-block">
+        <div style="font-size:1.2rem;">🪪</div>
+        <div style="flex:1;"><div style="font-size:.82rem;font-weight:800;">Identité vérifiée</div><div style="font-size:.7rem;color:var(--muted);">Niveau 3 · Obligatoire pour livrer</div></div>
+        <button class="btn p" style="padding:5px 12px;font-size:.7rem;" onclick="ouvrirVerifIdentite()">Vérifier →</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--cream);border-radius:var(--r);border:1.5px dashed var(--border);">
+        <div style="font-size:1.2rem;">🏠</div>
+        <div style="flex:1;"><div style="font-size:.82rem;font-weight:800;">Justificatif de domicile</div><div style="font-size:.7rem;color:var(--muted);">Requis pour modifier le nom</div></div>
+        <button class="btn s" style="padding:5px 12px;font-size:.7rem;" onclick="t('Envoyez votre justificatif à verification@livreo.fr 📧','')">Envoyer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOT DE PASSE -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">🔒 Mot de passe</div>
+    <div class="field"><label>Mot de passe actuel</label><input type="password" id="pw-old" placeholder="••••••••"></div>
+    <div class="field"><label>Nouveau mot de passe</label><input type="password" id="pw-new" placeholder="8 caractères minimum"></div>
+    <div class="field"><label>Confirmer le nouveau mot de passe</label><input type="password" id="pw-conf" placeholder="••••••••"></div>
+    <button class="btn p" onclick="changePw()" style="margin-top:4px;">Changer le mot de passe</button>
+  </div>
+
+  <!-- PAIEMENT -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">💳 Moyens de paiement</div>
+    <div class="field"><label>Numéro de carte bancaire</label><input type="text" placeholder="4242 4242 4242 4242" oninput="fmtCard(this)" maxlength="19"></div>
+    <div class="f2">
+      <div class="field"><label>Expiration</label><input type="text" placeholder="MM/AA" maxlength="5"></div>
+      <div class="field"><label>CVV</label><input type="text" placeholder="•••" maxlength="3"></div>
+    </div>
+    <div class="field"><label>IBAN (recevoir vos gains)</label><input type="text" placeholder="FR76 3000 6000 01..."></div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:.66rem;color:var(--muted2);margin-top:4px;margin-bottom:12px;">🔒 Sécurisé par Stripe · SSL 256 bits</div>
+    <button class="btn p" onclick="t('Paiement mis à jour ✅','s')">Sauvegarder</button>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">🔔 Notifications</div>
+    <div style="display:flex;flex-direction:column;gap:0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div><div style="font-size:.82rem;font-weight:700;">Livraison acceptée</div><div style="font-size:.68rem;color:var(--muted);margin-top:1px;">Quand un livreur prend votre colis</div></div>
+        <div class="tog on" id="tog1" onclick="toggle('tog1')"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div><div style="font-size:.82rem;font-weight:700;">Colis livré</div><div style="font-size:.68rem;color:var(--muted);margin-top:1px;">Confirmation de réception</div></div>
+        <div class="tog on" id="tog2" onclick="toggle('tog2')"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div><div style="font-size:.82rem;font-weight:700;">Paiement reçu</div><div style="font-size:.68rem;color:var(--muted);margin-top:1px;">Crédit sur votre portefeuille</div></div>
+        <div class="tog on" id="tog3" onclick="toggle('tog3')"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+        <div><div style="font-size:.82rem;font-weight:700;">Notifications SMS</div><div style="font-size:.68rem;color:var(--muted);margin-top:1px;">Recevoir les alertes par SMS</div></div>
+        <div class="tog on" id="tog4" onclick="toggle('tog4')"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARAMÈTRES -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">⚙️ Paramètres du compte</div>
+    <div style="display:flex;flex-direction:column;gap:2px;">
+      <div class="param-row" onclick="t('CGU ouvertes','')"><div><div style="font-size:.82rem;font-weight:700;">Conditions générales d'utilisation</div></div><span>›</span></div>
+      <div class="param-row" onclick="t('Politique de confidentialité ouverte','')"><div><div style="font-size:.82rem;font-weight:700;">Politique de confidentialité</div></div><span>›</span></div>
+      <div class="param-row" onclick="t('Aide ouverte','')"><div><div style="font-size:.82rem;font-weight:700;">Centre d'aide</div></div><span>›</span></div>
+      <div class="param-row" onclick="t('Rapport envoyé ✅','s')"><div><div style="font-size:.82rem;font-weight:700;">Signaler un problème</div></div><span>›</span></div>
+      <div class="param-row" onclick="t('Version 1.0.0 · Livreo','')"><div><div style="font-size:.82rem;font-weight:700;">Version de l'application</div><div style="font-size:.68rem;color:var(--muted);">1.0.0</div></div><span>›</span></div>
+    </div>
+  </div>
+
+  <!-- DÉCONNEXION -->
+  <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:8px;">
+    <button class="btn full" style="background:#fee2e2;color:var(--danger);font-size:.84rem;" onclick="doLogout()">Se déconnecter</button>
+    <button class="btn full" style="background:transparent;color:var(--muted);font-size:.76rem;border:1.5px solid var(--border);" onclick="t('Contactez support@livreo.fr pour supprimer votre compte','')">Supprimer mon compte</button>
+  </div>
+
+</div>
+
+<!-- ── AUTH ── -->
+<div class="screen" id="s-auth">
+  <div class="auth-wrap">
+    <div class="acard">
+      <div style="text-align:center;margin-bottom:12px;">
+        <svg width="64" height="64" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto;display:block;">
+          <defs>
+            <linearGradient id="ab" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0e1a10"/><stop offset="100%" style="stop-color:#1e3322"/></linearGradient>
+            <linearGradient id="ag" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#3dcf72"/><stop offset="100%" style="stop-color:#1a8044"/></linearGradient>
+          </defs>
+          <circle cx="200" cy="200" r="190" fill="url(#ab)"/>
+          <g transform="translate(90,148)">
+            <rect x="0" y="22" width="170" height="55" rx="11" fill="url(#ag)"/>
+            <ellipse cx="170" cy="49" rx="22" ry="27" fill="url(#ag)"/>
+            <rect x="18" y="30" width="30" height="22" rx="5" fill="rgba(255,255,255,.9)"/>
+            <rect x="58" y="30" width="30" height="22" rx="5" fill="rgba(255,255,255,.65)"/>
+            <rect x="98" y="30" width="30" height="22" rx="5" fill="rgba(255,255,255,.4)"/>
+          </g>
+          <text x="200" y="316" text-anchor="middle" fill="white" font-size="46" font-weight="900" font-family="Georgia,serif" font-style="italic" letter-spacing="-1">Livr<tspan fill="#3dcf72">eo</tspan></text>
+        </svg>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:6px;">
+        <svg width="44" height="44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="120" height="120" rx="26" fill="#141c14"/><text x="60" y="82" text-anchor="middle" font-size="68" font-weight="900" fill="#2ecc71" font-family="Arial Black,Impact,sans-serif">L</text><rect x="14" y="88" width="92" height="5" rx="2.5" fill="#2ecc71"/><rect x="14" y="97" width="92" height="5" rx="2.5" fill="#2ecc71" opacity="0.35"/></svg>
+        <span style="font-family:var(--sans);font-size:1.5rem;font-weight:900;color:var(--ink);letter-spacing:-.5px;">Livr<span style="color:var(--g500);">eo</span></span>
+      </div>
+      <div class="asub" style="font-size:.75rem;">Quelqu'un prend le train. Votre colis aussi.<br><span style="opacity:.6;">Inscription 100% gratuite.</span></div>
+
+      <div class="atabs">
+        <button class="atab on" onclick="authTab('login',this)">Connexion</button>
+        <button class="atab" onclick="authTab('register',this)">Inscription</button>
+      </div>
+
+      <!-- CONNEXION -->
+      <div id="at-login">
+        <button class="soc-google" onclick="loginGoogle()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Continuer avec Google
+        </button>
+        <button class="soc-apple" onclick="loginApple()">
+          <svg width="17" height="17" viewBox="0 0 814 1000"><path fill="#fff" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 465.1 0 324.4 0 193.7 0 82.5 66.7 24.7 165.5 24.7c63.8 0 116.5 43.3 155.5 43.3 37.2 0 98.3-45.6 168.6-45.6 68.6 0 128.3 29.9 173.1 79.5zm-68.7-40.8C676 230 605.7 195.2 555.4 195.2c-73.8 0-131.5 48.5-175.5 48.5-45.7 0-100.5-46.1-168.6-46.1-81.1 0-161.5 52.6-196.8 151.5C2.8 371.5 0 402.9 0 434.4c0 135.8 52.6 279.2 131.9 372.2 68.1 81.1 124.7 127.7 198.5 127.7 77.7 0 117.4-45.4 196.1-45.4 80.5 0 114.1 45.4 196.9 45.4 75.3 0 134.4-52 199.3-132.1 47.4-57.4 80.6-128.8 80.6-131.1 0-1.9-2.6-2.6-3.2-2.6z"/></svg>
+          Continuer avec Apple
+        </button>
+        <div class="div">ou par email</div>
+        <div class="field"><label>Email</label><input type="email" placeholder="vous@email.com" id="l-em" autocomplete="email"></div>
+        <div class="field" style="position:relative;">
+          <label>Mot de passe</label>
+          <input type="password" placeholder="••••••••" id="l-pw" autocomplete="current-password">
+          <span onclick="togglePw('l-pw',this)" style="position:absolute;right:14px;top:34px;cursor:pointer;font-size:1rem;color:var(--muted2);">👁️</span>
+        </div>
+        <div style="text-align:right;margin-top:-6px;margin-bottom:14px;">
+          <span onclick="authTab('forgot',null)" style="font-size:.74rem;color:var(--g500);font-weight:700;cursor:pointer;">Mot de passe oublié ?</span>
+        </div>
+        <button class="btn p full" id="login-btn" onclick="doLogin()">Se connecter</button>
+        <div style="text-align:center;margin-top:14px;font-size:.76rem;color:var(--muted);">
+          Pas encore de compte ? <span onclick="authTab('register',null)" style="color:var(--g500);font-weight:700;cursor:pointer;">S'inscrire gratuitement</span>
+        </div>
+      </div>
+
+      <!-- INSCRIPTION -->
+      <div id="at-register" style="display:none;">
+        <button class="soc-google" onclick="loginGoogle()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          S'inscrire avec Google
+        </button>
+        <button class="soc-apple" onclick="loginApple()">
+          <svg width="17" height="17" viewBox="0 0 814 1000"><path fill="#fff" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 465.1 0 324.4 0 193.7 0 82.5 66.7 24.7 165.5 24.7c63.8 0 116.5 43.3 155.5 43.3 37.2 0 98.3-45.6 168.6-45.6 68.6 0 128.3 29.9 173.1 79.5zm-68.7-40.8C676 230 605.7 195.2 555.4 195.2c-73.8 0-131.5 48.5-175.5 48.5-45.7 0-100.5-46.1-168.6-46.1-81.1 0-161.5 52.6-196.8 151.5C2.8 371.5 0 402.9 0 434.4c0 135.8 52.6 279.2 131.9 372.2 68.1 81.1 124.7 127.7 198.5 127.7 77.7 0 117.4-45.4 196.1-45.4 80.5 0 114.1 45.4 196.9 45.4 75.3 0 134.4-52 199.3-132.1 47.4-57.4 80.6-128.8 80.6-131.1 0-1.9-2.6-2.6-3.2-2.6z"/></svg>
+          S'inscrire avec Apple
+        </button>
+        <div class="div">ou par email</div>
+        <div class="f2">
+          <div class="field"><label>Prénom</label><input type="text" placeholder="Kevin" id="r-pn" autocomplete="given-name"></div>
+          <div class="field"><label>Nom</label><input type="text" placeholder="Martin" id="r-nm" autocomplete="family-name"></div>
+        </div>
+        <div class="field"><label>Email</label><input type="email" placeholder="vous@email.com" id="r-em" autocomplete="email"></div>
+        <div class="field"><label>Téléphone</label><input type="tel" placeholder="06 xx xx xx xx" id="r-ph" autocomplete="tel"></div>
+        <div class="field" style="position:relative;">
+          <label>Mot de passe</label>
+          <input type="password" placeholder="8 caractères minimum" id="r-pw" autocomplete="new-password">
+          <span onclick="togglePw('r-pw',this)" style="position:absolute;right:14px;top:34px;cursor:pointer;font-size:1rem;color:var(--muted2);">👁️</span>
+        </div>
+        <div class="fhint" style="margin-bottom:14px;line-height:1.6;">
+          En créant un compte vous acceptez les <a style="color:var(--g500);cursor:pointer;">CGU</a> et la <a style="color:var(--g500);cursor:pointer;">politique de confidentialité</a> de Livreo.
+        </div>
+        <button class="btn p full" id="reg-btn" onclick="doReg()">Créer mon compte gratuitement</button>
+        <div style="text-align:center;margin-top:14px;font-size:.76rem;color:var(--muted);">
+          Déjà un compte ? <span onclick="authTab('login',null)" style="color:var(--g500);font-weight:700;cursor:pointer;">Se connecter</span>
+        </div>
+      </div>
+
+      <!-- MOT DE PASSE OUBLIÉ -->
+      <div id="at-forgot" style="display:none;">
+        <div style="text-align:center;margin-bottom:18px;">
+          <div style="font-size:2rem;margin-bottom:8px;">🔐</div>
+          <div style="font-size:1rem;font-weight:800;margin-bottom:4px;">Mot de passe oublié ?</div>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.6;">Entrez votre email. Vous recevrez un code à 6 chiffres par SMS.</div>
+        </div>
+        <div class="field"><label>Email de votre compte</label><input type="email" placeholder="vous@email.com" id="forgot-em"></div>
+        <button class="btn p full" onclick="sendResetCode()" id="forgot-btn">Envoyer le code par SMS</button>
+        <div style="text-align:center;margin-top:12px;">
+          <span onclick="authTab('login',null)" style="font-size:.74rem;color:var(--muted);cursor:pointer;">← Retour à la connexion</span>
+        </div>
+      </div>
+
+      <!-- CODE RESET -->
+      <div id="at-verify-code" style="display:none;">
+        <div style="text-align:center;margin-bottom:18px;">
+          <div style="font-size:2rem;margin-bottom:8px;">📱</div>
+          <div style="font-size:1rem;font-weight:800;margin-bottom:4px;">Code envoyé !</div>
+          <div style="font-size:.78rem;color:var(--muted);line-height:1.6;">Entrez le code à 6 chiffres reçu par SMS et votre nouveau mot de passe.</div>
+        </div>
+        <div class="field"><label>Code reçu par SMS</label>
+          <input type="text" placeholder="123456" id="reset-code" maxlength="6" style="letter-spacing:4px;font-size:1.2rem;text-align:center;font-weight:800;">
+        </div>
+        <div class="field" style="position:relative;">
+          <label>Nouveau mot de passe</label>
+          <input type="password" placeholder="8 caractères minimum" id="reset-pw">
+          <span onclick="togglePw('reset-pw',this)" style="position:absolute;right:14px;top:34px;cursor:pointer;font-size:1rem;color:var(--muted2);">👁️</span>
+        </div>
+        <div class="field"><label>Confirmer le mot de passe</label><input type="password" placeholder="••••••••" id="reset-pw2"></div>
+        <button class="btn p full" onclick="verifyResetCode()">Réinitialiser le mot de passe</button>
+        <div style="text-align:center;margin-top:12px;">
+          <span onclick="authTab('forgot',null)" style="font-size:.74rem;color:var(--muted);cursor:pointer;">← Renvoyer le code</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div><!-- end content -->
+
+<!-- ════ BOTTOM NAV ════ -->
+<div class="bot-nav">
+  <div class="bn-row">
+    <div class="bni on" id="bn-home" onclick="goNav('home')"><div class="bni-icon">🏠</div><div class="bni-lbl">Accueil</div></div>
+    <div class="bni" id="bn-explorer" onclick="goNav('explorer')"><div class="bni-icon">🔍</div><div class="bni-lbl">Explorer</div></div>
+    <div class="bni" id="bn-poster" onclick="goPost()"><div class="bni-icon">➕</div><div class="bni-lbl">Poster</div></div>
+    <div class="bni" id="bn-suivi" onclick="goNav('suivi')"><div class="bni-icon">📍</div><div class="bni-lbl">Suivi</div></div>
+    <div class="bni" id="bn-dashboard" onclick="navDash()"><div class="bni-icon">👤</div><div class="bni-lbl">Moi</div></div>
+  </div>
+</div>
+
+<!-- ════ SCRIPTS ════ -->
+<script src="/js/app.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/home.js"></script>
+<script src="/js/explorer.js"></script>
+<script src="/js/poster.js"></script>
+<script src="/js/suivi.js"></script>
+<script src="/js/profil.js"></script>
+<script src="/js/livreur.js"></script>
+<script src="/js/admin.js"></script>
+
+</body>
+</html>

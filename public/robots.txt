@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+Sitemap: https://livreo-app.netlify.app/sitemap.xml
+
+# Livreo — Livraison entre particuliers par train
+# contact: seo@livreo.fr
