@@ -97,16 +97,27 @@ function updateSlider(val) {
 }
 
 // ── Upload photo colis ───────────────────
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const ALLOWED_IMAGE_EXTS  = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+
 async function uploadPhotoColis(file, type, colisId) {
   if (!file || !user) return null;
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    t('Type de fichier non autorisé (JPG, PNG, WebP uniquement)', 'e');
+    return null;
+  }
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!ALLOWED_IMAGE_EXTS.includes(ext)) {
+    t('Extension de fichier non autorisée', 'e');
+    return null;
+  }
   try {
-    const ext = file.name.split('.').pop();
-    const path = `${user.id}/${colisId || 'new'}/${type}_${Date.now()}.${ext}`;
+    const safePath = `${user.id}/${colisId || 'new'}/${type}_${Date.now()}.${ext}`;
     const { data, error } = await db.storage
       .from('photos-colis')
-      .upload(path, file, { upsert: false, contentType: file.type });
+      .upload(safePath, file, { upsert: false, contentType: file.type });
     if (error) { console.error('Upload error:', error); return null; }
-    const { data: urlData } = db.storage.from('photos-colis').getPublicUrl(path);
+    const { data: urlData } = db.storage.from('photos-colis').getPublicUrl(safePath);
     return urlData.publicUrl;
   } catch (e) { console.error(e); return null; }
 }
@@ -164,8 +175,8 @@ async function publishColis() {
 
   const dep = document.getElementById('pf-dep').value;
   const arr = document.getElementById('pf-arr').value;
-  const titre = document.getElementById('pf-title').value.trim();
-  const desc = document.getElementById('pf-desc').value.trim();
+  const titre = sanitize(document.getElementById('pf-title').value.trim());
+  const desc = sanitize(document.getElementById('pf-desc').value.trim());
   const fmt = document.getElementById('pf-fmt').value || 'Colis S';
   const poids = document.getElementById('pf-poids')?.value || '';
   const dated = document.getElementById('pf-date').value;

@@ -42,6 +42,8 @@ async function previewPhoto(input) {
   const file = input.files[0];
   if (!file) return;
   if (file.size > 5 * 1024 * 1024) { t('Photo trop lourde (max 5MB)', 'e'); return; }
+  const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!ALLOWED.includes(file.type)) { t('Format non autorisé (JPG, PNG, WebP uniquement)', 'e'); return; }
 
   const reader = new FileReader();
   reader.onload = async function (e) {

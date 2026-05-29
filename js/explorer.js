@@ -56,34 +56,38 @@ async function loadCards(dest = 'all') {
     const emojis = { 'Lettre': '✉️', 'Pochette': '📬', 'Colis': '📦', 'Bagage': '🧳' };
     g.innerHTML = data.map(col => {
       const prix = parseFloat(col.prix) || 7;
-      const fmt = col.format || 'Colis';
-      const em = emojis[fmt.split(' ')[0]] || '📦';
-      const prenom = col.users?.prenom || 'Utilisateur';
+      const fmt = escapeHtml(col.format || 'Colis');
+      const em = emojis[(col.format || '').split(' ')[0]] || '📦';
+      const prenom = escapeHtml(col.users?.prenom || 'Utilisateur');
       const note = col.users?.note_moyenne;
-      const dep = (col.gare_depart || '').split(' ')[0];
-      const arr = (col.gare_arrivee || '').split(' ')[0];
+      const dep = escapeHtml((col.gare_depart || '').split(' ')[0]);
+      const arr = escapeHtml((col.gare_arrivee || '').split(' ')[0]);
       const dt = col.date_souhaitee
         ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
         : '';
-      return '<div class="cc" onclick="openDetail(\'' + col.code_lvr + '\')">'
+      const titre = escapeHtml(col.titre || 'Colis');
+      const poids = escapeHtml(col.poids || '');
+      const photoUrl = col.photo_emballee_url ? escapeHtml(col.photo_emballee_url) : null;
+      const codeLvrJs = JSON.stringify(col.code_lvr);
+      return '<div class="cc" onclick="openDetail(' + codeLvrJs + ')">'
         + '<div class="cc-img">'
-        + (col.photo_emballee_url
-          ? '<img src="' + col.photo_emballee_url + '" style="width:100%;height:100%;object-fit:cover;">'
+        + (photoUrl
+          ? '<img src="' + photoUrl + '" style="width:100%;height:100%;object-fit:cover;">'
           : '<span style="font-size:3rem;">' + em + '</span>')
         + '<div class="cc-bdg new">NOUVEAU</div>'
         + '</div>'
         + '<div class="cc-body">'
         + '<div class="cc-route"><div class="cc-city">' + dep + '</div><div class="cc-arr">→</div><div class="cc-city">' + arr + '</div></div>'
-        + '<div class="cc-title">' + (col.titre || 'Colis') + '</div>'
+        + '<div class="cc-title">' + titre + '</div>'
         + '<div class="cc-meta"><div class="cc-tag">' + fmt + '</div>'
-        + (col.poids ? '<div class="cc-tag">' + col.poids + '</div>' : '')
+        + (poids ? '<div class="cc-tag">' + poids + '</div>' : '')
         + (dt ? '<div class="cc-tag">📅 ' + dt + '</div>' : '')
         + '</div>'
         + '<div class="cc-foot">'
         + '<div class="cc-price">' + prix.toFixed(2).replace('.', ',') + '€ <span>pour le livreur</span></div>'
         + '<div style="display:flex;align-items:center;gap:4px;">'
         + '<div class="cav">' + prenom[0].toUpperCase() + '</div>'
-        + '<div class="pname">' + prenom + (note && note > 0 ? ' ⭐' + note : '') + '</div>'
+        + '<div class="pname">' + prenom + (note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : '') + '</div>'
         + '</div></div></div></div>';
     }).join('');
   } catch (e) {
@@ -143,9 +147,11 @@ async function accepterC(id) {
   if (!user) { t('Connectez-vous pour accepter', 'e'); return; }
   closeSheet();
   try {
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) { t('Session expirée, reconnectez-vous', 'e'); return; }
     const res = await fetch(`${SUPA_URL}/functions/v1/accepter-colis`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPA_KEY },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
       body: JSON.stringify({ code_lvr: id, livreur_id: user.id })
     });
     const data = await res.json();

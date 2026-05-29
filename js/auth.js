@@ -138,7 +138,7 @@ async function sendResetCode() {
   try {
     rateLimit('reset_password', 3, 600000);
     await callEdgeFunction('reset-password', { email });
-    window._resetEmail = email;
+    sessionStorage.setItem('_resetEmail', email);
     authTab('verify-code', null);
     t('Code envoyé par SMS ✅', 's');
   } catch (e) {
@@ -153,7 +153,7 @@ async function verifyResetCode() {
   const code = document.getElementById('reset-code')?.value.trim();
   const pw = document.getElementById('reset-pw')?.value;
   const pw2 = document.getElementById('reset-pw2')?.value;
-  const email = window._resetEmail;
+  const email = sessionStorage.getItem('_resetEmail');
 
   if (!code || code.length !== 6) { t('Code à 6 chiffres requis', 'e'); return; }
   if (!validatePassword(pw)) { t('8 caractères minimum', 'e'); return; }
@@ -163,7 +163,7 @@ async function verifyResetCode() {
   try {
     await callEdgeFunction('verify-reset-code', { email, code, nouveau_mdp: pw });
     t('Mot de passe réinitialisé ! 🎉', 's');
-    window._resetEmail = null;
+    sessionStorage.removeItem('_resetEmail');
     authTab('login', null);
   } catch (e) {
     t(e.message || 'Code incorrect ou expiré', 'e');
@@ -193,7 +193,7 @@ async function onLoginSuccess(profil) {
     'moi-av-txt': profil.prenom[0].toUpperCase(),
     'moi-name': (profil.prenom || '') + ' ' + (profil.nom || ''),
     'moi-email': profil.email || '',
-    'dash-h': `Bonjour <em>${profil.prenom}</em> 👋`,
+    'dash-h': `Bonjour <em>${escapeHtml(profil.prenom)}</em> 👋`,
   };
   Object.entries(fields).forEach(([id, val]) => {
     const el = document.getElementById(id);

@@ -351,6 +351,17 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 let adminUser = null;
 
+// ── Échappement HTML ─────────────────────
+function escapeHtml(val) {
+  if (val == null) return '';
+  return String(val)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 // ── Toast ─────────────────────────────────
 function toast(msg, type = '') {
   const c = document.getElementById('admin-toast');
@@ -452,10 +463,10 @@ async function loadDashboard() {
       document.getElementById('activity-count').textContent = colis.length + ' colis';
       tbody.innerHTML = colis.map(c => `
         <tr>
-          <td><strong>${c.code_lvr || '—'}</strong></td>
-          <td>${c.expediteur || '—'}</td>
-          <td style="font-size:.76rem;">${c.gare_depart || '?'} → ${c.gare_arrivee || '?'}</td>
-          <td>${c.livreur || '<span style="color:var(--muted);">Non assigné</span>'}</td>
+          <td><strong>${escapeHtml(c.code_lvr || '—')}</strong></td>
+          <td>${escapeHtml(c.expediteur || '—')}</td>
+          <td style="font-size:.76rem;">${escapeHtml(c.gare_depart || '?')} → ${escapeHtml(c.gare_arrivee || '?')}</td>
+          <td>${c.livreur ? escapeHtml(c.livreur) : '<span style="color:var(--muted);">Non assigné</span>'}</td>
           <td style="color:var(--g500);font-weight:800;">${parseFloat(c.prix || 0).toFixed(2)}€</td>
           <td>${statusBadge(c.statut)}</td>
         </tr>`).join('');
@@ -476,15 +487,15 @@ async function loadUsers() {
   }
   tbody.innerHTML = data.map(u => `
     <tr>
-      <td><strong>${u.prenom || ''} ${u.nom || ''}</strong><br><span style="font-size:.7rem;color:var(--muted);">${u.id?.substring(0, 8)}...</span></td>
-      <td>${u.email || '—'}</td>
-      <td>${u.telephone || '—'}</td>
-      <td>${u.nb_livraisons || 0}</td>
-      <td>${u.note_moyenne > 0 ? '⭐' + u.note_moyenne : '—'}</td>
+      <td><strong>${escapeHtml(u.prenom || '')} ${escapeHtml(u.nom || '')}</strong><br><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(u.id?.substring(0, 8))}...</span></td>
+      <td>${escapeHtml(u.email || '—')}</td>
+      <td>${escapeHtml(u.telephone || '—')}</td>
+      <td>${parseInt(u.nb_livraisons) || 0}</td>
+      <td>${u.note_moyenne > 0 ? '⭐' + parseFloat(u.note_moyenne).toFixed(1) : '—'}</td>
       <td>${statusBadge(u.statut || 'actif')}</td>
       <td>
-        <button class="action-btn orange" onclick="suspendUser('${u.id}','${u.email}')">Suspendre</button>
-        <button class="action-btn red" onclick="blockUser('${u.id}','${u.email}')">Bloquer</button>
+        <button class="action-btn orange" onclick="suspendUser(${JSON.stringify(u.id)},${JSON.stringify(u.email || '')})">Suspendre</button>
+        <button class="action-btn red" onclick="blockUser(${JSON.stringify(u.id)},${JSON.stringify(u.email || '')})">Bloquer</button>
       </td>
     </tr>`).join('');
 }
@@ -500,14 +511,14 @@ async function loadColis() {
   }
   tbody.innerHTML = data.map(c => `
     <tr>
-      <td><strong>${c.code_lvr}</strong></td>
-      <td>${c.titre || '—'}</td>
-      <td style="font-size:.76rem;">${c.gare_depart || '?'} → ${c.gare_arrivee || '?'}</td>
+      <td><strong>${escapeHtml(c.code_lvr)}</strong></td>
+      <td>${escapeHtml(c.titre || '—')}</td>
+      <td style="font-size:.76rem;">${escapeHtml(c.gare_depart || '?')} → ${escapeHtml(c.gare_arrivee || '?')}</td>
       <td style="color:var(--g500);font-weight:800;">${parseFloat(c.prix || 0).toFixed(2)}€</td>
-      <td>${c.expediteur || '—'}</td>
-      <td>${c.livreur || '<span style="color:var(--muted);">—</span>'}</td>
+      <td>${escapeHtml(c.expediteur || '—')}</td>
+      <td>${c.livreur ? escapeHtml(c.livreur) : '<span style="color:var(--muted);">—</span>'}</td>
       <td>${statusBadge(c.statut)}</td>
-      <td><button class="action-btn red" onclick="cancelColis('${c.code_lvr}')">Annuler</button></td>
+      <td><button class="action-btn red" onclick="cancelColis(${JSON.stringify(c.code_lvr)})">Annuler</button></td>
     </tr>`).join('');
 }
 
@@ -524,11 +535,11 @@ async function loadTransactions() {
   }
   tbody.innerHTML = data.map(tx => `
     <tr>
-      <td><strong>${tx.colis?.code_lvr || '—'}</strong></td>
+      <td><strong>${escapeHtml(tx.colis?.code_lvr || '—')}</strong></td>
       <td style="color:var(--g500);font-weight:800;">${parseFloat(tx.montant || 0).toFixed(2)}€</td>
-      <td>${tx.exp?.prenom || '—'}</td>
-      <td>${tx.liv?.prenom || '—'}</td>
-      <td style="font-size:.7rem;color:var(--muted);">${tx.stripe_payment_intent?.substring(0, 20) || '—'}...</td>
+      <td>${escapeHtml(tx.exp?.prenom || '—')}</td>
+      <td>${escapeHtml(tx.liv?.prenom || '—')}</td>
+      <td style="font-size:.7rem;color:var(--muted);">${escapeHtml(tx.stripe_payment_intent?.substring(0, 20) || '—')}...</td>
       <td>${statusBadge(tx.statut)}</td>
       <td style="font-size:.74rem;">${new Date(tx.created_at).toLocaleDateString('fr-FR')}</td>
     </tr>`).join('');
@@ -547,13 +558,13 @@ async function loadVerifications() {
   }
   tbody.innerHTML = data.map(v => `
     <tr>
-      <td><strong>${v.users?.prenom || ''} ${v.users?.nom || ''}</strong><br><span style="font-size:.7rem;color:var(--muted);">${v.users?.email || ''}</span></td>
-      <td>${v.type_document || '—'}</td>
+      <td><strong>${escapeHtml(v.users?.prenom || '')} ${escapeHtml(v.users?.nom || '')}</strong><br><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(v.users?.email || '')}</span></td>
+      <td>${escapeHtml(v.type_document || '—')}</td>
       <td>${new Date(v.created_at).toLocaleDateString('fr-FR')}</td>
       <td>${statusBadge(v.statut)}</td>
       <td>
-        <button class="action-btn green" onclick="approveVerif('${v.id}')">✅ Approuver</button>
-        <button class="action-btn red" onclick="rejectVerif('${v.id}')">❌ Refuser</button>
+        <button class="action-btn green" onclick="approveVerif(${JSON.stringify(v.id)})">✅ Approuver</button>
+        <button class="action-btn red" onclick="rejectVerif(${JSON.stringify(v.id)})">❌ Refuser</button>
       </td>
     </tr>`).join('');
 }
@@ -571,12 +582,12 @@ async function loadLitiges() {
   }
   tbody.innerHTML = data.map(l => `
     <tr>
-      <td><strong>${l.colis?.code_lvr || '—'}</strong></td>
-      <td>${l.users?.prenom || ''} ${l.users?.nom || ''}</td>
-      <td>${l.motif || '—'}</td>
+      <td><strong>${escapeHtml(l.colis?.code_lvr || '—')}</strong></td>
+      <td>${escapeHtml(l.users?.prenom || '')} ${escapeHtml(l.users?.nom || '')}</td>
+      <td>${escapeHtml(l.motif || '—')}</td>
       <td>${statusBadge(l.statut)}</td>
       <td>${new Date(l.created_at).toLocaleDateString('fr-FR')}</td>
-      <td><button class="action-btn orange" onclick="resolveLitige('${l.id}')">Résoudre</button></td>
+      <td><button class="action-btn orange" onclick="resolveLitige(${JSON.stringify(l.id)})">Résoudre</button></td>
     </tr>`).join('');
 }
 
@@ -587,10 +598,10 @@ async function loadConfig() {
   if (!data) return;
   tbody.innerHTML = data.map(c => `
     <tr>
-      <td><strong>${c.key}</strong></td>
-      <td><input type="text" value="${c.value || ''}" id="cfg-${c.key}" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.82rem;width:100%;"></td>
-      <td style="font-size:.74rem;color:var(--muted);">${c.description || ''}</td>
-      <td><button class="action-btn green" onclick="saveConfig('${c.key}')">Sauver</button></td>
+      <td><strong>${escapeHtml(c.key)}</strong></td>
+      <td><input type="text" value="${escapeHtml(c.value || '')}" id="cfg-${escapeHtml(c.key)}" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.82rem;width:100%;"></td>
+      <td style="font-size:.74rem;color:var(--muted);">${escapeHtml(c.description || '')}</td>
+      <td><button class="action-btn green" onclick="saveConfig(${JSON.stringify(c.key)})">Sauver</button></td>
     </tr>`).join('');
 }
 
@@ -612,9 +623,9 @@ async function loadSecurity() {
   }
   tbody.innerHTML = data.map(l => `
     <tr>
-      <td><span class="badge ${l.type?.includes('fail') ? 'red' : 'grey'}">${l.type}</span></td>
-      <td>${l.user_id?.substring(0, 8) || 'Anonyme'}...</td>
-      <td style="font-size:.74rem;">${JSON.stringify(l.details || {}).substring(0, 80)}</td>
+      <td><span class="badge ${l.type?.includes('fail') ? 'red' : 'grey'}">${escapeHtml(l.type)}</span></td>
+      <td>${escapeHtml(l.user_id?.substring(0, 8) || 'Anonyme')}...</td>
+      <td style="font-size:.74rem;">${escapeHtml(JSON.stringify(l.details || {}).substring(0, 80))}</td>
       <td>${new Date(l.timestamp).toLocaleString('fr-FR')}</td>
     </tr>`).join('');
 }
@@ -675,8 +686,8 @@ function statusBadge(status) {
     approuve: ['green', 'Approuvé'], refuse: ['red', 'Refusé'],
     ouvert: ['orange', 'Ouvert'], resolu: ['green', 'Résolu'],
   };
-  const [cls, label] = map[status] || ['grey', status];
-  return `<span class="badge ${cls}">${label}</span>`;
+  const [cls, label] = map[status] || ['grey', escapeHtml(status)];
+  return `<span class="badge ${escapeHtml(cls)}">${label}</span>`;
 }
 
 function searchUsers() {

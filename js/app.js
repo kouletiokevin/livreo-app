@@ -135,7 +135,7 @@ db.auth.onAuthStateChange(async (event, session) => {
         prenom: meta.given_name || meta.name?.split(' ')[0] || 'Utilisateur',
         nom: meta.family_name || meta.name?.split(' ').slice(1).join(' ') || '',
         telephone: '',
-        verifie: true,
+        verifie: false,
         statut: 'actif'
       };
       await db.from('users').insert(newUser).onConflict('id').ignore();
@@ -195,51 +195,7 @@ window.addEventListener('load', () => {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      const swCode = `
-        const CACHE = 'livreo-v1';
-        const ASSETS = ['/'];
-        self.addEventListener('install', e => {
-          e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
-          self.skipWaiting();
-        });
-        self.addEventListener('activate', e => {
-          e.waitUntil(caches.keys().then(keys =>
-            Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-          ));
-          self.clients.claim();
-        });
-        self.addEventListener('fetch', e => {
-          if (e.request.method !== 'GET') return;
-          if (e.request.url.includes('supabase') || e.request.url.includes('stripe') || e.request.url.includes('twilio')) return;
-          e.respondWith(
-            caches.match(e.request).then(cached => {
-              const fresh = fetch(e.request).then(res => {
-                if (res.status === 200) {
-                  const clone = res.clone();
-                  caches.open(CACHE).then(cache => cache.put(e.request, clone));
-                }
-                return res;
-              });
-              return cached || fresh;
-            })
-          );
-        });
-        self.addEventListener('push', e => {
-          if (!e.data) return;
-          const data = e.data.json();
-          self.registration.showNotification(data.title || 'Livreo', {
-            body: data.body || '', icon: '/favicon.svg', badge: '/favicon.svg',
-            tag: data.tag || 'livreo-notif', data: data.url || '/'
-          });
-        });
-        self.addEventListener('notificationclick', e => {
-          e.notification.close();
-          e.waitUntil(clients.openWindow(e.notification.data || '/'));
-        });
-      `;
-      const blob = new Blob([swCode], { type: 'application/javascript' });
-      const url = URL.createObjectURL(blob);
-      await navigator.serviceWorker.register(url);
+      await navigator.serviceWorker.register('/sw.js', { scope: '/' });
 
       window.addEventListener('beforeinstallprompt', e => {
         e.preventDefault();

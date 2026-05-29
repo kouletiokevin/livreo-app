@@ -7,9 +7,20 @@
 function openLivrFlow(ref, trajet, train, dest, prix) {
   livrPhoto = false;
   livrChecksOk = false;
+  // Valeurs pour affichage HTML (entités échappées)
+  const eRef    = escapeHtml(ref);
+  const eTrajet = escapeHtml(trajet);
+  const eTrain  = escapeHtml(train);
+  const eDest   = escapeHtml(dest);
+  const ePrix   = escapeHtml(String(prix));
+  // Valeurs pour attributs onclick JS (JSON.stringify gère les quotes et caractères spéciaux)
+  const jRef  = JSON.stringify(ref);
+  const jDest = JSON.stringify(dest);
+  const jPrix = JSON.stringify(prix);
+
   openSheet(`
-    <div style="font-size:1rem;font-weight:900;letter-spacing:-.4px;margin-bottom:2px;">Livraison ${ref}</div>
-    <div style="font-size:.74rem;color:var(--muted);margin-bottom:16px;">${trajet} · ${train} · ${dest} · <span style="color:var(--g500);font-weight:800;">+${prix}€</span></div>
+    <div style="font-size:1rem;font-weight:900;letter-spacing:-.4px;margin-bottom:2px;">Livraison ${eRef}</div>
+    <div style="font-size:.74rem;color:var(--muted);margin-bottom:16px;">${eTrajet} · ${eTrain} · ${eDest} · <span style="color:var(--g500);font-weight:800;">+${ePrix}€</span></div>
     <div class="livr-steps" id="ls-wrap">
 
       <div class="lstep active" id="ls1">
@@ -19,7 +30,7 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
           <div class="photo-z" id="pz" onclick="doPhoto()">
             <div class="pz-icon">📷</div>
             <div class="pz-txt">Prendre la photo</div>
-            <div class="pz-sub">Colis en main de ${dest}</div>
+            <div class="pz-sub">Colis en main de ${eDest}</div>
           </div>
           <div class="photo-ok" id="photo-ok" style="display:none;">
             <span style="color:var(--g500);font-weight:800;font-size:.8rem;">📸 Photo prise avec succès ✅</span>
@@ -32,9 +43,9 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
         <div class="ls-body" id="ls2-body" style="display:none;">
           <div style="font-size:.72rem;color:var(--muted);margin-bottom:9px;">Cochez chaque point avant de scanner le QR Code.</div>
           <div class="check-list">
-            <div class="ci"><input type="checkbox" id="c1" onchange="checkAll()"><label for="c1">Le destinataire est bien ${dest}</label></div>
+            <div class="ci"><input type="checkbox" id="c1" onchange="checkAll()"><label for="c1">Le destinataire est bien ${eDest}</label></div>
             <div class="ci"><input type="checkbox" id="c2" onchange="checkAll()"><label for="c2">L'emballage est intact, aucun dommage visible</label></div>
-            <div class="ci"><input type="checkbox" id="c3" onchange="checkAll()"><label for="c3">Le colis correspond bien à la référence ${ref}</label></div>
+            <div class="ci"><input type="checkbox" id="c3" onchange="checkAll()"><label for="c3">Le colis correspond bien à la référence ${eRef}</label></div>
           </div>
         </div>
       </div>
@@ -42,7 +53,7 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
       <div class="lstep locked" id="ls3">
         <div class="lsh"><div class="ls-n">3</div><div class="ls-title">📱 Scanner le QR Code</div></div>
         <div class="ls-body" id="ls3-body" style="display:none;">
-          <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Demandez à ${dest} d'afficher son QR Code dans l'onglet <strong>Suivi</strong> de son téléphone, puis scannez-le.</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Demandez à ${eDest} d'afficher son QR Code dans l'onglet <strong>Suivi</strong> de son téléphone, puis scannez-le.</div>
           <div class="scan-vp">
             <div class="sc tl"></div><div class="sc tr"></div><div class="sc bl"></div><div class="sc br"></div>
             <div class="scan-line"></div>
@@ -50,8 +61,8 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
           </div>
           <div class="div-or">ou entrer manuellement</div>
           <div class="man-scan">
-            <input type="text" id="qr-man" placeholder="${ref}" value="${ref}">
-            <button onclick="doScan('${ref}','${dest}','${prix}')">Scanner ▶</button>
+            <input type="text" id="qr-man" placeholder="${eRef}" value="${eRef}">
+            <button onclick="doScan(${jRef},${jDest},${jPrix})">Scanner ▶</button>
           </div>
         </div>
       </div>
@@ -101,9 +112,11 @@ async function doScan(ref, dest, prix) {
   document.getElementById('ls3').classList.add('done');
 
   try {
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) { t('Session expirée, reconnectez-vous', 'e'); return; }
     const res = await fetch(`${SUPA_URL}/functions/v1/confirm-livraison`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPA_KEY },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
       body: JSON.stringify({
         code_lvr: code,
         livreur_id: user?.id,

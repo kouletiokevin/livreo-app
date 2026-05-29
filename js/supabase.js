@@ -61,6 +61,12 @@ function sanitize(str) {
     .trim();
 }
 
+// Échappement HTML pour affichage (gère null/undefined/nombres)
+function escapeHtml(val) {
+  if (val == null) return '';
+  return sanitize(String(val));
+}
+
 // ── Validation des entrées ───────────────
 function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

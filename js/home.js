@@ -54,8 +54,8 @@ async function chargerLivraisonsEnCours(userId) {
       div.innerHTML = `
         <div class="li-icon">📦</div>
         <div style="flex:1;">
-          <div class="li-ref">${c.code_lvr}</div>
-          <div class="li-detail">${c.gare_depart} → ${c.gare_arrivee} · ${c.destinataire_nom}</div>
+          <div class="li-ref">${escapeHtml(c.code_lvr)}</div>
+          <div class="li-detail">${escapeHtml(c.gare_depart)} → ${escapeHtml(c.gare_arrivee)} · ${escapeHtml(c.destinataire_nom)}</div>
           <div style="margin-top:3px;"><span class="prt">🚆 ${c.statut === 'en_transit' ? 'En transit' : 'En attente départ'}</span></div>
         </div>
         <div class="li-price">+${parseFloat(c.prix).toFixed(0)}€</div>
