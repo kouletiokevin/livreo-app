@@ -2,7 +2,7 @@
 
 > **Mission :** Finir et solidifier l'application Livreo — livraison de colis entre particuliers par train.
 > **Slogan :** *"Quelqu'un prend le train. Votre colis aussi."*
-> **URL en ligne  :** https://livreo-app.netlify.app
+> **URL en ligne 7 :** https://livreo-app.netlify.app
 > **Stack actuelle :** HTML/CSS/JS mono-fichier → à migrer vers une structure propre
 
 ---
