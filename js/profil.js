@@ -121,9 +121,7 @@ async function ouvrirSetupMFA() {
       <div class="sheet-title">🔐 Double authentification</div>
       <div class="sheet-sub">Obligatoire pour les comptes admin. Scannez le QR code avec Google Authenticator ou Authy.</div>
 
-      <div style="text-align:center;margin:20px 0;">
-        <img src="${qrCode}" style="width:180px;height:180px;border-radius:8px;border:2px solid var(--border);" alt="QR Code 2FA">
-      </div>
+      <div id="mfa-qr-wrap" style="width:184px;height:184px;margin:20px auto;border-radius:8px;border:2px solid var(--border);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;"></div>
 
       <div style="background:var(--cream);border-radius:var(--r);padding:12px;margin-bottom:16px;font-size:.72rem;color:var(--muted);text-align:center;word-break:break-all;line-height:1.8;">
         Code manuel :<br>
@@ -144,6 +142,16 @@ async function ouvrirSetupMFA() {
     `);
 
     setTimeout(() => {
+      // Injecter l'image via DOM pour éviter que les " du SVG cassent le HTML
+      const wrap = document.getElementById('mfa-qr-wrap');
+      if (wrap && qrCode) {
+        const img = document.createElement('img');
+        img.src = qrCode;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.alt = 'QR Code 2FA';
+        wrap.appendChild(img);
+      }
       const inp = document.getElementById('mfa-code');
       if (inp) {
         inp.focus();
