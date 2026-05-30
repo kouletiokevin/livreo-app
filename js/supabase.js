@@ -114,21 +114,37 @@ function rateLimit(action, maxAttempts = 5, windowMs = 60000) {
   rateLimits[action].push(now);
 }
 
+// ── Fetch avec timeout ───────────────────
+async function fetchWithTimeout(url, options = {}, timeoutMs = 10000) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    return res;
+  } catch (e) {
+    if (e.name === 'AbortError') {
+      throw new Error('Délai dépassé. Vérifiez votre connexion et réessayez.');
+    }
+    throw e;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 // ── Appel sécurisé aux Edge Functions ────
 async function callEdgeFunction(name, body) {
   const { data: { session } } = await db.auth.getSession();
   const headers = {
     'Content-Type': 'application/json',
-    'X-CSRF-Token': csrfToken,
   };
   if (session?.access_token) {
     headers['Authorization'] = `Bearer ${session.access_token}`;
   }
-  const res = await fetch(`${SUPA_URL}/functions/v1/${name}`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body)
-  });
+  const res = await fetchWithTimeout(
+    `${SUPA_URL}/functions/v1/${name}`,
+    { method: 'POST', headers, body: JSON.stringify(body) },
+    15000
+  );
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Erreur serveur' }));
     throw new Error(err.error || 'Erreur serveur');

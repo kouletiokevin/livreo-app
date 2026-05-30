@@ -244,7 +244,7 @@ async function doScan(ref, dest, prix) {
   try {
     const { data: { session } } = await db.auth.getSession();
     if (!session) { t('Session expirée, reconnectez-vous', 'e'); return; }
-    const res = await fetch(`${SUPA_URL}/functions/v1/confirm-livraison`, {
+    const res = await fetchWithTimeout(`${SUPA_URL}/functions/v1/confirm-livraison`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
       body: JSON.stringify({

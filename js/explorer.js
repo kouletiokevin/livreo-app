@@ -161,11 +161,11 @@ async function accepterC(id) {
   try {
     const { data: { session } } = await db.auth.getSession();
     if (!session) { t('Session expirée, reconnectez-vous', 'e'); return; }
-    const res = await fetch(`${SUPA_URL}/functions/v1/accepter-colis`, {
+    const res = await fetchWithTimeout(`${SUPA_URL}/functions/v1/accepter-colis`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
       body: JSON.stringify({ code_lvr: id, livreur_id: user.id })
-    });
+    }, 15000);
     const data = await res.json();
     if (data.success) {
       t(`Colis ${id} accepté ! SMS envoyé au destinataire ✅`, 's');
