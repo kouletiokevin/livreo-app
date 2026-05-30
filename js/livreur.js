@@ -1,22 +1,29 @@
 /* ═══════════════════════════════════════
    LIVREO — Module Flow de livraison
-   Version 1.0 — Mai 2026
+   Version 2.0 — Mai 2026
 ═══════════════════════════════════════ */
+
+let _currentLivraison = null;
+let _scanStream       = null;
+let _scanRaf          = null;
+let _remisePhotoUrl   = null;
 
 // ── Ouvrir le flow de livraison ──────────
 function openLivrFlow(ref, trajet, train, dest, prix) {
-  livrPhoto = false;
-  livrChecksOk = false;
-  // Valeurs pour affichage HTML (entités échappées)
+  stopCamera();
+  _currentLivraison = { ref, dest, prix };
+  _remisePhotoUrl   = null;
+  livrPhoto         = false;
+  livrChecksOk      = false;
+
   const eRef    = escapeHtml(ref);
   const eTrajet = escapeHtml(trajet);
   const eTrain  = escapeHtml(train);
   const eDest   = escapeHtml(dest);
   const ePrix   = escapeHtml(String(prix));
-  // Valeurs pour attributs onclick JS (JSON.stringify gère les quotes et caractères spéciaux)
-  const jRef  = JSON.stringify(ref);
-  const jDest = JSON.stringify(dest);
-  const jPrix = JSON.stringify(prix);
+  const jRef    = JSON.stringify(ref);
+  const jDest   = JSON.stringify(dest);
+  const jPrix   = JSON.stringify(prix);
 
   openSheet(`
     <div style="font-size:1rem;font-weight:900;letter-spacing:-.4px;margin-bottom:2px;">Livraison ${eRef}</div>
@@ -26,8 +33,8 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
       <div class="lstep active" id="ls1">
         <div class="lsh"><div class="ls-n">1</div><div class="ls-title">📸 Photographier la remise</div></div>
         <div class="ls-body">
-          <div style="font-size:.72rem;color:var(--muted);margin-bottom:9px;line-height:1.5;">Prenez une photo du colis <strong>en main du destinataire</strong>. C'est la preuve de livraison. Sans cette photo, vous ne pouvez pas passer à l'étape suivante.</div>
-          <div class="photo-z" id="pz" onclick="doPhoto()">
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:9px;line-height:1.5;">Prenez une photo du colis <strong>en main du destinataire</strong>. C'est la preuve de livraison.</div>
+          <div class="photo-z" id="pz" onclick="initPhotoRemise()">
             <div class="pz-icon">📷</div>
             <div class="pz-txt">Prendre la photo</div>
             <div class="pz-sub">Colis en main de ${eDest}</div>
@@ -53,11 +60,11 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
       <div class="lstep locked" id="ls3">
         <div class="lsh"><div class="ls-n">3</div><div class="ls-title">📱 Scanner le QR Code</div></div>
         <div class="ls-body" id="ls3-body" style="display:none;">
-          <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Demandez à ${eDest} d'afficher son QR Code dans l'onglet <strong>Suivi</strong> de son téléphone, puis scannez-le.</div>
-          <div class="scan-vp">
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Demandez à ${eDest} d'afficher son QR Code dans l'onglet <strong>Suivi</strong>, puis scannez-le.</div>
+          <div class="scan-vp" id="scan-vp" style="position:relative;overflow:hidden;">
             <div class="sc tl"></div><div class="sc tr"></div><div class="sc bl"></div><div class="sc br"></div>
             <div class="scan-line"></div>
-            <div class="scan-ph"><div style="font-size:1.6rem;margin-bottom:5px;">📷</div>Pointez vers le QR Code<br>du destinataire</div>
+            <div class="scan-ph"><div style="font-size:1.6rem;margin-bottom:5px;">📷</div>Activation caméra…</div>
           </div>
           <div class="div-or">ou entrer manuellement</div>
           <div class="man-scan">
@@ -71,20 +78,59 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
   `);
 }
 
-// ── Étape 1 : Photo ──────────────────────
+// ── Étape 1 : photo réelle avec la caméra ─
+function initPhotoRemise() {
+  const inp = document.createElement('input');
+  inp.type    = 'file';
+  inp.accept  = 'image/*';
+  inp.capture = 'environment';
+
+  inp.onchange = async function () {
+    const file = inp.files[0];
+    if (!file) return;
+
+    // Prévisualisation immédiate
+    const reader = new FileReader();
+    reader.onload = e => {
+      const pz = document.getElementById('pz');
+      if (pz) pz.innerHTML =
+        `<img src="${e.target.result}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--g200);">`;
+    };
+    reader.readAsDataURL(file);
+
+    // Upload vers photos-colis (bucket privé)
+    if (user) {
+      try {
+        const ext  = file.name.split('.').pop().toLowerCase();
+        const ref  = _currentLivraison?.ref || 'livr';
+        const path = `${user.id}/remise_${ref}_${Date.now()}.${ext}`;
+        const { error } = await db.storage
+          .from('photos-colis')
+          .upload(path, file, { upsert: false, contentType: file.type });
+        if (!error) {
+          const { data: urlData } = db.storage.from('photos-colis').getPublicUrl(path);
+          _remisePhotoUrl = urlData.publicUrl;
+        }
+      } catch (e) { console.log('Upload photo remise:', e.message); }
+    }
+    doPhoto();
+  };
+  inp.click();
+}
+
 function doPhoto() {
   livrPhoto = true;
-  document.getElementById('pz').style.display = 'none';
-  document.getElementById('photo-ok').style.display = 'block';
+  document.getElementById('pz').style.display         = 'none';
+  document.getElementById('photo-ok').style.display   = 'block';
   document.getElementById('ls1').classList.remove('active');
   document.getElementById('ls1').classList.add('done');
   document.getElementById('ls2').classList.remove('locked');
   document.getElementById('ls2').classList.add('active');
-  document.getElementById('ls2-body').style.display = 'block';
+  document.getElementById('ls2-body').style.display   = 'block';
   t('📸 Photo prise ! Cochez les cases.', 's');
 }
 
-// ── Étape 2 : Checklist ──────────────────
+// ── Étape 2 : checklist ──────────────────
 function checkAll() {
   const cs = document.querySelectorAll('#ls-wrap .check-list input[type=checkbox]');
   let ok = true;
@@ -96,17 +142,101 @@ function checkAll() {
     document.getElementById('ls3').classList.remove('locked');
     document.getElementById('ls3').classList.add('active');
     document.getElementById('ls3-body').style.display = 'block';
-    t('Checklist complète ✅ Scannez le QR Code.', 's');
+    t('Checklist complète ✅ Activation caméra…', 's');
+    startCameraScanner();
   }
 }
 
-// ── Étape 3 : Scan QR ────────────────────
+// ── Caméra jsQR ──────────────────────────
+function startCameraScanner() {
+  const vp = document.getElementById('scan-vp');
+  if (!vp) return;
+
+  if (typeof jsQR === 'undefined') {
+    t('Scanner caméra indisponible — entrez le code manuellement', '');
+    return;
+  }
+
+  vp.innerHTML = `
+    <video id="scan-video" playsinline autoplay muted
+      style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>
+    <canvas id="scan-canvas" style="display:none;"></canvas>
+    <div class="sc tl"></div><div class="sc tr"></div><div class="sc bl"></div><div class="sc br"></div>
+    <div class="scan-line"></div>
+    <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;
+      font-size:.68rem;color:rgba(255,255,255,.9);font-weight:700;
+      text-shadow:0 1px 4px rgba(0,0,0,.6);">Pointez vers le QR Code</div>
+  `;
+
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+  })
+  .then(stream => {
+    _scanStream = stream;
+    const video = document.getElementById('scan-video');
+    if (!video) { stopCamera(); return; }
+    video.srcObject = stream;
+    video.play().catch(() => {});
+    video.addEventListener('loadedmetadata', () => {
+      const { ref, dest, prix } = _currentLivraison || {};
+      _scanRaf = requestAnimationFrame(() => scanFrame(ref, dest, prix));
+    });
+  })
+  .catch(err => {
+    console.log('Caméra indisponible:', err.message);
+    t('Caméra indisponible — entrez le code manuellement', '');
+  });
+}
+
+function scanFrame(ref, dest, prix) {
+  const video  = document.getElementById('scan-video');
+  const canvas = document.getElementById('scan-canvas');
+  if (!video || !canvas || !_scanStream) return;
+
+  if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+    _scanRaf = requestAnimationFrame(() => scanFrame(ref, dest, prix));
+    return;
+  }
+
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+  const code = jsQR(imageData.data, imageData.width, imageData.height, {
+    inversionAttempts: 'dontInvert',
+  });
+
+  if (code) {
+    stopCamera();
+    // Format QR Livreo : "LIVREO|LVR-XXXX|DEST:...|timestamp"
+    const parts        = code.data.split('|');
+    const detectedCode = (parts[1] || code.data).trim().toUpperCase();
+    const qrInput      = document.getElementById('qr-man');
+    if (qrInput) qrInput.value = detectedCode;
+    t('QR Code détecté ✅', 's');
+    doScan(ref, dest, prix);
+    return;
+  }
+
+  _scanRaf = requestAnimationFrame(() => scanFrame(ref, dest, prix));
+}
+
+function stopCamera() {
+  if (_scanRaf)    { cancelAnimationFrame(_scanRaf); _scanRaf = null; }
+  if (_scanStream) { _scanStream.getTracks().forEach(tr => tr.stop()); _scanStream = null; }
+}
+
+// ── Étape 3 : confirmation livraison ─────
 async function doScan(ref, dest, prix) {
-  if (!livrPhoto) { t('Prenez la photo en étape 1 d\'abord 📸', 'e'); return; }
+  if (!livrPhoto)    { t('Prenez la photo en étape 1 d\'abord 📸', 'e'); return; }
   if (!livrChecksOk) { t('Cochez toutes les cases en étape 2 ✅', 'e'); return; }
 
+  stopCamera();
+
   const input = document.getElementById('qr-man');
-  const code = input ? input.value.trim().toUpperCase() : ref;
+  const code  = input ? input.value.trim().toUpperCase() : ref;
 
   document.getElementById('ls3').classList.remove('active');
   document.getElementById('ls3').classList.add('done');
@@ -118,9 +248,9 @@ async function doScan(ref, dest, prix) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
       body: JSON.stringify({
-        code_lvr: code,
+        code_lvr:   code,
         livreur_id: user?.id,
-        photo_url: null
+        photo_url:  _remisePhotoUrl
       })
     });
     const data = await res.json();
@@ -138,9 +268,9 @@ async function doScan(ref, dest, prix) {
     document.querySelectorAll('#sv-tl .tld').forEach(d => { d.classList.remove('active'); d.classList.add('done'); });
     document.querySelectorAll('#sv-tl .tl-txt.faded').forEach(el => el.classList.remove('faded'));
 
-    const qrMain = document.getElementById('qr-main');
+    const qrMain  = document.getElementById('qr-main');
     const destSuc = document.getElementById('dest-suc');
-    if (qrMain) qrMain.style.display = 'none';
+    if (qrMain)  qrMain.style.display  = 'none';
     if (destSuc) destSuc.style.display = 'block';
 
     if (Notification.permission === 'granted') {

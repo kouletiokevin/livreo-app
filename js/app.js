@@ -100,7 +100,10 @@ function openSheet(html) {
   document.getElementById('ov').classList.add('open');
 }
 function cov(e) { if (e.target === document.getElementById('ov')) closeSheet(); }
-function closeSheet() { document.getElementById('ov').classList.remove('open'); }
+function closeSheet() {
+  document.getElementById('ov').classList.remove('open');
+  if (typeof stopCamera === 'function') stopCamera();
+}
 
 // ── Utilitaires ──────────────────────────
 function fmtCard(input) {
