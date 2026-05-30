@@ -182,6 +182,16 @@ async function onLoginSuccess(profil) {
   const role = await getUserRole(profil.id || profil.auth_id);
   user.role = role;
 
+  if (role === 'admin') {
+    const { data: factors } = await db.auth.mfa.listFactors();
+    const hasVerifiedMFA = factors?.totp?.some(f => f.status === 'verified');
+    if (!hasVerifiedMFA) {
+      await db.auth.signOut();
+      t('Les comptes admin doivent activer la double authentification. Contactez support@livreo.fr', 'e');
+      return;
+    }
+  }
+
   // Nav
   document.getElementById('nav-login').style.display = 'none';
   document.getElementById('nav-av').style.display = 'flex';
