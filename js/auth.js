@@ -49,7 +49,7 @@ async function doReg() {
   if (!pn || !nm || !em || !ph || !pw) { t('Remplissez tous les champs', 'e'); return; }
   if (!validateEmail(em)) { t('Email invalide', 'e'); return; }
   if (!validatePhone(ph)) { t('Numéro de téléphone invalide', 'e'); return; }
-  if (!validatePassword(pw)) { t('Mot de passe : 8 caractères minimum', 'e'); return; }
+  if (!validatePassword(pw)) { t(pwError(pw) || 'Mot de passe invalide', 'e'); return; }
 
   const btn = document.getElementById('reg-btn');
   if (btn) { btn.textContent = 'Création...'; btn.disabled = true; }
@@ -156,7 +156,7 @@ async function verifyResetCode() {
   const email = sessionStorage.getItem('_resetEmail');
 
   if (!code || code.length !== 6) { t('Code à 6 chiffres requis', 'e'); return; }
-  if (!validatePassword(pw)) { t('8 caractères minimum', 'e'); return; }
+  if (!validatePassword(pw)) { t(pwError(pw) || 'Mot de passe invalide', 'e'); return; }
   if (pw !== pw2) { t('Les mots de passe ne correspondent pas', 'e'); return; }
   if (!email) { t('Session expirée, recommencez', 'e'); authTab('forgot', null); return; }
 

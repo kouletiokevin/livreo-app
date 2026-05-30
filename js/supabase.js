@@ -76,8 +76,23 @@ function validatePhone(phone) {
   return /^(\+33|0033|0)[1-9](\d{2}){4}$/.test(phone.replace(/[\s\.\-]/g, ''));
 }
 
-function validatePassword(password) {
-  return password && password.length >= 8;
+function validatePassword(pw) {
+  if (!pw || pw.length < 8) return false;
+  if (!/[A-Z]/.test(pw)) return false;
+  if (!/[a-z]/.test(pw)) return false;
+  if (!/[0-9]/.test(pw)) return false;
+  if (!/[^A-Za-z0-9]/.test(pw)) return false;
+  return true;
+}
+
+function pwError(pw) {
+  const e = [];
+  if (!pw || pw.length < 8) e.push('8 caractères min');
+  if (!/[A-Z]/.test(pw)) e.push('1 majuscule');
+  if (!/[a-z]/.test(pw)) e.push('1 minuscule');
+  if (!/[0-9]/.test(pw)) e.push('1 chiffre');
+  if (!/[^A-Za-z0-9]/.test(pw)) e.push('1 symbole (!@#$%...)');
+  return e.length ? 'Requis : ' + e.join(', ') : null;
 }
 
 // ── Protection CSRF ──────────────────────
