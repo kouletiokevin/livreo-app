@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Livreo — Admin Dashboard</title>
-<meta name="robots" content="noindex, nofollow">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -19,28 +18,28 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: var(--sans); background: var(--cream); color: var(--ink); }
 
-/* LOADING */
-#loading-screen {
+/* LOGIN */
+#admin-login {
   min-height: 100vh; display: flex; align-items: center;
-  justify-content: center; flex-direction: column; gap: 16px;
+  justify-content: center; padding: 20px;
 }
-.loading-logo { font-size: 2rem; font-weight: 900; }
-.loading-logo span { color: var(--g500); }
-.loading-sub { font-size: .84rem; color: var(--muted); }
-
-/* ACCESS DENIED */
-#access-denied {
-  min-height: 100vh; display: none; align-items: center;
-  justify-content: center; padding: 20px; text-align: center;
+.login-card {
+  background: var(--white); border-radius: 20px;
+  padding: 40px; width: 100%; max-width: 400px;
+  box-shadow: 0 8px 40px rgba(14,26,16,.12);
+  border: 1.5px solid var(--border);
 }
-.denied-card {
-  background: var(--white); border-radius: 20px; padding: 40px;
-  max-width: 380px; border: 1.5px solid var(--border);
-}
-.denied-icon { font-size: 3rem; margin-bottom: 12px; }
-.denied-card h2 { font-size: 1.2rem; font-weight: 900; margin-bottom: 8px; }
-.denied-card p { font-size: .82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
-.btn-back { padding: 11px 24px; background: var(--ink); color: #fff; border: none; border-radius: 50px; font-family: var(--sans); font-size: .88rem; font-weight: 700; cursor: pointer; }
+.login-logo { text-align: center; margin-bottom: 8px; }
+.login-logo h1 { font-size: 2rem; font-weight: 900; color: var(--ink); }
+.login-logo h1 span { color: var(--g500); }
+.login-logo p { font-size: .8rem; color: var(--muted); margin-top: 2px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: .7rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .5px; }
+.field input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--sans); font-size: .9rem; outline: none; background: var(--cream); transition: .16s; }
+.field input:focus { border-color: var(--g400); background: var(--white); }
+.btn-login { width: 100%; padding: 13px; background: var(--ink); color: #fff; border: none; border-radius: 50px; font-family: var(--sans); font-size: .9rem; font-weight: 700; cursor: pointer; transition: .18s; }
+.btn-login:hover { background: var(--ink2); }
+.error-msg { color: var(--danger); font-size: .78rem; text-align: center; margin-top: 10px; display: none; }
 
 /* DASHBOARD */
 #admin-dashboard { display: none; min-height: 100vh; }
@@ -50,29 +49,27 @@ body { font-family: var(--sans); background: var(--cream); color: var(--ink); }
   position: fixed; left: 0; top: 0; bottom: 0;
   width: 240px; background: var(--ink);
   padding: 24px 16px; z-index: 100;
-  display: flex; flex-direction: column; overflow-y: auto;
+  display: flex; flex-direction: column;
 }
 .sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
 .sidebar-logo h2 { color: #fff; font-size: 1.2rem; font-weight: 900; }
 .sidebar-logo h2 span { color: var(--g300); }
 .sidebar-logo small { color: rgba(255,255,255,.35); font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; }
-.nav-link {
+nav a {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 14px; border-radius: 10px;
   color: rgba(255,255,255,.55); text-decoration: none;
   font-size: .84rem; font-weight: 600; margin-bottom: 4px;
-  transition: .15s; cursor: pointer; border: none; background: none;
-  width: 100%; text-align: left; font-family: var(--sans);
+  transition: .15s; cursor: pointer;
 }
-.nav-link:hover, .nav-link.active { background: rgba(255,255,255,.08); color: #fff; }
-.nav-link.active { background: var(--g500); color: #fff; }
-.nav-link .icon { font-size: 1.1rem; width: 20px; text-align: center; }
-.sidebar-bottom { margin-top: auto; padding-top: 16px; }
+nav a:hover, nav a.active { background: rgba(255,255,255,.08); color: #fff; }
+nav a.active { background: var(--g500); color: #fff; }
+nav a .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+.sidebar-bottom { margin-top: auto; }
 .admin-info { padding: 12px; background: rgba(255,255,255,.06); border-radius: 10px; margin-bottom: 8px; }
 .admin-info p { color: rgba(255,255,255,.7); font-size: .74rem; }
 .admin-info strong { color: #fff; }
 .btn-logout { width: 100%; padding: 9px; background: rgba(220,38,38,.2); color: #fca5a5; border: 1px solid rgba(220,38,38,.3); border-radius: 50px; font-family: var(--sans); font-size: .78rem; font-weight: 700; cursor: pointer; }
-.btn-back-app { width: 100%; padding: 9px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); border: none; border-radius: 50px; font-family: var(--sans); font-size: .78rem; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
 
 /* MAIN */
 .main { margin-left: 240px; padding: 28px; }
@@ -104,8 +101,6 @@ td { padding: 12px 16px; font-size: .82rem; border-bottom: 1px solid var(--borde
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--cream); }
 td strong { color: var(--ink); }
-
-/* BADGES */
 .badge { font-size: .65rem; font-weight: 800; padding: 3px 9px; border-radius: 50px; display: inline-block; }
 .badge.green { background: var(--g100); color: var(--g500); }
 .badge.orange { background: #fef3c7; color: #92400e; }
@@ -125,34 +120,46 @@ td strong { color: var(--ink); }
 .search-bar input:focus { border-color: var(--g400); }
 .search-bar select { padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--sans); font-size: .84rem; outline: none; background: var(--white); cursor: pointer; }
 
-/* TOAST */
+/* TOAST ADMIN */
 #admin-toast { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
 .at { background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 10px; font-size: .82rem; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.2); animation: slideIn .3s ease; }
 .at.s { background: var(--g500); }
 .at.e { background: var(--danger); }
 @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--white); border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; }
+.modal h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
 @media (max-width: 1024px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; padding: 16px; } }
+@media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } }
 </style>
 </head>
 <body>
 
 <div id="admin-toast"></div>
 
-<!-- ════ LOADING ════ -->
-<div id="loading-screen">
-  <div class="loading-logo">Livr<span>eo</span></div>
-  <div class="loading-sub">Vérification des droits d'accès...</div>
-</div>
-
-<!-- ════ ACCÈS REFUSÉ ════ -->
-<div id="access-denied" style="display:none;">
-  <div class="denied-card">
-    <div class="denied-icon">🔐</div>
-    <h2>Accès refusé</h2>
-    <p>Vous n'avez pas les droits pour accéder à cet espace. Connectez-vous avec un compte administrateur sur l'application principale.</p>
-    <button class="btn-back" onclick="window.location.href='/'">← Retour à l'application</button>
+<!-- ════ LOGIN ════ -->
+<div id="admin-login">
+  <div class="login-card">
+    <div class="login-logo">
+      <h1>Livr<span>eo</span></h1>
+      <p>🔐 Espace Administrateur</p>
+    </div>
+    <br>
+    <div class="field">
+      <label>Email administrateur</label>
+      <input type="email" id="admin-email" placeholder="kouletiokevinfr@gmail.com" value="kouletiokevinfr@gmail.com">
+    </div>
+    <div class="field">
+      <label>Mot de passe</label>
+      <input type="password" id="admin-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()">
+    </div>
+    <button class="btn-login" onclick="adminLogin()">Accéder au dashboard →</button>
+    <p class="error-msg" id="login-error">Accès refusé. Compte admin requis.</p>
   </div>
 </div>
 
@@ -168,44 +175,51 @@ td strong { color: var(--ink); }
       </div>
     </div>
 
-    <button class="nav-link active" onclick="showSection('overview', this)">
-      <span class="icon">📊</span> Vue d'ensemble
-    </button>
-    <button class="nav-link" onclick="showSection('users', this)">
-      <span class="icon">👥</span> Utilisateurs
-    </button>
-    <button class="nav-link" onclick="showSection('colis', this)">
-      <span class="icon">📦</span> Colis
-    </button>
-    <button class="nav-link" onclick="showSection('transactions', this)">
-      <span class="icon">💳</span> Transactions
-    </button>
-    <button class="nav-link" onclick="showSection('verifications', this)">
-      <span class="icon">🛡️</span> Vérifications
-      <span id="verif-badge" style="margin-left:auto;background:var(--danger);color:#fff;font-size:.6rem;padding:1px 6px;border-radius:50px;display:none;">0</span>
-    </button>
-    <button class="nav-link" onclick="showSection('litiges', this)">
-      <span class="icon">⚖️</span> Litiges
-    </button>
-    <button class="nav-link" onclick="showSection('config', this)">
-      <span class="icon">⚙️</span> Configuration
-    </button>
-    <button class="nav-link" onclick="showSection('security', this)">
-      <span class="icon">🔐</span> Sécurité
-    </button>
+    <nav>
+      <a class="active" onclick="showSection('overview')">
+        <span class="icon">📊</span> Vue d'ensemble
+      </a>
+      <a onclick="showSection('users')">
+        <span class="icon">👥</span> Utilisateurs
+      </a>
+      <a onclick="showSection('colis')">
+        <span class="icon">📦</span> Colis
+      </a>
+      <a onclick="showSection('transactions')">
+        <span class="icon">💳</span> Transactions
+      </a>
+      <a onclick="showSection('verifications')">
+        <span class="icon">🛡️</span> Vérifications
+        <span id="verif-badge" style="margin-left:auto;background:var(--danger);color:#fff;font-size:.6rem;padding:1px 6px;border-radius:50px;display:none;">0</span>
+      </a>
+      <a onclick="showSection('litiges')">
+        <span class="icon">⚖️</span> Litiges
+      </a>
+      <a onclick="showSection('notifications')">
+        <span class="icon">🔔</span> Notifications
+      </a>
+      <a onclick="showSection('config')">
+        <span class="icon">⚙️</span> Configuration
+      </a>
+      <a onclick="showSection('security')">
+        <span class="icon">🔐</span> Sécurité
+      </a>
+      <a onclick="showSection('roles')">
+        <span class="icon">👑</span> Gestion des rôles
+      </a>
+    </nav>
 
     <div class="sidebar-bottom">
       <div class="admin-info">
         <p>Connecté en tant que</p>
-        <strong id="admin-name">—</strong>
-        <p style="margin-top:2px;font-size:.65rem;color:rgba(255,255,255,.3);">👑 Administrateur</p>
+        <strong id="admin-name">Kevin KOULETIO</strong>
+        <p style="margin-top:2px;font-size:.65rem;color:rgba(255,255,255,.3);" id="admin-role-badge">👑 Administrateur</p>
       </div>
-      <button class="btn-back-app" onclick="window.location.href='/'">← Retour à l'app</button>
       <button class="btn-logout" onclick="adminLogout()">Se déconnecter</button>
     </div>
   </div>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <div class="main">
 
     <!-- ── VUE D'ENSEMBLE ── -->
@@ -226,6 +240,8 @@ td strong { color: var(--ink); }
         <div class="kpi-card"><div class="label">Vérifications à traiter</div><div class="value" id="k-verif" style="color:var(--warn)">—</div></div>
         <div class="kpi-card"><div class="label">Litiges ouverts</div><div class="value" id="k-litiges" style="color:var(--danger)">—</div></div>
       </div>
+
+      <!-- Activité récente -->
       <div class="table-card">
         <div class="table-header">
           <h3>Activité récente</h3>
@@ -240,7 +256,10 @@ td strong { color: var(--ink); }
 
     <!-- ── UTILISATEURS ── -->
     <div id="section-users" class="section">
-      <div class="page-header"><h1>Utilisateurs</h1><p>Gérer tous les comptes de la plateforme</p></div>
+      <div class="page-header">
+        <h1>Utilisateurs</h1>
+        <p>Gérer tous les comptes de la plateforme</p>
+      </div>
       <div class="search-bar">
         <input type="text" id="user-search" placeholder="Rechercher par nom, email, téléphone..." oninput="searchUsers()">
         <select onchange="filterUsers(this.value)">
@@ -251,7 +270,10 @@ td strong { color: var(--ink); }
         </select>
       </div>
       <div class="table-card">
-        <div class="table-header"><h3>Liste des utilisateurs</h3><span class="count" id="users-count">0 utilisateurs</span></div>
+        <div class="table-header">
+          <h3>Liste des utilisateurs</h3>
+          <span class="count" id="users-count">0 utilisateurs</span>
+        </div>
         <table>
           <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Livraisons</th><th>Note</th><th>Statut</th><th>Actions</th></tr></thead>
           <tbody id="users-table"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
@@ -261,7 +283,10 @@ td strong { color: var(--ink); }
 
     <!-- ── COLIS ── -->
     <div id="section-colis" class="section">
-      <div class="page-header"><h1>Colis</h1><p>Suivre toutes les annonces et livraisons</p></div>
+      <div class="page-header">
+        <h1>Colis</h1>
+        <p>Suivre toutes les annonces et livraisons</p>
+      </div>
       <div class="search-bar">
         <input type="text" id="colis-search" placeholder="Rechercher par code LVR, gare, titre..." oninput="searchColis()">
         <select onchange="filterColis(this.value)">
@@ -271,10 +296,14 @@ td strong { color: var(--ink); }
           <option value="en_transit">En transit</option>
           <option value="livre">Livré</option>
           <option value="annule">Annulé</option>
+          <option value="litige">Litige</option>
         </select>
       </div>
       <div class="table-card">
-        <div class="table-header"><h3>Tous les colis</h3><span class="count" id="colis-count">0 colis</span></div>
+        <div class="table-header">
+          <h3>Tous les colis</h3>
+          <span class="count" id="colis-count">0 colis</span>
+        </div>
         <table>
           <thead><tr><th>Code LVR</th><th>Titre</th><th>Trajet</th><th>Prix</th><th>Expéditeur</th><th>Livreur</th><th>Statut</th><th>Actions</th></tr></thead>
           <tbody id="colis-table"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
@@ -284,9 +313,15 @@ td strong { color: var(--ink); }
 
     <!-- ── TRANSACTIONS ── -->
     <div id="section-transactions" class="section">
-      <div class="page-header"><h1>Transactions</h1><p>Suivi des paiements et de l'argent en circulation</p></div>
+      <div class="page-header">
+        <h1>Transactions</h1>
+        <p>Suivi des paiements et de l'argent en circulation</p>
+      </div>
       <div class="table-card">
-        <div class="table-header"><h3>Toutes les transactions</h3><span class="count" id="tx-count">0 transactions</span></div>
+        <div class="table-header">
+          <h3>Toutes les transactions</h3>
+          <span class="count" id="tx-count">0 transactions</span>
+        </div>
         <table>
           <thead><tr><th>Colis</th><th>Montant</th><th>Expéditeur</th><th>Livreur</th><th>Stripe ID</th><th>Statut</th><th>Date</th></tr></thead>
           <tbody id="tx-table"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
@@ -296,9 +331,15 @@ td strong { color: var(--ink); }
 
     <!-- ── VÉRIFICATIONS ── -->
     <div id="section-verifications" class="section">
-      <div class="page-header"><h1>Vérifications d'identité</h1><p>Traiter les demandes de vérification des livreurs</p></div>
+      <div class="page-header">
+        <h1>Vérifications d'identité</h1>
+        <p>Traiter les demandes de vérification des livreurs</p>
+      </div>
       <div class="table-card">
-        <div class="table-header"><h3>Demandes en attente</h3><span class="count" id="verif-count">0 demandes</span></div>
+        <div class="table-header">
+          <h3>Demandes en attente</h3>
+          <span class="count" id="verif-count">0 demandes</span>
+        </div>
         <table>
           <thead><tr><th>Utilisateur</th><th>Type document</th><th>Date demande</th><th>Statut</th><th>Actions</th></tr></thead>
           <tbody id="verif-table"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Aucune demande en attente ✅</td></tr></tbody>
@@ -308,9 +349,15 @@ td strong { color: var(--ink); }
 
     <!-- ── LITIGES ── -->
     <div id="section-litiges" class="section">
-      <div class="page-header"><h1>Litiges</h1><p>Résoudre les conflits entre utilisateurs</p></div>
+      <div class="page-header">
+        <h1>Litiges</h1>
+        <p>Résoudre les conflits entre utilisateurs</p>
+      </div>
       <div class="table-card">
-        <div class="table-header"><h3>Litiges actifs</h3><span class="count" id="litiges-count">0 litiges</span></div>
+        <div class="table-header">
+          <h3>Litiges actifs</h3>
+          <span class="count" id="litiges-count">0 litiges</span>
+        </div>
         <table>
           <thead><tr><th>Colis</th><th>Plaignant</th><th>Motif</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead>
           <tbody id="litiges-table"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Aucun litige actif ✅</td></tr></tbody>
@@ -320,7 +367,10 @@ td strong { color: var(--ink); }
 
     <!-- ── CONFIGURATION ── -->
     <div id="section-config" class="section">
-      <div class="page-header"><h1>Configuration</h1><p>Paramètres globaux de l'application</p></div>
+      <div class="page-header">
+        <h1>Configuration</h1>
+        <p>Paramètres globaux de l'application</p>
+      </div>
       <div class="table-card">
         <div class="table-header"><h3>Paramètres app</h3></div>
         <table>
@@ -332,9 +382,15 @@ td strong { color: var(--ink); }
 
     <!-- ── SÉCURITÉ ── -->
     <div id="section-security" class="section">
-      <div class="page-header"><h1>Sécurité</h1><p>Logs de sécurité et tentatives suspectes</p></div>
+      <div class="page-header">
+        <h1>Sécurité</h1>
+        <p>Logs de sécurité et tentatives suspectes</p>
+      </div>
       <div class="table-card">
-        <div class="table-header"><h3>Logs récents</h3><span class="count" id="logs-count">0 événements</span></div>
+        <div class="table-header">
+          <h3>Logs récents</h3>
+          <span class="count" id="logs-count">0 événements</span>
+        </div>
         <table>
           <thead><tr><th>Type</th><th>Utilisateur</th><th>Détails</th><th>Date</th></tr></thead>
           <tbody id="security-table"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucun événement de sécurité ✅</td></tr></tbody>
@@ -342,8 +398,85 @@ td strong { color: var(--ink); }
       </div>
     </div>
 
-  </div>
-</div>
+    <!-- ── GESTION DES RÔLES ── -->
+    <div id="section-roles" class="section">
+      <div class="page-header">
+        <h1>👑 Gestion des rôles</h1>
+        <p>Attribuer ou révoquer des rôles aux utilisateurs</p>
+      </div>
+
+      <!-- Attribuer un rôle -->
+      <div class="table-card" style="margin-bottom:20px;">
+        <div class="table-header"><h3>Attribuer un rôle</h3></div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;">
+            <div>
+              <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Email de l'utilisateur</label>
+              <input type="email" id="role-email" placeholder="utilisateur@email.com"
+                style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.88rem;outline:none;">
+            </div>
+            <div>
+              <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Rôle à attribuer</label>
+              <select id="role-select" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.88rem;outline:none;background:white;cursor:pointer;">
+                <option value="user">👤 User — Utilisateur standard</option>
+                <option value="livreur_verifie">✅ Livreur vérifié — Peut livrer</option>
+                <option value="support">💬 Support — Peut voir les litiges</option>
+                <option value="moderateur">🛡️ Modérateur — Peut modérer</option>
+                <option value="admin">👑 Admin — Accès total</option>
+              </select>
+            </div>
+            <button class="action-btn green" style="padding:10px 20px;font-size:.84rem;" onclick="assignRole()">
+              Attribuer →
+            </button>
+          </div>
+          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;font-size:.78rem;color:#92400e;">
+            ⚠️ <strong>Admin</strong> donne accès à tout — ne l'attribuer qu'à des personnes de confiance absolue.
+          </div>
+        </div>
+      </div>
+
+      <!-- Liste des rôles actuels -->
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Rôles actuels</h3>
+          <span class="count" id="roles-count">0 rôles</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+              <th>Rôle</th>
+              <th>Attribué le</th>
+              <th>Par</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="roles-table">
+            <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Description des rôles -->
+      <div class="table-card" style="margin-top:20px;">
+        <div class="table-header"><h3>Description des rôles</h3></div>
+        <table>
+          <thead><tr><th>Rôle</th><th>Permissions</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge grey">👤 User</span></td><td>Peut envoyer et recevoir des colis. Accès à son profil uniquement.</td></tr>
+            <tr><td><span class="badge blue">✅ Livreur vérifié</span></td><td>Identité vérifiée. Peut accepter des colis et livrer. Badge visible sur son profil.</td></tr>
+            <tr><td><span class="badge orange">💬 Support</span></td><td>Peut voir les litiges et les vérifications d'identité. Aide les utilisateurs.</td></tr>
+            <tr><td><span class="badge orange">🛡️ Modérateur</span></td><td>Peut suspendre des utilisateurs, annuler des colis, résoudre des litiges.</td></tr>
+            <tr><td><span class="badge red">👑 Admin</span></td><td>Accès total à tout. Peut attribuer et révoquer tous les rôles.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /admin-dashboard -->
 
 <script>
 const SUPA_URL = 'https://wqhuaylfytdmhzjauvmv.supabase.co';
@@ -351,18 +484,7 @@ const SUPA_KEY = 'sb_publishable_pq9e6TM3kHwpZhoI8Fsq8Q_iIoKBPQ4';
 const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 let adminUser = null;
 
-// ── Échappement HTML ─────────────────────
-function escapeHtml(val) {
-  if (val == null) return '';
-  return String(val)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-// ── Toast ─────────────────────────────────
+// ── TOAST ────────────────────────────────
 function toast(msg, type = '') {
   const c = document.getElementById('admin-toast');
   const d = document.createElement('div');
@@ -373,51 +495,61 @@ function toast(msg, type = '') {
   setTimeout(() => d.remove(), 3400);
 }
 
-// ── Vérification session au chargement ───
-(async () => {
+// ── PROTECTION XSS ───────────────────────
+function escapeHtml(val) {
+  if (val == null) return '';
+  return String(val)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+// ── LOGIN ────────────────────────────────
+async function adminLogin() {
+  const email = document.getElementById('admin-email').value.trim();
+  const pw = document.getElementById('admin-pw').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
   try {
-    const { data: { session } } = await db.auth.getSession();
-    if (!session) { showDenied(); return; }
+    const { data, error } = await db.auth.signInWithPassword({ email, password: pw });
+    if (error) throw new Error(error.message);
 
-    const { data: role } = await db.from('user_roles')
-      .select('role')
-      .eq('user_id', session.user.id)
-      .single();
+    // Vérifier que c'est bien un admin
+    const { data: role } = await db.from('user_roles').select('role').eq('user_id', data.user.id).single();
+    if (!role || role.role !== 'admin') {
+      await db.auth.signOut();
+      errEl.style.display = 'block';
+      return;
+    }
 
-    if (!role || role.role !== 'admin') { showDenied(); return; }
-
-    const { data: profil } = await db.from('users')
-      .select('*')
-      .eq('id', session.user.id)
-      .single();
-
+    // Charger le profil
+    const { data: profil } = await db.from('users').select('*').eq('id', data.user.id).single();
     adminUser = profil;
-    document.getElementById('admin-name').textContent = (profil?.prenom || '') + ' ' + (profil?.nom || '');
+    document.getElementById('admin-name').textContent = (profil.prenom || '') + ' ' + (profil.nom || '');
 
-    document.getElementById('loading-screen').style.display = 'none';
+    // Afficher le dashboard
+    document.getElementById('admin-login').style.display = 'none';
     document.getElementById('admin-dashboard').style.display = 'block';
+
     loadDashboard();
   } catch (e) {
-    showDenied();
+    errEl.style.display = 'block';
+    errEl.textContent = e.message;
   }
-})();
-
-function showDenied() {
-  document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('access-denied').style.display = 'flex';
 }
 
 async function adminLogout() {
   await db.auth.signOut();
-  window.location.href = '/';
+  document.getElementById('admin-login').style.display = 'flex';
+  document.getElementById('admin-dashboard').style.display = 'none';
 }
 
-// ── Navigation ───────────────────────────
-function showSection(name, btn) {
+// ── NAVIGATION ───────────────────────────
+function showSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
   document.getElementById('section-' + name)?.classList.add('active');
-  if (btn) btn.classList.add('active');
+  event?.target?.closest('a')?.classList.add('active');
 
   const loaders = {
     overview: loadDashboard,
@@ -428,11 +560,12 @@ function showSection(name, btn) {
     litiges: loadLitiges,
     config: loadConfig,
     security: loadSecurity,
+    roles: loadRoles,
   };
   loaders[name]?.();
 }
 
-// ── Dashboard ────────────────────────────
+// ── CHARGEMENT DASHBOARD ─────────────────
 async function loadDashboard() {
   try {
     const { data } = await db.from('admin_dashboard').select('*').single();
@@ -463,9 +596,9 @@ async function loadDashboard() {
       document.getElementById('activity-count').textContent = colis.length + ' colis';
       tbody.innerHTML = colis.map(c => `
         <tr>
-          <td><strong>${escapeHtml(c.code_lvr || '—')}</strong></td>
-          <td>${escapeHtml(c.expediteur || '—')}</td>
-          <td style="font-size:.76rem;">${escapeHtml(c.gare_depart || '?')} → ${escapeHtml(c.gare_arrivee || '?')}</td>
+          <td><strong>${escapeHtml(c.code_lvr) || '—'}</strong></td>
+          <td>${escapeHtml(c.expediteur) || '—'}</td>
+          <td style="font-size:.76rem;">${escapeHtml(c.gare_depart) || '?'} → ${escapeHtml(c.gare_arrivee) || '?'}</td>
           <td>${c.livreur ? escapeHtml(c.livreur) : '<span style="color:var(--muted);">Non assigné</span>'}</td>
           <td style="color:var(--g500);font-weight:800;">${parseFloat(c.prix || 0).toFixed(2)}€</td>
           <td>${statusBadge(c.statut)}</td>
@@ -473,10 +606,12 @@ async function loadDashboard() {
     } else {
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Aucun colis pour le moment</td></tr>';
     }
-  } catch (e) { console.error('loadDashboard:', e); }
+  } catch (e) {
+    console.error('loadDashboard:', e);
+  }
 }
 
-// ── Utilisateurs ─────────────────────────
+// ── CHARGEMENT UTILISATEURS ───────────────
 async function loadUsers() {
   const { data } = await db.from('users').select('*, user_roles(role)').order('created_at', { ascending: false });
   const tbody = document.getElementById('users-table');
@@ -485,22 +620,25 @@ async function loadUsers() {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Aucun utilisateur</td></tr>';
     return;
   }
-  tbody.innerHTML = data.map(u => `
+  tbody.innerHTML = data.map(u => {
+    const jId = JSON.stringify(u.id); const jEm = JSON.stringify(u.email || '');
+    return `
     <tr>
-      <td><strong>${escapeHtml(u.prenom || '')} ${escapeHtml(u.nom || '')}</strong><br><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(u.id?.substring(0, 8))}...</span></td>
-      <td>${escapeHtml(u.email || '—')}</td>
-      <td>${escapeHtml(u.telephone || '—')}</td>
-      <td>${parseInt(u.nb_livraisons) || 0}</td>
-      <td>${u.note_moyenne > 0 ? '⭐' + parseFloat(u.note_moyenne).toFixed(1) : '—'}</td>
+      <td><strong>${escapeHtml(u.prenom)} ${escapeHtml(u.nom)}</strong><br><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(u.id?.substring(0,8))}...</span></td>
+      <td>${escapeHtml(u.email) || '—'}</td>
+      <td>${escapeHtml(u.telephone) || '—'}</td>
+      <td>${u.nb_livraisons || 0}</td>
+      <td>${u.note_moyenne > 0 ? '⭐' + u.note_moyenne : '—'}</td>
       <td>${statusBadge(u.statut || 'actif')}</td>
       <td>
-        <button class="action-btn orange" onclick="suspendUser(${JSON.stringify(u.id)},${JSON.stringify(u.email || '')})">Suspendre</button>
-        <button class="action-btn red" onclick="blockUser(${JSON.stringify(u.id)},${JSON.stringify(u.email || '')})">Bloquer</button>
+        <button class="action-btn orange" onclick="suspendUser(${jId},${jEm})">Suspendre</button>
+        <button class="action-btn red" onclick="blockUser(${jId},${jEm})">Bloquer</button>
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
-// ── Colis ────────────────────────────────
+// ── CHARGEMENT COLIS ─────────────────────
 async function loadColis() {
   const { data } = await db.from('colis_actifs').select('*').order('created_at', { ascending: false });
   const tbody = document.getElementById('colis-table');
@@ -509,100 +647,106 @@ async function loadColis() {
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Aucun colis</td></tr>';
     return;
   }
-  tbody.innerHTML = data.map(c => `
+  tbody.innerHTML = data.map(c => {
+    const jCode = JSON.stringify(c.code_lvr);
+    return `
     <tr>
       <td><strong>${escapeHtml(c.code_lvr)}</strong></td>
-      <td>${escapeHtml(c.titre || '—')}</td>
-      <td style="font-size:.76rem;">${escapeHtml(c.gare_depart || '?')} → ${escapeHtml(c.gare_arrivee || '?')}</td>
+      <td>${escapeHtml(c.titre) || '—'}</td>
+      <td style="font-size:.76rem;">${escapeHtml(c.gare_depart) || '?'} → ${escapeHtml(c.gare_arrivee) || '?'}</td>
       <td style="color:var(--g500);font-weight:800;">${parseFloat(c.prix || 0).toFixed(2)}€</td>
-      <td>${escapeHtml(c.expediteur || '—')}</td>
+      <td>${escapeHtml(c.expediteur) || '—'}</td>
       <td>${c.livreur ? escapeHtml(c.livreur) : '<span style="color:var(--muted);">—</span>'}</td>
       <td>${statusBadge(c.statut)}</td>
-      <td><button class="action-btn red" onclick="cancelColis(${JSON.stringify(c.code_lvr)})">Annuler</button></td>
-    </tr>`).join('');
+      <td><button class="action-btn red" onclick="cancelColis(${jCode})">Annuler</button></td>
+    </tr>`;
+  }).join('');
 }
 
-// ── Transactions ─────────────────────────
+// ── CHARGEMENT TRANSACTIONS ───────────────
 async function loadTransactions() {
-  const { data } = await db.from('transactions')
-    .select('*, colis(code_lvr), exp:users!transactions_expediteur_id_fkey(prenom), liv:users!transactions_livreur_id_fkey(prenom)')
-    .order('created_at', { ascending: false }).limit(50);
+  const { data } = await db.from('transactions').select('*, colis(code_lvr), exp:users!transactions_expediteur_id_fkey(prenom), liv:users!transactions_livreur_id_fkey(prenom)').order('created_at', { ascending: false }).limit(50);
   const tbody = document.getElementById('tx-table');
   document.getElementById('tx-count').textContent = (data?.length || 0) + ' transactions';
   if (!data || data.length === 0) {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Aucune transaction</td></tr>';
     return;
   }
-  tbody.innerHTML = data.map(tx => `
+  tbody.innerHTML = data.map(t => `
     <tr>
-      <td><strong>${escapeHtml(tx.colis?.code_lvr || '—')}</strong></td>
-      <td style="color:var(--g500);font-weight:800;">${parseFloat(tx.montant || 0).toFixed(2)}€</td>
-      <td>${escapeHtml(tx.exp?.prenom || '—')}</td>
-      <td>${escapeHtml(tx.liv?.prenom || '—')}</td>
-      <td style="font-size:.7rem;color:var(--muted);">${escapeHtml(tx.stripe_payment_intent?.substring(0, 20) || '—')}...</td>
-      <td>${statusBadge(tx.statut)}</td>
-      <td style="font-size:.74rem;">${new Date(tx.created_at).toLocaleDateString('fr-FR')}</td>
+      <td><strong>${escapeHtml(t.colis?.code_lvr) || '—'}</strong></td>
+      <td style="color:var(--g500);font-weight:800;">${parseFloat(t.montant || 0).toFixed(2)}€</td>
+      <td>${escapeHtml(t.exp?.prenom) || '—'}</td>
+      <td>${escapeHtml(t.liv?.prenom) || '—'}</td>
+      <td style="font-size:.7rem;color:var(--muted);">${escapeHtml(t.stripe_payment_intent?.substring(0,20)) || '—'}...</td>
+      <td>${statusBadge(t.statut)}</td>
+      <td style="font-size:.74rem;">${new Date(t.created_at).toLocaleDateString('fr-FR')}</td>
     </tr>`).join('');
 }
 
-// ── Vérifications ────────────────────────
+// ── CHARGEMENT VÉRIFICATIONS ──────────────
 async function loadVerifications() {
-  const { data } = await db.from('verifications_identite')
-    .select('*, users(prenom, nom, email)')
-    .order('created_at', { ascending: false });
+  const { data } = await db.from('verifications_identite').select('*, users(prenom, nom, email)').order('created_at', { ascending: false });
   const tbody = document.getElementById('verif-table');
   document.getElementById('verif-count').textContent = (data?.length || 0) + ' demandes';
   if (!data || data.length === 0) {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Aucune demande en attente ✅</td></tr>';
     return;
   }
-  tbody.innerHTML = data.map(v => `
+  tbody.innerHTML = data.map(v => {
+    const jId = JSON.stringify(v.id);
+    return `
     <tr>
-      <td><strong>${escapeHtml(v.users?.prenom || '')} ${escapeHtml(v.users?.nom || '')}</strong><br><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(v.users?.email || '')}</span></td>
-      <td>${escapeHtml(v.type_document || '—')}</td>
+      <td><strong>${escapeHtml(v.users?.prenom)} ${escapeHtml(v.users?.nom)}</strong><br><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(v.users?.email)}</span></td>
+      <td>${escapeHtml(v.type_document) || '—'}</td>
       <td>${new Date(v.created_at).toLocaleDateString('fr-FR')}</td>
       <td>${statusBadge(v.statut)}</td>
       <td>
-        <button class="action-btn green" onclick="approveVerif(${JSON.stringify(v.id)})">✅ Approuver</button>
-        <button class="action-btn red" onclick="rejectVerif(${JSON.stringify(v.id)})">❌ Refuser</button>
+        <button class="action-btn green" onclick="approveVerif(${jId})">✅ Approuver</button>
+        <button class="action-btn red" onclick="rejectVerif(${jId})">❌ Refuser</button>
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
-// ── Litiges ──────────────────────────────
+// ── CHARGEMENT LITIGES ────────────────────
 async function loadLitiges() {
-  const { data } = await db.from('litiges')
-    .select('*, colis(code_lvr), users!litiges_plaignant_id_fkey(prenom,nom)')
-    .order('created_at', { ascending: false });
+  const { data } = await db.from('litiges').select('*, colis(code_lvr), users!litiges_plaignant_id_fkey(prenom,nom)').order('created_at', { ascending: false });
   const tbody = document.getElementById('litiges-table');
   document.getElementById('litiges-count').textContent = (data?.length || 0) + ' litiges';
   if (!data || data.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Aucun litige actif ✅</td></tr>';
     return;
   }
-  tbody.innerHTML = data.map(l => `
+  tbody.innerHTML = data.map(l => {
+    const jId = JSON.stringify(l.id);
+    return `
     <tr>
-      <td><strong>${escapeHtml(l.colis?.code_lvr || '—')}</strong></td>
-      <td>${escapeHtml(l.users?.prenom || '')} ${escapeHtml(l.users?.nom || '')}</td>
-      <td>${escapeHtml(l.motif || '—')}</td>
+      <td><strong>${escapeHtml(l.colis?.code_lvr) || '—'}</strong></td>
+      <td>${escapeHtml(l.users?.prenom)} ${escapeHtml(l.users?.nom)}</td>
+      <td>${escapeHtml(l.motif) || '—'}</td>
       <td>${statusBadge(l.statut)}</td>
       <td>${new Date(l.created_at).toLocaleDateString('fr-FR')}</td>
-      <td><button class="action-btn orange" onclick="resolveLitige(${JSON.stringify(l.id)})">Résoudre</button></td>
-    </tr>`).join('');
+      <td><button class="action-btn orange" onclick="resolveLitige(${jId})">Résoudre</button></td>
+    </tr>`;
+  }).join('');
 }
 
-// ── Configuration ────────────────────────
+// ── CHARGEMENT CONFIG ─────────────────────
 async function loadConfig() {
   const { data } = await db.from('app_config').select('*').order('key');
   const tbody = document.getElementById('config-table');
   if (!data) return;
-  tbody.innerHTML = data.map(c => `
+  tbody.innerHTML = data.map(c => {
+    const jKey = JSON.stringify(c.key);
+    return `
     <tr>
       <td><strong>${escapeHtml(c.key)}</strong></td>
       <td><input type="text" value="${escapeHtml(c.value || '')}" id="cfg-${escapeHtml(c.key)}" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.82rem;width:100%;"></td>
       <td style="font-size:.74rem;color:var(--muted);">${escapeHtml(c.description || '')}</td>
-      <td><button class="action-btn green" onclick="saveConfig(${JSON.stringify(c.key)})">Sauver</button></td>
-    </tr>`).join('');
+      <td><button class="action-btn green" onclick="saveConfig(${jKey})">Sauver</button></td>
+    </tr>`;
+  }).join('');
 }
 
 async function saveConfig(key) {
@@ -611,10 +755,9 @@ async function saveConfig(key) {
   toast('Sauvegardé ✅', 's');
 }
 
-// ── Sécurité ─────────────────────────────
+// ── CHARGEMENT SÉCURITÉ ───────────────────
 async function loadSecurity() {
-  const { data } = await db.from('security_logs')
-    .select('*').order('timestamp', { ascending: false }).limit(50);
+  const { data } = await db.from('security_logs').select('*').order('timestamp', { ascending: false }).limit(50);
   const tbody = document.getElementById('security-table');
   document.getElementById('logs-count').textContent = (data?.length || 0) + ' événements';
   if (!data || data.length === 0) {
@@ -624,70 +767,102 @@ async function loadSecurity() {
   tbody.innerHTML = data.map(l => `
     <tr>
       <td><span class="badge ${l.type?.includes('fail') ? 'red' : 'grey'}">${escapeHtml(l.type)}</span></td>
-      <td>${escapeHtml(l.user_id?.substring(0, 8) || 'Anonyme')}...</td>
-      <td style="font-size:.74rem;">${escapeHtml(JSON.stringify(l.details || {}).substring(0, 80))}</td>
+      <td>${escapeHtml(l.user_id?.substring(0,8) || 'Anonyme')}...</td>
+      <td style="font-size:.74rem;">${escapeHtml(JSON.stringify(l.details || {}).substring(0,80))}</td>
       <td>${new Date(l.timestamp).toLocaleString('fr-FR')}</td>
     </tr>`).join('');
 }
 
-// ── Actions admin ────────────────────────
+// ── ACTIONS ADMIN ────────────────────────
+async function adminRPC(action, targetId = null, value = null) {
+  const { data, error } = await db.rpc('admin_action', {
+    p_action: action,
+    p_target_id: targetId,
+    p_value: value
+  });
+  if (error) throw new Error(error.message);
+  if (!data.success) throw new Error(data.error);
+  return data;
+}
+
 async function suspendUser(id, email) {
   if (!confirm(`Suspendre ${email} ?`)) return;
-  await db.from('users').update({ statut: 'suspendu' }).eq('id', id);
-  toast('Utilisateur suspendu', 'e');
-  loadUsers();
+  try {
+    await adminRPC('suspend_user', id);
+    toast('Utilisateur suspendu', 'e');
+    loadUsers();
+  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
 }
 
 async function blockUser(id, email) {
   if (!confirm(`⚠️ Bloquer définitivement ${email} ?`)) return;
-  await db.from('users').update({ statut: 'bloqué' }).eq('id', id);
-  toast('Utilisateur bloqué', 'e');
-  loadUsers();
+  try {
+    await adminRPC('block_user', id);
+    toast('Utilisateur bloqué', 'e');
+    loadUsers();
+  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
 }
 
 async function cancelColis(code) {
   if (!confirm(`Annuler le colis ${code} ?`)) return;
-  await db.from('colis').update({ statut: 'annule' }).eq('code_lvr', code);
-  toast('Colis annulé', 'e');
-  loadColis();
+  try {
+    const { data: c } = await db.from('colis').select('id').eq('code_lvr', code).single();
+    await adminRPC('cancel_colis', c.id);
+    toast('Colis annulé', 'e');
+    loadColis();
+  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
 }
 
 async function approveVerif(id) {
-  await db.from('verifications_identite').update({ statut: 'approuve', traite_at: new Date().toISOString() }).eq('id', id);
-  toast('Vérification approuvée ✅', 's');
-  loadVerifications();
-  loadDashboard();
+  try {
+    await adminRPC('approve_verif', id);
+    toast('Vérification approuvée ✅', 's');
+    loadVerifications();
+    loadDashboard();
+  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
 }
 
 async function rejectVerif(id) {
   const note = prompt('Raison du refus :');
   if (!note) return;
-  await db.from('verifications_identite').update({ statut: 'refuse', note_admin: note, traite_at: new Date().toISOString() }).eq('id', id);
-  toast('Vérification refusée', 'e');
-  loadVerifications();
+  try {
+    await adminRPC('reject_verif', id, note);
+    toast('Vérification refusée', 'e');
+    loadVerifications();
+  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
 }
 
 async function resolveLitige(id) {
   const decision = prompt('Décision (remboursement / livreur / partage) :');
   if (!decision) return;
-  await db.from('litiges').update({ statut: 'resolu', decision }).eq('id', id);
-  toast('Litige résolu ✅', 's');
-  loadLitiges();
+  try {
+    await adminRPC('resolve_litige', id, decision);
+    toast('Litige résolu ✅', 's');
+    loadLitiges();
+  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
 }
 
-// ── Helpers ──────────────────────────────
+// ── HELPERS ──────────────────────────────
 function statusBadge(status) {
   const map = {
-    actif: ['green', 'Actif'], suspendu: ['orange', 'Suspendu'], 'bloqué': ['red', 'Bloqué'],
-    en_attente: ['orange', 'En attente'], livreur_accepte: ['blue', 'Assigné'],
-    en_transit: ['blue', 'En transit'], livre: ['green', 'Livré'],
-    annule: ['red', 'Annulé'], litige: ['red', 'Litige'],
-    escrow: ['orange', 'En escrow'], libere: ['green', 'Libéré'],
-    approuve: ['green', 'Approuvé'], refuse: ['red', 'Refusé'],
-    ouvert: ['orange', 'Ouvert'], resolu: ['green', 'Résolu'],
+    actif: ['green', 'Actif'],
+    suspendu: ['orange', 'Suspendu'],
+    'bloqué': ['red', 'Bloqué'],
+    en_attente: ['orange', 'En attente'],
+    livreur_accepte: ['blue', 'Assigné'],
+    en_transit: ['blue', 'En transit'],
+    livre: ['green', 'Livré'],
+    annule: ['red', 'Annulé'],
+    litige: ['red', 'Litige'],
+    escrow: ['orange', 'En escrow'],
+    libere: ['green', 'Libéré'],
+    approuve: ['green', 'Approuvé'],
+    refuse: ['red', 'Refusé'],
+    ouvert: ['orange', 'Ouvert'],
+    resolu: ['green', 'Résolu'],
   };
   const [cls, label] = map[status] || ['grey', escapeHtml(status)];
-  return `<span class="badge ${escapeHtml(cls)}">${label}</span>`;
+  return `<span class="badge ${cls}">${label}</span>`;
 }
 
 function searchUsers() {
@@ -716,7 +891,83 @@ function filterColis(status) {
   });
 }
 
-// Auto-refresh toutes les 60 secondes
+// ── GESTION DES RÔLES ────────────────────
+async function loadRoles() {
+  const { data } = await db.from('vue_roles').select('*');
+  const tbody = document.getElementById('roles-table');
+  document.getElementById('roles-count').textContent = (data?.length || 0) + ' rôles';
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Aucun rôle configuré</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(r => {
+    const jEmail = JSON.stringify(r.email);
+    return `
+    <tr>
+      <td><strong>${escapeHtml(r.nom_complet) || '—'}</strong></td>
+      <td>${escapeHtml(r.email) || '—'}</td>
+      <td>${escapeHtml(r.telephone) || '—'}</td>
+      <td>${roleBadge(r.role)}</td>
+      <td style="font-size:.74rem;">${r.granted_at ? new Date(r.granted_at).toLocaleDateString('fr-FR') : '—'}</td>
+      <td style="font-size:.74rem;">${escapeHtml(r.attribue_par) || 'Système'}</td>
+      <td>
+        ${r.email !== 'kouletiokevinfr@gmail.com' ?
+          `<button class="action-btn red" onclick="revokeRole(${jEmail})">Révoquer</button>`
+          : '<span style="font-size:.72rem;color:var(--muted);">Protégé</span>'}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function assignRole() {
+  const email = document.getElementById('role-email')?.value.trim();
+  const role = document.getElementById('role-select')?.value;
+  if (!email) { toast('Entrez un email', 'e'); return; }
+
+  try {
+    const { data, error } = await db.rpc('assign_role', {
+      p_target_email: email,
+      p_role: role,
+      p_admin_id: adminUser.id
+    });
+    if (error) throw new Error(error.message);
+    if (!data.success) throw new Error(data.error);
+    toast(data.message + ' ✅', 's');
+    document.getElementById('role-email').value = '';
+    loadRoles();
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'e');
+  }
+}
+
+async function revokeRole(email) {
+  if (!confirm(`Révoquer le rôle de ${email} ? Il redeviendra utilisateur standard.`)) return;
+  try {
+    const { data, error } = await db.rpc('revoke_role', {
+      p_target_email: email,
+      p_admin_id: adminUser.id
+    });
+    if (error) throw new Error(error.message);
+    if (!data.success) throw new Error(data.error);
+    toast(data.message + ' ✅', 's');
+    loadRoles();
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'e');
+  }
+}
+
+function roleBadge(role) {
+  const map = {
+    admin: ['red', '👑 Admin'],
+    moderateur: ['orange', '🛡️ Modérateur'],
+    support: ['orange', '💬 Support'],
+    livreur_verifie: ['blue', '✅ Livreur vérifié'],
+    user: ['grey', '👤 User'],
+  };
+  const [cls, label] = map[role] || ['grey', escapeHtml(role)];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
 setInterval(() => {
   const activeSection = document.querySelector('.section.active')?.id?.replace('section-', '');
   if (activeSection === 'overview') loadDashboard();
