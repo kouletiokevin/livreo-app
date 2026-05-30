@@ -114,8 +114,8 @@ async function ouvrirSetupMFA() {
     if (error) throw new Error(error.message);
 
     _mfaFactorId = data.id;
-    const qrCode = data.totp.qr_code;
-    const secret = data.totp.secret;
+    const uri    = data.totp.uri;    // otpauth:// — utilisé pour générer le QR via qrcodejs
+    const secret = data.totp.secret; // secret Base32 pour saisie manuelle
 
     openSheet(`
       <div class="sheet-title">🔐 Double authentification</div>
@@ -142,15 +142,17 @@ async function ouvrirSetupMFA() {
     `);
 
     setTimeout(() => {
-      // Injecter l'image via DOM pour éviter que les " du SVG cassent le HTML
+      // Générer le QR code avec qrcodejs (déjà chargé) à partir de l'URI otpauth://
       const wrap = document.getElementById('mfa-qr-wrap');
-      if (wrap && qrCode) {
-        const img = document.createElement('img');
-        img.src = qrCode;
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.alt = 'QR Code 2FA';
-        wrap.appendChild(img);
+      if (wrap && typeof QRCode !== 'undefined') {
+        new QRCode(wrap, {
+          text: uri,
+          width: 180,
+          height: 180,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
       }
       const inp = document.getElementById('mfa-code');
       if (inp) {
