@@ -76,6 +76,32 @@ async function previewPhoto(input) {
   reader.readAsDataURL(file);
 }
 
+// ── Suppression de compte (RGPD) ────────
+async function supprimerMonCompte() {
+  const confirm1 = confirm(
+    'Êtes-vous sûr de vouloir supprimer votre compte ?\n' +
+    'Cette action est irréversible.'
+  );
+  if (!confirm1) return;
+
+  const confirm2 = confirm(
+    'Dernière confirmation — toutes vos données ' +
+    'personnelles seront effacées définitivement.'
+  );
+  if (!confirm2) return;
+
+  try {
+    const { data, error } = await db.rpc('delete_my_account');
+    if (error) throw new Error(error.message);
+    if (!data.success) throw new Error(data.error);
+    await db.auth.signOut();
+    t('Compte supprimé. À bientôt.', 's');
+    goNav('home');
+  } catch(e) {
+    t('Erreur : ' + e.message, 'e');
+  }
+}
+
 // ── Vérification d'identité ──────────────
 function ouvrirVerifIdentite() {
   openSheet(`

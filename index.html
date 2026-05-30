@@ -786,7 +786,14 @@
   <!-- DÉCONNEXION -->
   <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:8px;">
     <button class="btn full" style="background:#fee2e2;color:var(--danger);font-size:.84rem;" onclick="doLogout()">Se déconnecter</button>
-    <button class="btn full" style="background:transparent;color:var(--muted);font-size:.76rem;border:1.5px solid var(--border);" onclick="t('Contactez support@livreo.fr pour supprimer votre compte','')">Supprimer mon compte</button>
+    <button onclick="supprimerMonCompte()" style="width:100%;padding:12px;background:#fee2e2;color:#dc2626;border:1.5px solid #fecaca;border-radius:50px;font-family:var(--sans);font-size:.84rem;font-weight:700;cursor:pointer;margin-top:8px;">
+      🗑️ Supprimer mon compte
+    </button>
+  </div>
+
+  <div style="text-align:center;margin-top:16px;font-size:.72rem;color:var(--muted);">
+    <a href="#" style="color:var(--g500);">Politique de confidentialité</a> ·
+    <a href="#" style="color:var(--g500);">Mentions légales</a>
   </div>
 
 </div>
