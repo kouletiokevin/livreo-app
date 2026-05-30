@@ -97,29 +97,30 @@ function updateSlider(val) {
 }
 
 // ── Upload photo colis ───────────────────
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const ALLOWED_IMAGE_EXTS  = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-
-async function uploadPhotoColis(file, type, colisId) {
-  if (!file || !user) return null;
-  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-    t('Type de fichier non autorisé (JPG, PNG, WebP uniquement)', 'e');
-    return null;
+async function uploadPhotoColis(file, userId, colisId) {
+  const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  const MAX_SIZE = 10 * 1024 * 1024;
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    throw new Error('Format non autorisé. Utilisez JPG, PNG ou WebP.');
   }
-  const ext = file.name.split('.').pop().toLowerCase();
-  if (!ALLOWED_IMAGE_EXTS.includes(ext)) {
-    t('Extension de fichier non autorisée', 'e');
-    return null;
+  if (file.size > MAX_SIZE) {
+    throw new Error('Fichier trop lourd. Maximum 10MB.');
   }
-  try {
-    const safePath = `${user.id}/${colisId || 'new'}/${type}_${Date.now()}.${ext}`;
-    const { data, error } = await db.storage
-      .from('photos-colis')
-      .upload(safePath, file, { upsert: false, contentType: file.type });
-    if (error) { console.error('Upload error:', error); return null; }
-    const { data: urlData } = db.storage.from('photos-colis').getPublicUrl(safePath);
-    return urlData.publicUrl;
-  } catch (e) { console.error(e); return null; }
+  const buffer = await file.slice(0, 4).arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
+  const MAGIC = { 'ffd8ff': 'jpeg', '89504e47': 'png', '52494646': 'webp' };
+  const isValid = Object.keys(MAGIC).some(magic => hex.startsWith(magic));
+  if (!isValid) {
+    throw new Error('Fichier invalide. Contenu ne correspond pas au format.');
+  }
+  const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+  const filename = `${userId}/${colisId}/${Date.now()}.${ext}`;
+  const { data, error } = await db.storage
+    .from('photos-colis')
+    .upload(filename, file, { contentType: file.type, upsert: false });
+  if (error) throw new Error(error.message);
+  return db.storage.from('photos-colis').getPublicUrl(data.path).data.publicUrl;
 }
 
 // ── Sélection photos ─────────────────────
@@ -215,14 +216,18 @@ async function publishColis() {
     t(`Colis publié ! Code : ${ref} 🚀`, 's');
 
     if (window._photoEmballee) {
-      const url = await uploadPhotoColis(window._photoEmballee, 'emballee', data.id);
-      if (url) await db.from('colis').update({ photo_emballee_url: url }).eq('id', data.id);
+      try {
+        const url = await uploadPhotoColis(window._photoEmballee, user.id, data.id);
+        if (url) await db.from('colis').update({ photo_emballee_url: url }).eq('id', data.id);
+      } catch (e) { t('Photo emballée : ' + e.message, 'e'); }
     }
     if (window._photosContenu && window._photosContenu.length) {
       const urls = [];
       for (const f of window._photosContenu) {
-        const u = await uploadPhotoColis(f, 'contenu', data.id);
-        if (u) urls.push(u);
+        try {
+          const u = await uploadPhotoColis(f, user.id, data.id);
+          if (u) urls.push(u);
+        } catch (e) { t('Photo contenu : ' + e.message, 'e'); }
       }
       if (urls.length) await db.from('colis').update({ photos_contenu_urls: urls }).eq('id', data.id);
     }
