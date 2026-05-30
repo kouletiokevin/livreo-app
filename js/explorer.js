@@ -45,11 +45,19 @@ async function loadCards(dest = 'all') {
     if (dest !== 'all') query = query.ilike('gare_arrivee', '%' + dest + '%');
 
     const { data, error } = await query;
-    if (error || !data || data.length === 0) {
-      const demo = dest === 'all' ? D : D.filter(c => c.to.toLowerCase().includes(dest));
-      g.innerHTML = demo.length
-        ? demo.map(cardHTML).join('')
-        : '<div style="text-align:center;padding:32px;color:var(--muted);">Aucun colis sur ce trajet pour le moment.<br>Soyez le premier à en poster un ! 📦</div>';
+    if (error) {
+      console.error('Explorer:', error.message);
+      g.innerHTML = `
+        <div style="text-align:center;padding:40px 20px;">
+          <div style="font-size:2.5rem;margin-bottom:12px;">📭</div>
+          <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">Impossible de charger les colis</div>
+          <div style="font-size:.8rem;color:var(--muted);margin-bottom:16px;">Vérifiez votre connexion et réessayez.</div>
+          <button onclick="loadCards()" style="padding:10px 24px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.84rem;font-weight:700;cursor:pointer;">Réessayer</button>
+        </div>`;
+      return;
+    }
+    if (!data || data.length === 0) {
+      g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);">Aucun colis sur ce trajet pour le moment.<br>Soyez le premier à en poster un ! 📦</div>';
       return;
     }
 
@@ -91,10 +99,14 @@ async function loadCards(dest = 'all') {
         + '</div></div></div></div>';
     }).join('');
   } catch (e) {
-    const demo = dest === 'all' ? D : D.filter(c => c.to.toLowerCase().includes(dest));
-    g.innerHTML = demo.length
-      ? demo.map(cardHTML).join('')
-      : '<div style="text-align:center;padding:32px;color:var(--muted);">Aucun colis sur ce trajet.</div>';
+    console.error('Explorer:', e.message);
+    g.innerHTML = `
+      <div style="text-align:center;padding:40px 20px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">📭</div>
+        <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">Impossible de charger les colis</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:16px;">Vérifiez votre connexion et réessayez.</div>
+        <button onclick="loadCards()" style="padding:10px 24px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.84rem;font-weight:700;cursor:pointer;">Réessayer</button>
+      </div>`;
   }
 }
 

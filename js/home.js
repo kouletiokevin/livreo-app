@@ -62,5 +62,14 @@ async function chargerLivraisonsEnCours(userId) {
         <div class="li-arrow">›</div>`;
       container.insertBefore(div, container.querySelector('.krow'));
     });
-  } catch (e) { console.log('Livraisons:', e.message); }
+  } catch (e) {
+    console.error('Livraisons:', e.message);
+    const container = document.querySelector('#home-dash .livr-item')?.parentNode;
+    if (container) {
+      const div = document.createElement('div');
+      div.style.cssText = 'text-align:center;padding:20px;font-size:.8rem;color:var(--muted);';
+      div.textContent = 'Impossible de charger vos livraisons.';
+      container.insertBefore(div, container.querySelector('.krow') || null);
+    }
+  }
 }
