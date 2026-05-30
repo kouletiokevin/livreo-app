@@ -136,12 +136,22 @@ async function callEdgeFunction(name, body) {
   return res.json();
 }
 
+// ── Validation UUID ──────────────────────
+function isValidUUID(val) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
+}
+
 // ── Vérification de session au démarrage ─
 async function checkSession() {
   try {
     const { data: { session }, error } = await db.auth.getSession();
     if (error) throw error;
     if (!session) return null;
+
+    if (!isValidUUID(session.user.id)) {
+      await db.auth.signOut();
+      return null;
+    }
 
     const expiresAt = session.expires_at * 1000;
     if (Date.now() > expiresAt) {
