@@ -3,6 +3,8 @@
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
+let _pendingMFASetup = false;
+
 // ── Connexion email ──────────────────────
 async function doLogin() {
   const email = document.getElementById('l-em')?.value.trim().toLowerCase();
@@ -186,9 +188,7 @@ async function onLoginSuccess(profil) {
     const { data: factors } = await db.auth.mfa.listFactors();
     const hasVerifiedMFA = factors?.totp?.some(f => f.status === 'verified');
     if (!hasVerifiedMFA) {
-      await db.auth.signOut();
-      t('Les comptes admin doivent activer la double authentification. Contactez support@livreo.fr', 'e');
-      return;
+      _pendingMFASetup = true;
     }
   }
 
@@ -238,6 +238,11 @@ async function onLoginSuccess(profil) {
   refreshHome();
   chargerPortefeuille(profil.id);
   chargerLivraisonsEnCours(profil.id);
+
+  if (_pendingMFASetup) {
+    _pendingMFASetup = false;
+    setTimeout(ouvrirSetupMFA, 300);
+  }
 }
 
 // ── Tabs auth ────────────────────────────

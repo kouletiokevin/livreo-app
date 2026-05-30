@@ -102,6 +102,81 @@ async function supprimerMonCompte() {
   }
 }
 
+// ── Configuration MFA (TOTP) ────────────
+let _mfaFactorId = null;
+
+async function ouvrirSetupMFA() {
+  try {
+    const { data, error } = await db.auth.mfa.enroll({
+      factorType: 'totp',
+      friendlyName: 'Livreo'
+    });
+    if (error) throw new Error(error.message);
+
+    _mfaFactorId = data.id;
+    const qrCode = data.totp.qr_code;
+    const secret = data.totp.secret;
+
+    openSheet(`
+      <div class="sheet-title">🔐 Double authentification</div>
+      <div class="sheet-sub">Obligatoire pour les comptes admin. Scannez le QR code avec Google Authenticator ou Authy.</div>
+
+      <div style="text-align:center;margin:20px 0;">
+        <img src="${qrCode}" style="width:180px;height:180px;border-radius:8px;border:2px solid var(--border);" alt="QR Code 2FA">
+      </div>
+
+      <div style="background:var(--cream);border-radius:var(--r);padding:12px;margin-bottom:16px;font-size:.72rem;color:var(--muted);text-align:center;word-break:break-all;line-height:1.8;">
+        Code manuel :<br>
+        <strong style="color:var(--ink);letter-spacing:2px;font-size:.78rem;">${escapeHtml(secret)}</strong>
+      </div>
+
+      <div style="font-size:.76rem;font-weight:700;color:var(--ink);margin-bottom:6px;">Code à 6 chiffres affiché dans l'application :</div>
+      <input type="text" id="mfa-code" inputmode="numeric" maxlength="6" placeholder="000000"
+        style="width:100%;padding:14px;font-size:1.6rem;text-align:center;letter-spacing:8px;
+               border:1.5px solid var(--border);border-radius:var(--r);
+               font-family:monospace;box-sizing:border-box;margin-bottom:12px;">
+
+      <button id="mfa-btn" class="btn p full" onclick="verifierCodeMFA()">Activer la double authentification</button>
+      <div style="text-align:center;margin-top:12px;font-size:.7rem;color:var(--muted);line-height:1.7;">
+        Applications recommandées :<br>
+        <strong>Google Authenticator · Authy · 1Password</strong>
+      </div>
+    `);
+
+    setTimeout(() => {
+      const inp = document.getElementById('mfa-code');
+      if (inp) {
+        inp.focus();
+        inp.addEventListener('keydown', e => { if (e.key === 'Enter') verifierCodeMFA(); });
+      }
+    }, 200);
+
+  } catch(e) {
+    t('Erreur MFA : ' + e.message, 'e');
+  }
+}
+
+async function verifierCodeMFA() {
+  if (!_mfaFactorId) { t('Session MFA expirée. Réessayez.', 'e'); return; }
+  const code = (document.getElementById('mfa-code')?.value || '').replace(/\s/g, '');
+  if (!code || code.length !== 6) { t('Code à 6 chiffres requis', 'e'); return; }
+
+  const btn = document.getElementById('mfa-btn');
+  if (btn) { btn.textContent = 'Vérification...'; btn.disabled = true; }
+
+  try {
+    const { error } = await db.auth.mfa.challengeAndVerify({ factorId: _mfaFactorId, code });
+    if (error) throw new Error(error.message);
+    _mfaFactorId = null;
+    closeSheet();
+    t('Double authentification activée ✅ Votre compte est sécurisé.', 's');
+    goNav('home');
+  } catch(e) {
+    t('Code incorrect ou expiré. Réessayez.', 'e');
+    if (btn) { btn.textContent = 'Activer la double authentification'; btn.disabled = false; }
+  }
+}
+
 // ── Vérification d'identité ──────────────
 function ouvrirVerifIdentite() {
   openSheet(`
