@@ -401,20 +401,20 @@
 <div class="screen" id="s-poster">
   <div class="s-lbl">Nouvelle annonce</div>
   <div class="s-h">Poster <em>un colis</em></div>
-  <div class="s-sub">Seule la photo emballée est publique.</div>
+  <div class="s-sub">La photo publique est visible sur la marketplace.</div>
   <div id="poster-form">
     <div class="fcard">
       <div class="fc-lbl">📷 Photos</div>
       <div class="field">
-        <label>Photo colis emballé <span style="color:var(--g500)">*</span></label>
-        <div class="upz" onclick="fakeUp('em')"><div class="upz-icon">📷</div><div class="upz-txt">Photo emballée (publique)</div><div class="upz-sub">Visible par tous</div></div>
-        <div class="prev-row" id="prev-em"></div>
-        <div class="fhint">🔒 Seule photo visible avant acceptation.</div>
+        <label>Photo publique 📸 <span style="color:var(--g500)">*</span> <span style="font-size:.65rem;color:var(--muted);font-weight:400;">(visible sur la marketplace)</span></label>
+        <div class="upz" onclick="fakeUp('co')"><div class="upz-icon">📸</div><div class="upz-txt">Ajouter la photo publique</div><div class="upz-sub">Vue par tous sur la marketplace</div></div>
+        <div class="prev-row" id="prev-co"></div>
+        <div class="fhint">📸 Cette photo est visible par tous avant acceptation.</div>
       </div>
       <div class="field">
-        <label>Photos du contenu (privé) <span style="color:var(--g500)">*</span></label>
-        <div class="upz" onclick="fakeUp('co')"><div class="upz-icon">🔒</div><div class="upz-txt">Photos contenu (privées)</div><div class="upz-sub">Visibles par le passeur après acceptation</div></div>
-        <div class="prev-row" id="prev-co"></div>
+        <label>Photo du colis 🔒 <span style="font-size:.65rem;color:var(--muted);font-weight:400;">(visible après acceptation)</span></label>
+        <div class="upz" onclick="fakeUp('em')"><div class="upz-icon">🔒</div><div class="upz-txt">Photo emballée (privée)</div><div class="upz-sub">Visible seulement par le passeur après acceptation</div></div>
+        <div class="prev-row" id="prev-em"></div>
       </div>
     </div>
     <div class="fcard">
@@ -453,39 +453,8 @@
           </select>
         </div>
       </div>
-      <div class="field"><label>Titre de l'annonce</label><input type="text" id="pf-title" placeholder="Ex: Livres scolaires, vêtements..."></div>
-      <div class="field"><label>Description du contenu (privée)</label><textarea id="pf-desc" placeholder="Visible uniquement par le passeur..."></textarea></div>
-      <div class="f2">
-        <div class="field">
-          <label>Poids du colis</label>
-          <select id="pf-poids" onchange="calcP()">
-            <option value="">Choisir...</option>
-            <option value="0.1">Moins de 250g</option>
-            <option value="0.25">250g à 500g</option>
-            <option value="0.75">500g à 1kg</option>
-            <option value="1.5">1kg à 2kg</option>
-            <option value="3">2kg à 4kg</option>
-            <option value="4.5">4kg à 5kg</option>
-            <option value="7">5kg à 10kg</option>
-            <option value="15">10kg à 20kg</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Taille du colis</label>
-          <select id="pf-taille" onchange="calcP()">
-            <option value="">Choisir...</option>
-            <option value="xs">Lettre épaisse / Documents</option>
-            <option value="s">Pochette (vêtement plat, livre...)</option>
-            <option value="m">Petit colis (chaussures, jouet...)</option>
-            <option value="l">Colis moyen (vêtements, petit électro...)</option>
-            <option value="xl">Grand colis (bagage, équipement...)</option>
-          </select>
-        </div>
-      </div>
-      <div id="fmt-result" style="display:none;background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:.8rem;">
-        <strong id="fmt-label">Colis S</strong> — <span id="fmt-desc" style="color:var(--muted);">calculé selon poids et taille</span>
-      </div>
-      <input type="hidden" id="pf-fmt" value="Colis S">
+      <div class="field"><label>Qu'est-ce que c'est ? <span style="color:var(--g500)">*</span></label><input type="text" id="pf-title" placeholder="Ex: Chaussures Nike, Livre de cuisine, Fromage sous vide, Vêtements, Téléphone..."></div>
+      <div class="field"><label>Description (privée, pour le passeur)</label><textarea id="pf-desc" placeholder="Visible uniquement par le passeur..."></textarea></div>
       <div class="field"><label>Date souhaitée</label><input type="date" id="pf-date"></div>
     </div>
     <div class="fcard">
@@ -496,27 +465,26 @@
       </div>
       <div class="fhint">🔒 Ces informations sont strictement confidentielles. Le destinataire recevra automatiquement son code de suivi unique par SMS dès qu'un passeur accepte.</div>
     </div>
-    <div id="prix-slider-wrap" style="display:none;background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:18px;margin-bottom:10px;">
-      <div class="fc-lbl">💰 Votre offre au passeur</div>
-      <div id="speed-indicator" style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px 12px;border-radius:var(--r);background:var(--cream);">
-        <div id="speed-icon" style="font-size:1.2rem;">⚡</div>
+    <div id="prix-slider-wrap" style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:18px;margin-bottom:10px;">
+      <div class="fc-lbl">💰 Prix proposé au passeur</div>
+      <div id="speed-indicator" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;border-radius:var(--r);background:var(--cream);">
+        <div id="speed-icon" style="font-size:1.6rem;">🚶</div>
         <div>
-          <div id="speed-title" style="font-size:.8rem;font-weight:800;">Offre compétitive</div>
-          <div id="speed-sub" style="font-size:.7rem;color:var(--muted);">Un passeur acceptera probablement dans la journée</div>
+          <div id="speed-title" style="font-size:.84rem;font-weight:900;">Moyen</div>
+          <div id="speed-sub" style="font-size:.7rem;color:var(--muted);">Au prix conseillé — bonne visibilité</div>
         </div>
       </div>
-      <div style="text-align:center;margin-bottom:12px;">
-        <div style="font-size:2.8rem;font-weight:900;letter-spacing:-2px;color:var(--g500);" id="pf-price">7,00€</div>
-        <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">Prix suggéré · 0% commission · Gratuit</div>
+      <div style="position:relative;margin-bottom:10px;">
+        <input type="number" id="pf-price-input" min="0" step="0.5" value="7"
+          style="width:100%;padding:14px 44px 14px 16px;font-size:2rem;font-weight:900;
+                 text-align:center;letter-spacing:-1px;color:var(--g500);
+                 border:2px solid var(--g200);border-radius:var(--r);
+                 font-family:var(--sans);box-sizing:border-box;outline:none;background:var(--g50);"
+          oninput="onPrixInput(this.value)">
+        <span style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1.4rem;font-weight:900;color:var(--g400);pointer-events:none;">€</span>
       </div>
-      <input type="range" id="prix-range" min="5" max="18" value="7" step="0.5" oninput="updateSlider(this.value)" style="width:100%;accent-color:var(--g500);height:6px;cursor:pointer;margin-bottom:8px;">
-      <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-bottom:14px;">
-        <span id="prix-min-lbl">Min : 5€</span>
-        <span style="color:var(--g500);font-weight:700;">Recommandé : <span id="prix-suggest-lbl">7€</span></span>
-        <span id="prix-max-lbl">Max : 18€</span>
-      </div>
-      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:var(--r);padding:10px 12px;font-size:.72rem;color:var(--g700);line-height:1.6;">
-        💡 <strong>Astuce :</strong> Plus votre offre est élevée, plus vite un passeur acceptera.
+      <div style="background:var(--cream);border-radius:var(--r);padding:10px 12px;font-size:.72rem;color:var(--ink);line-height:1.7;">
+        💡 Prix libre — nous conseillons <strong id="pf-conseille-txt">7€</strong> pour ce format. Plus le prix est attractif, plus vite votre colis sera accepté.
       </div>
     </div>
     <button class="btn p full lg" onclick="publishColis()">🚀 Publier l'annonce</button>

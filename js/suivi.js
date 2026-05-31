@@ -12,7 +12,7 @@ async function loadSuivi() {
   if (!val) { t('Entrez votre numéro de suivi', 'e'); return; }
 
   const { data: colis, error } = await db.from('colis').select('*').eq('code_lvr', val).single();
-  if (error || !colis) { t('Code introuvable. Vérifiez le numéro.', 'e'); return; }
+  if (error || !colis) { t('Code LVR introuvable. Vérifiez le code reçu par SMS.', 'e'); return; }
 
   _currentColis = colis;
   qrLoaded = false;
