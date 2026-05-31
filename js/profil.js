@@ -187,6 +187,24 @@ async function verifierCodeMFA() {
   }
 }
 
+// ── Badges passeurs ──────────────────────
+function badgeHTML(badge) {
+  const map = {
+    certifie:  { icon: '🔵', label: 'Passeur Certifié',     bg: '#dbeafe', color: '#1e40af', border: '#bfdbfe' },
+    prudent:   { icon: '🟠', label: 'Passeur Prudent',      bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+    confiance: { icon: '🥇', label: 'Passeur de Confiance', bg: '#fef9c3', color: '#78350f', border: '#fde047' },
+    suspendu:  { icon: '❌', label: 'Compte Suspendu',      bg: '#fee2e2', color: '#991b1b', border: '#fecaca' },
+  };
+  if (!badge || badge === 'aucun' || !map[badge]) return '';
+  const b = map[badge];
+  return `<span style="background:${b.bg};border:1px solid ${b.border};color:${b.color};font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:50px;white-space:nowrap;">${b.icon} ${b.label}</span>`;
+}
+
+function afficherBadgeProfil(badge) {
+  const el = document.getElementById('moi-badge');
+  if (el) el.innerHTML = badgeHTML(badge || 'aucun');
+}
+
 // ── Vérification d'identité ──────────────
 function ouvrirVerifIdentite() {
   openSheet(`

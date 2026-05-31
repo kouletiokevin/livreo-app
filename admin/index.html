@@ -275,8 +275,8 @@ td strong { color: var(--ink); }
           <span class="count" id="users-count">0 utilisateurs</span>
         </div>
         <table>
-          <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Passages</th><th>Note</th><th>Statut</th><th>Actions</th></tr></thead>
-          <tbody id="users-table"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
+          <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Passages</th><th>Note</th><th>Badge</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody id="users-table"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -617,11 +617,12 @@ async function loadUsers() {
   const tbody = document.getElementById('users-table');
   document.getElementById('users-count').textContent = (data?.length || 0) + ' utilisateurs';
   if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Aucun utilisateur</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Aucun utilisateur</td></tr>';
     return;
   }
   tbody.innerHTML = data.map(u => {
     const jId = JSON.stringify(u.id); const jEm = JSON.stringify(u.email || '');
+    const badgeSel = (val) => u.badge === val ? 'selected' : '';
     return `
     <tr>
       <td><strong>${escapeHtml(u.prenom)} ${escapeHtml(u.nom)}</strong><br><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(u.id?.substring(0,8))}...</span></td>
@@ -629,6 +630,16 @@ async function loadUsers() {
       <td>${escapeHtml(u.telephone) || '—'}</td>
       <td>${u.nb_livraisons || 0}</td>
       <td>${u.note_moyenne > 0 ? '⭐' + u.note_moyenne : '—'}</td>
+      <td>
+        <select onchange="updateUserBadge(${jId},this.value)"
+          style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:.74rem;background:var(--white);cursor:pointer;font-family:var(--sans);">
+          <option value="aucun" ${badgeSel('aucun')}>— Aucun</option>
+          <option value="certifie" ${badgeSel('certifie')}>🔵 Certifié</option>
+          <option value="prudent" ${badgeSel('prudent')}>🟠 Prudent</option>
+          <option value="confiance" ${badgeSel('confiance')}>🥇 Confiance</option>
+          <option value="suspendu" ${badgeSel('suspendu')}>❌ Suspendu</option>
+        </select>
+      </td>
       <td>${statusBadge(u.statut || 'actif')}</td>
       <td>
         <button class="action-btn orange" onclick="suspendUser(${jId},${jEm})">Suspendre</button>
@@ -636,6 +647,14 @@ async function loadUsers() {
       </td>
     </tr>`;
   }).join('');
+}
+
+async function updateUserBadge(id, badge) {
+  try {
+    const { error } = await db.from('users').update({ badge }).eq('id', id);
+    if (error) throw new Error(error.message);
+    toast('Badge mis à jour ✅', 's');
+  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
 }
 
 // ── CHARGEMENT COLIS ─────────────────────

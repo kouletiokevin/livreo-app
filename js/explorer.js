@@ -38,7 +38,7 @@ async function loadCards(dest = 'all') {
   g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:.84rem;">Chargement...</div>';
   try {
     let query = db.from('colis')
-      .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne)')
+      .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge)')
       .eq('statut', 'en_attente')
       .order('created_at', { ascending: false })
       .limit(20);
@@ -68,6 +68,7 @@ async function loadCards(dest = 'all') {
       const em = emojis[(col.format || '').split(' ')[0]] || '📦';
       const prenom = escapeHtml(col.users?.prenom || 'Utilisateur');
       const note = col.users?.note_moyenne;
+      const badge = col.users?.badge;
       const dep = escapeHtml((col.gare_depart || '').split(' ')[0]);
       const arr = escapeHtml((col.gare_arrivee || '').split(' ')[0]);
       const dt = col.date_souhaitee
@@ -93,9 +94,12 @@ async function loadCards(dest = 'all') {
         + '</div>'
         + '<div class="cc-foot">'
         + '<div class="cc-price">' + prix.toFixed(2).replace('.', ',') + '€ <span>pour le passeur</span></div>'
+        + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">'
         + '<div style="display:flex;align-items:center;gap:4px;">'
         + '<div class="cav">' + prenom[0].toUpperCase() + '</div>'
         + '<div class="pname">' + prenom + (note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : '') + '</div>'
+        + '</div>'
+        + (badge && badge !== 'aucun' && typeof badgeHTML === 'function' ? badgeHTML(badge) : '')
         + '</div></div></div></div>';
     }).join('');
   } catch (e) {

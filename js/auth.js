@@ -225,6 +225,8 @@ async function onLoginSuccess(profil) {
     if (adminLink) adminLink.style.display = 'flex';
   }
 
+  if (typeof afficherBadgeProfil === 'function') afficherBadgeProfil(profil.badge);
+
   refreshHome();
   chargerPortefeuille(profil.id);
   chargerLivraisonsEnCours(profil.id);
