@@ -3,8 +3,6 @@
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
-let _pendingMFASetup = false;
-
 // ── Connexion email ──────────────────────
 async function doLogin() {
   const email = document.getElementById('l-em')?.value.trim().toLowerCase();
@@ -184,14 +182,6 @@ async function onLoginSuccess(profil) {
   const role = await getUserRole(profil.id || profil.auth_id);
   user.role = role;
 
-  if (role === 'admin') {
-    const { data: factors } = await db.auth.mfa.listFactors();
-    const hasVerifiedMFA = factors?.totp?.some(f => f.status === 'verified');
-    if (!hasVerifiedMFA) {
-      _pendingMFASetup = true;
-    }
-  }
-
   // Nav
   document.getElementById('nav-login').style.display = 'none';
   document.getElementById('nav-av').style.display = 'flex';
@@ -238,11 +228,6 @@ async function onLoginSuccess(profil) {
   refreshHome();
   chargerPortefeuille(profil.id);
   chargerLivraisonsEnCours(profil.id);
-
-  if (_pendingMFASetup) {
-    _pendingMFASetup = false;
-    setTimeout(ouvrirSetupMFA, 300);
-  }
 }
 
 // ── Tabs auth ────────────────────────────
