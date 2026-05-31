@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -248,7 +248,7 @@ td strong { color: var(--ink); }
           <span class="count" id="activity-count">0 colis</span>
         </div>
         <table>
-          <thead><tr><th>Code LVR</th><th>Expéditeur</th><th>Trajet</th><th>Livreur</th><th>Prix</th><th>Statut</th></tr></thead>
+          <thead><tr><th>Code LVR</th><th>Expéditeur</th><th>Trajet</th><th>Passeur</th><th>Prix</th><th>Statut</th></tr></thead>
           <tbody id="activity-table"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
         </table>
       </div>
@@ -275,7 +275,7 @@ td strong { color: var(--ink); }
           <span class="count" id="users-count">0 utilisateurs</span>
         </div>
         <table>
-          <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Livraisons</th><th>Note</th><th>Statut</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Passages</th><th>Note</th><th>Statut</th><th>Actions</th></tr></thead>
           <tbody id="users-table"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
         </table>
       </div>
@@ -285,14 +285,14 @@ td strong { color: var(--ink); }
     <div id="section-colis" class="section">
       <div class="page-header">
         <h1>Colis</h1>
-        <p>Suivre toutes les annonces et livraisons</p>
+        <p>Suivre toutes les annonces et passages</p>
       </div>
       <div class="search-bar">
         <input type="text" id="colis-search" placeholder="Rechercher par code LVR, gare, titre..." oninput="searchColis()">
         <select onchange="filterColis(this.value)">
           <option value="all">Tous les statuts</option>
           <option value="en_attente">En attente</option>
-          <option value="livreur_accepte">Livreur assigné</option>
+          <option value="livreur_accepte">Passeur assigné</option>
           <option value="en_transit">En transit</option>
           <option value="livre">Livré</option>
           <option value="annule">Annulé</option>
@@ -305,7 +305,7 @@ td strong { color: var(--ink); }
           <span class="count" id="colis-count">0 colis</span>
         </div>
         <table>
-          <thead><tr><th>Code LVR</th><th>Titre</th><th>Trajet</th><th>Prix</th><th>Expéditeur</th><th>Livreur</th><th>Statut</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Code LVR</th><th>Titre</th><th>Trajet</th><th>Prix</th><th>Expéditeur</th><th>Passeur</th><th>Statut</th><th>Actions</th></tr></thead>
           <tbody id="colis-table"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
         </table>
       </div>
@@ -323,7 +323,7 @@ td strong { color: var(--ink); }
           <span class="count" id="tx-count">0 transactions</span>
         </div>
         <table>
-          <thead><tr><th>Colis</th><th>Montant</th><th>Expéditeur</th><th>Livreur</th><th>Stripe ID</th><th>Statut</th><th>Date</th></tr></thead>
+          <thead><tr><th>Colis</th><th>Montant</th><th>Expéditeur</th><th>Passeur</th><th>Stripe ID</th><th>Statut</th><th>Date</th></tr></thead>
           <tbody id="tx-table"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
         </table>
       </div>
@@ -333,7 +333,7 @@ td strong { color: var(--ink); }
     <div id="section-verifications" class="section">
       <div class="page-header">
         <h1>Vérifications d'identité</h1>
-        <p>Traiter les demandes de vérification des livreurs</p>
+        <p>Traiter les demandes de vérification des passeurs</p>
       </div>
       <div class="table-card">
         <div class="table-header">
@@ -419,7 +419,7 @@ td strong { color: var(--ink); }
               <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Rôle à attribuer</label>
               <select id="role-select" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.88rem;outline:none;background:white;cursor:pointer;">
                 <option value="user">👤 User — Utilisateur standard</option>
-                <option value="livreur_verifie">✅ Livreur vérifié — Peut livrer</option>
+                <option value="livreur_verifie">✅ Passeur vérifié — Peut livrer</option>
                 <option value="support">💬 Support — Peut voir les litiges</option>
                 <option value="moderateur">🛡️ Modérateur — Peut modérer</option>
                 <option value="admin">👑 Admin — Accès total</option>
@@ -466,7 +466,7 @@ td strong { color: var(--ink); }
           <thead><tr><th>Rôle</th><th>Permissions</th></tr></thead>
           <tbody>
             <tr><td><span class="badge grey">👤 User</span></td><td>Peut envoyer et recevoir des colis. Accès à son profil uniquement.</td></tr>
-            <tr><td><span class="badge blue">✅ Livreur vérifié</span></td><td>Identité vérifiée. Peut accepter des colis et livrer. Badge visible sur son profil.</td></tr>
+            <tr><td><span class="badge blue">✅ Passeur vérifié</span></td><td>Identité vérifiée. Peut accepter des colis et les transporter. Badge visible sur son profil.</td></tr>
             <tr><td><span class="badge orange">💬 Support</span></td><td>Peut voir les litiges et les vérifications d'identité. Aide les utilisateurs.</td></tr>
             <tr><td><span class="badge orange">🛡️ Modérateur</span></td><td>Peut suspendre des utilisateurs, annuler des colis, résoudre des litiges.</td></tr>
             <tr><td><span class="badge red">👑 Admin</span></td><td>Accès total à tout. Peut attribuer et révoquer tous les rôles.</td></tr>
@@ -833,7 +833,7 @@ async function rejectVerif(id) {
 }
 
 async function resolveLitige(id) {
-  const decision = prompt('Décision (remboursement / livreur / partage) :');
+  const decision = prompt('Décision (remboursement / passeur / partage) :');
   if (!decision) return;
   try {
     await adminRPC('resolve_litige', id, decision);
@@ -961,7 +961,7 @@ function roleBadge(role) {
     admin: ['red', '👑 Admin'],
     moderateur: ['orange', '🛡️ Modérateur'],
     support: ['orange', '💬 Support'],
-    livreur_verifie: ['blue', '✅ Livreur vérifié'],
+    livreur_verifie: ['blue', '✅ Passeur vérifié'],
     user: ['grey', '👤 User'],
   };
   const [cls, label] = map[role] || ['grey', escapeHtml(role)];

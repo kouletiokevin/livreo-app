@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════
+﻿/* ═══════════════════════════════════════
    LIVREO — Module Profil utilisateur
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -191,7 +191,7 @@ async function verifierCodeMFA() {
 function ouvrirVerifIdentite() {
   openSheet(`
     <div class="sheet-title">🪪 Vérification d'identité</div>
-    <div class="sheet-sub">Obligatoire pour devenir livreur. Vos documents sont chiffrés et sécurisés.</div>
+    <div class="sheet-sub">Obligatoire pour devenir passeur. Vos documents sont chiffrés et sécurisés.</div>
 
     <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px;margin-bottom:16px;font-size:.76rem;color:var(--g700);line-height:1.6;">
       🔒 <strong>Vos données sont protégées.</strong> Nous utilisons un chiffrement SSL 256 bits. Vos documents ne sont jamais partagés avec des tiers.

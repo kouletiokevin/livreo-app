@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════
+﻿/* ═══════════════════════════════════════
    LIVREO — Module Explorer
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -24,7 +24,7 @@ function cardHTML(c) {
       <div class="cc-title">${c.title}</div>
       <div class="cc-meta"><div class="cc-tag">${c.fmt}</div><div class="cc-tag">${c.w}</div><div class="cc-tag">📅 ${c.date}</div></div>
       <div class="cc-foot">
-        <div><div class="cc-price">${c.price}€ <span>pour le livreur</span></div></div>
+        <div><div class="cc-price">${c.price}€ <span>pour le passeur</span></div></div>
         <div style="display:flex;align-items:center;gap:4px;"><div class="cav">${c.pi}</div><div class="pname">${c.poster}</div></div>
       </div>
     </div>
@@ -92,7 +92,7 @@ async function loadCards(dest = 'all') {
         + (dt ? '<div class="cc-tag">📅 ' + dt + '</div>' : '')
         + '</div>'
         + '<div class="cc-foot">'
-        + '<div class="cc-price">' + prix.toFixed(2).replace('.', ',') + '€ <span>pour le livreur</span></div>'
+        + '<div class="cc-price">' + prix.toFixed(2).replace('.', ',') + '€ <span>pour le passeur</span></div>'
         + '<div style="display:flex;align-items:center;gap:4px;">'
         + '<div class="cav">' + prenom[0].toUpperCase() + '</div>'
         + '<div class="pname">' + prenom + (note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : '') + '</div>'

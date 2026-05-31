@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════
+﻿/* ═══════════════════════════════════════
    LIVREO — Module Flow de livraison
    Version 2.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -26,14 +26,14 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
   const jPrix   = JSON.stringify(prix);
 
   openSheet(`
-    <div style="font-size:1rem;font-weight:900;letter-spacing:-.4px;margin-bottom:2px;">Livraison ${eRef}</div>
+    <div style="font-size:1rem;font-weight:900;letter-spacing:-.4px;margin-bottom:2px;">Passage ${eRef}</div>
     <div style="font-size:.74rem;color:var(--muted);margin-bottom:16px;">${eTrajet} · ${eTrain} · ${eDest} · <span style="color:var(--g500);font-weight:800;">+${ePrix}€</span></div>
     <div class="livr-steps" id="ls-wrap">
 
       <div class="lstep active" id="ls1">
         <div class="lsh"><div class="ls-n">1</div><div class="ls-title">📸 Photographier la remise</div></div>
         <div class="ls-body">
-          <div style="font-size:.72rem;color:var(--muted);margin-bottom:9px;line-height:1.5;">Prenez une photo du colis <strong>en main du destinataire</strong>. C'est la preuve de livraison.</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:9px;line-height:1.5;">Prenez une photo du colis <strong>en main du destinataire</strong>. C'est la preuve du passage.</div>
           <div class="photo-z" id="pz" onclick="initPhotoRemise()">
             <div class="pz-icon">📷</div>
             <div class="pz-txt">Prendre la photo</div>
@@ -261,7 +261,7 @@ async function doScan(ref, dest, prix) {
 
   setTimeout(() => {
     closeSheet();
-    t(`🎉 Livraison confirmée ! Paiement de ${prix}€ déclenché.`, 's');
+    t(`🎉 Passage confirmé ! Paiement de ${prix}€ déclenché.`, 's');
 
     const pill = document.getElementById('sv-pill');
     if (pill) { pill.className = 'tpill pill-ok'; pill.textContent = '✅ Livré'; }
@@ -274,7 +274,7 @@ async function doScan(ref, dest, prix) {
     if (destSuc) destSuc.style.display = 'block';
 
     if (Notification.permission === 'granted') {
-      new Notification('Livreo — Livraison confirmée ✅', {
+      new Notification('Livreo — Passage confirmé ✅', {
         body: `Colis ${ref} remis à ${dest}. Paiement déclenché automatiquement.`
       });
     }

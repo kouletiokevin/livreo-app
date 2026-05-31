@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════
+﻿/* ═══════════════════════════════════════
    LIVREO — Module Accueil / Dashboard
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -68,7 +68,7 @@ async function chargerLivraisonsEnCours(userId) {
     if (container) {
       const div = document.createElement('div');
       div.style.cssText = 'text-align:center;padding:20px;font-size:.8rem;color:var(--muted);';
-      div.textContent = 'Impossible de charger vos livraisons.';
+      div.textContent = 'Impossible de charger vos passages.';
       container.insertBefore(div, container.querySelector('.krow') || null);
     }
   }

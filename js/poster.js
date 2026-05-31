@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════
+﻿/* ═══════════════════════════════════════
    LIVREO — Module Poster un colis
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -78,15 +78,15 @@ function updateSlider(val) {
   let icon, title, sub, bg;
   if (pct >= 0.7) {
     icon = '🚀'; title = 'Acceptation très rapide !';
-    sub = 'Un livreur acceptera probablement dans l\'heure';
+    sub = 'Un passeur acceptera probablement dans l\'heure';
     bg = 'var(--g50)';
   } else if (pct >= 0.4) {
     icon = '⚡'; title = 'Offre compétitive';
-    sub = 'Un livreur acceptera probablement dans la journée';
+    sub = 'Un passeur acceptera probablement dans la journée';
     bg = 'var(--cream)';
   } else {
     icon = '🕐'; title = 'Offre économique';
-    sub = 'Peut prendre 1-2 jours selon les livreurs disponibles';
+    sub = 'Peut prendre 1-2 jours selon les passeurs disponibles';
     bg = '#fffbeb';
   }
 
