@@ -485,11 +485,12 @@ td strong { color: var(--ink); }
 @keyframes trainMove { 0% { left: -420px; } 70% { left: 55%; } 85% { left: 55%; } 100% { left: 120%; opacity: .8; } }
 #colis-anim { position: absolute; top: calc(50% - 72px); animation: colisMove 1.8s cubic-bezier(.4,0,.2,1) forwards; }
 @keyframes colisMove { 0% { left: -360px; } 70% { left: calc(55% + 20px); } 85% { left: calc(55% + 20px); } 100% { left: 120%; } }
-#splash-logo   { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 14px; opacity: 0; animation: logoAppear .7s ease .6s forwards; }
-@keyframes logoAppear { 0% { opacity: 0; transform: scale(.85) translateY(10px); } 60% { transform: scale(1.04) translateY(-2px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-#splash-slogan { opacity: 0; animation: sloganAppear .5s ease 1s forwards; text-align: center; }
+#splash-logo   { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 14px; opacity: 1; }
+@keyframes kgIconIn   { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: scale(1); } }
+@keyframes kgLetterIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+#splash-slogan { opacity: 0; animation: sloganAppear .5s ease 1.4s forwards; text-align: center; }
 @keyframes sloganAppear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-#splash-enter  { opacity: 0; animation: enterAppear .4s ease 1.5s forwards; position: absolute; bottom: 48px; }
+#splash-enter  { opacity: 0; animation: enterAppear .4s ease 2.0s forwards; position: absolute; bottom: 48px; }
 @keyframes enterAppear { from { opacity: 0; } to { opacity: 1; } }
 
 /* ── RESPONSIVE ── */
