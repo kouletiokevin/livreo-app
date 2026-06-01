@@ -37,7 +37,7 @@ async function loadCards(dest = 'all') {
   if (!g) return;
   g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:.84rem;">Chargement...</div>';
   try {
-    let query = db.from('colis')
+    let query = db.from('colis_marketplace')
       .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge)')
       .eq('statut', 'en_attente')
       .order('created_at', { ascending: false })
