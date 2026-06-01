@@ -105,12 +105,6 @@ function closeSheet() {
   if (typeof stopCamera === 'function') stopCamera();
 }
 
-// ── Utilitaires ──────────────────────────
-function fmtCard(input) {
-  let v = input.value.replace(/\D/g, '').substring(0, 16);
-  input.value = v.replace(/(.{4})/g, '$1 ').trim();
-}
-
 function toggle(id) {
   const el = document.getElementById(id);
   el.classList.toggle('on');
