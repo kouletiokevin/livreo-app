@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   LIVREO — Module Poster un colis
+   KOLISGO — Module Poster un kolis
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -149,7 +149,7 @@ async function publishColis() {
     document.getElementById('poster-form').style.display = 'none';
     document.getElementById('poster-suc').style.display = 'block';
     document.getElementById('content').scrollTop = 0;
-    t(`Colis publié ! Code : ${ref} 🚀`, 's');
+    t(`Kolis publié ! Code : ${ref} 🚀`, 's');
 
     // Photo publique (champ co) → photo_emballee_url (visible marketplace)
     if (window._photosContenu && window._photosContenu.length) {
@@ -169,8 +169,8 @@ async function publishColis() {
     window._photosContenu = null;
 
     envoyerSMS(rtel,
-      `Bonjour ${rnom} ! Un colis vous est envoyé via Livreo. ` +
-      `Votre code : ${ref}. Ouvrez Livreo → Suivi → entrez ce code pour votre QR Code. 🚆`
+      `Bonjour ${rnom} ! Un kolis vous est envoyé via KolisGo. ` +
+      `Votre code : ${ref}. Ouvrez KolisGo → Suivi → entrez ce code pour votre QR Code. 🚆`
     );
   } catch (e) {
     t('Erreur : ' + e.message, 'e');

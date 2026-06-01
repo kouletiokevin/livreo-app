@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Livreo — Admin Dashboard</title>
+<title>KolisGo — Admin Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -146,7 +146,7 @@ td strong { color: var(--ink); }
 <div id="admin-login">
   <div class="login-card">
     <div class="login-logo">
-      <h1>Livr<span>eo</span></h1>
+      <h1>Kolis<span>Go</span></h1>
       <p>🔐 Espace Administrateur</p>
     </div>
     <br>
@@ -170,7 +170,7 @@ td strong { color: var(--ink); }
   <div class="sidebar">
     <div class="sidebar-logo">
       <div>
-        <h2>Livr<span>eo</span></h2>
+        <h2>Kolis<span>Go</span></h2>
         <small>Admin Dashboard</small>
       </div>
     </div>
@@ -245,7 +245,7 @@ td strong { color: var(--ink); }
       <div class="table-card">
         <div class="table-header">
           <h3>Activité récente</h3>
-          <span class="count" id="activity-count">0 colis</span>
+          <span class="count" id="activity-count">0 kolis</span>
         </div>
         <table>
           <thead><tr><th>Code LVR</th><th>Expéditeur</th><th>Trajet</th><th>Passeur</th><th>Prix</th><th>Statut</th></tr></thead>
@@ -284,7 +284,7 @@ td strong { color: var(--ink); }
     <!-- ── COLIS ── -->
     <div id="section-colis" class="section">
       <div class="page-header">
-        <h1>Colis</h1>
+        <h1>Kolis</h1>
         <p>Suivre toutes les annonces et passages</p>
       </div>
       <div class="search-bar">
@@ -301,8 +301,8 @@ td strong { color: var(--ink); }
       </div>
       <div class="table-card">
         <div class="table-header">
-          <h3>Tous les colis</h3>
-          <span class="count" id="colis-count">0 colis</span>
+          <h3>Tous les kolis</h3>
+          <span class="count" id="colis-count">0 kolis</span>
         </div>
         <table>
           <thead><tr><th>Code LVR</th><th>Titre</th><th>Trajet</th><th>Prix</th><th>Expéditeur</th><th>Passeur</th><th>Statut</th><th>Actions</th></tr></thead>
@@ -593,7 +593,7 @@ async function loadDashboard() {
     const { data: colis } = await db.from('colis_actifs').select('*').limit(10);
     const tbody = document.getElementById('activity-table');
     if (colis && colis.length > 0) {
-      document.getElementById('activity-count').textContent = colis.length + ' colis';
+      document.getElementById('activity-count').textContent = colis.length + ' kolis';
       tbody.innerHTML = colis.map(c => `
         <tr>
           <td><strong>${escapeHtml(c.code_lvr) || '—'}</strong></td>
@@ -661,9 +661,9 @@ async function updateUserBadge(id, badge) {
 async function loadColis() {
   const { data } = await db.from('colis_actifs').select('*').order('created_at', { ascending: false });
   const tbody = document.getElementById('colis-table');
-  document.getElementById('colis-count').textContent = (data?.length || 0) + ' colis';
+  document.getElementById('colis-count').textContent = (data?.length || 0) + ' kolis';
   if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Aucun colis</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Aucun kolis</td></tr>';
     return;
   }
   tbody.innerHTML = data.map(c => {
@@ -823,11 +823,11 @@ async function blockUser(id, email) {
 }
 
 async function cancelColis(code) {
-  if (!confirm(`Annuler le colis ${code} ?`)) return;
+  if (!confirm(`Annuler le kolis ${code} ?`)) return;
   try {
     const { data: c } = await db.from('colis').select('id').eq('code_lvr', code).single();
     await adminRPC('cancel_colis', c.id);
-    toast('Colis annulé', 'e');
+    toast('Kolis annulé', 'e');
     loadColis();
   } catch(e) { toast('Erreur : ' + e.message, 'e'); }
 }

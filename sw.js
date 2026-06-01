@@ -1,5 +1,5 @@
-/* Livreo — Service Worker v1 */
-const CACHE = 'livreo-v1';
+﻿/* KolisGo — Service Worker v1 */
+const CACHE = 'kolisgo-v1';
 const ASSETS = ['/'];
 
 self.addEventListener('install', e => {
@@ -37,11 +37,11 @@ self.addEventListener('fetch', e => {
 self.addEventListener('push', e => {
   if (!e.data) return;
   const data = e.data.json();
-  self.registration.showNotification(data.title || 'Livreo', {
+  self.registration.showNotification(data.title || 'KolisGo', {
     body: data.body || '',
     icon: '/favicon.svg',
     badge: '/favicon.svg',
-    tag: data.tag || 'livreo-notif',
+    tag: data.tag || 'kolisgo-notif',
     data: data.url || '/'
   });
 });

@@ -1,5 +1,5 @@
-/* ═══════════════════════════════════════
-   LIVREO — App Core
+﻿/* ═══════════════════════════════════════
+   KOLISGO — App Core
    Navigation, toast, sheet, PWA, Stripe
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -14,7 +14,7 @@ function closeSplash() {
   const s = document.getElementById('splash');
   s.classList.add('hide');
   setTimeout(() => { s.style.display = 'none'; }, 650);
-  if (!localStorage.getItem('livreo_perms_done')) {
+  if (!localStorage.getItem('kolisgo_perms_done')) {
     setTimeout(() => {
       document.getElementById('perm-ov').style.display = 'flex';
     }, 700);
@@ -53,7 +53,7 @@ async function askPerms() {
     const r = await Notification.requestPermission();
     return r === 'granted';
   });
-  localStorage.setItem('livreo_perms_done', '1');
+  localStorage.setItem('kolisgo_perms_done', '1');
   setTimeout(() => {
     const o = document.getElementById('perm-ov');
     o.style.opacity = '0';
@@ -179,7 +179,7 @@ function installPWA() {
   if (window._pwaPrompt) {
     window._pwaPrompt.prompt();
     window._pwaPrompt.userChoice.then(r => {
-      if (r.outcome === 'accepted') t('Livreo installé sur votre appareil ! 🎉', 's');
+      if (r.outcome === 'accepted') t('KolisGo installé sur votre appareil ! 🎉', 's');
       window._pwaPrompt = null;
       const btn = document.getElementById('pwa-install-btn');
       if (btn) btn.remove();
@@ -205,7 +205,7 @@ if ('serviceWorker' in navigator) {
         window._pwaPrompt = e;
         const btn = document.createElement('div');
         btn.id = 'pwa-install-btn';
-        btn.innerHTML = `<div style="position:fixed;bottom:calc(var(--bot) + 12px);right:14px;z-index:1000;background:var(--ink);color:#fff;padding:10px 16px;border-radius:50px;font-size:.76rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.3);display:flex;align-items:center;gap:7px;" onclick="installPWA()">📲 Installer Livreo</div>`;
+        btn.innerHTML = `<div style="position:fixed;bottom:calc(var(--bot) + 12px);right:14px;z-index:1000;background:var(--ink);color:#fff;padding:10px 16px;border-radius:50px;font-size:.76rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.3);display:flex;align-items:center;gap:7px;" onclick="installPWA()">📲 Installer KolisGo</div>`;
         document.body.appendChild(btn);
         setTimeout(() => { if (btn.parentNode) btn.parentNode.removeChild(btn); }, 8000);
       });

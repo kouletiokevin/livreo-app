@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   LIVREO — Module Explorer
+   KOLISGO — Module Explorer
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -57,7 +57,7 @@ async function loadCards(dest = 'all') {
       return;
     }
     if (!data || data.length === 0) {
-      g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);">Aucun colis sur ce trajet pour le moment.<br>Soyez le premier à en poster un ! 📦</div>';
+      g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);">Aucun kolis sur ce trajet pour le moment.<br>Soyez le premier à en poster un ! 📦</div>';
       return;
     }
 
@@ -146,7 +146,7 @@ function openDetail(id) {
         <div style="font-size:.64rem;font-weight:800;color:var(--muted);margin-bottom:3px;">📞 Contact expéditeur (après acceptation)</div>
         <div style="font-size:.82rem;font-weight:700;">${c.poster} · <span style="color:var(--g500);">06 ·· ·· ·· ··</span></div>
       </div>
-      <button class="btn p full" onclick="accepterC('${c.id}')">🤝 Accepter de livrer ce colis</button>
+      <button class="btn p full" onclick="accepterC('${c.id}')">🤝 Accepter de livrer ce kolis</button>
     ` : `
       <div style="background:var(--ink);border-radius:var(--r);padding:16px;text-align:center;margin-bottom:11px;">
         <div style="font-size:1.5rem;margin-bottom:6px;">🔒</div>
@@ -158,7 +158,7 @@ function openDetail(id) {
   `);
 }
 
-// ── Accepter un colis ────────────────────
+// ── Accepter un kolis ────────────────────
 async function accepterC(id) {
   if (!user) { t('Connectez-vous pour accepter', 'e'); return; }
   closeSheet();

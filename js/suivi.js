@@ -1,5 +1,5 @@
-/* ═══════════════════════════════════════
-   LIVREO — Module Suivi colis
+﻿/* ═══════════════════════════════════════
+   KOLISGO — Module Suivi colis
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -41,7 +41,7 @@ function loadQR(colis) {
   d.innerHTML = '';
   // qr_secret généré côté serveur à la création du colis — fallback UUID si absent
   const secret = colis.qr_secret || crypto.randomUUID();
-  const qrText = `LIVREO|${colis.code_lvr}|${secret}|${Date.now()}`;
+  const qrText = `KOLISGO|${colis.code_lvr}|${secret}|${Date.now()}`;
   try {
     new QRCode(d, {
       text: qrText,

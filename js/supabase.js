@@ -1,5 +1,5 @@
-/* ═══════════════════════════════════════
-   LIVREO — Configuration Supabase
+﻿/* ═══════════════════════════════════════
+   KOLISGO — Configuration Supabase
    Sécurité et authentification
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -17,7 +17,7 @@ const db = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
   },
   global: {
     headers: {
-      'X-App-Name': 'Livreo',
+      'X-App-Name': 'KolisGo',
       'X-App-Version': '1.0.0',
     }
   }

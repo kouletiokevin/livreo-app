@@ -1,15 +1,15 @@
-# LIVREO — Documentation complète pour Claude Code
+﻿# KOLISGO — Documentation complète pour Claude Code
 
-> **Mission :** Finir et solidifier l'application Livreo — livraison de colis entre particuliers par train.
+> **Mission :** Finir et solidifier l'application KolisGo — livraison de colis entre particuliers par train.
 > **Slogan :** *"Quelqu'un prend le train. Votre colis aussi."*
-> **URL en ligne 7  :** https://livreo-app.netlify.app
+> **URL en ligne 7  :** https://kolisgo-app.netlify.app
 > **Stack actuelle :** HTML/CSS/JS mono-fichier → à migrer vers une structure propre
 
 ---
 
 ## 1. CONCEPT MÉTIER
 
-Livreo met en relation :
+KolisGo met en relation :
 - **L'expéditeur** — a un colis à envoyer d'une gare A à une gare B
 - **Le livreur** — un voyageur qui prend le train et transporte le colis
 - **Le destinataire** — reçoit le colis, confirme par QR Code unique
@@ -25,7 +25,7 @@ Livreo met en relation :
 | Couche | Technologie | Détails |
 |---|---|---|
 | Frontend | HTML/CSS/JS pur | Mono-fichier index.html — **à séparer** |
-| Hébergement | Netlify | livreo-app.netlify.app — Site ID: `77ed7afd-afba-4963-9d0d-19336ba46d77` |
+| Hébergement | Netlify | kolisgo-app.netlify.app — Site ID: `77ed7afd-afba-4963-9d0d-19336ba46d77` |
 | Base de données | Supabase (PostgreSQL) | Project ID: `wqhuaylfytdmhzjauvmv` |
 | Auth | Supabase Auth | Email + Google OAuth |
 | Paiements | Stripe LIVE | Account: `acct_1QLFSSFQ0erFJFSm` |
@@ -49,7 +49,7 @@ BREVO_API_KEY=(à configurer)
 ## 3. STRUCTURE DE FICHIERS CIBLE (à créer)
 
 ```
-livreo/
+kolisgo/
 ├── index.html                  # Point d'entrée SPA
 ├── netlify.toml                # Headers sécurité + redirections
 ├── robots.txt
@@ -279,7 +279,7 @@ const res = await fetch(`${SUPABASE_URL}/functions/v1/nom-fonction`, {
 ### Écran 5 : Moi (`profil`)
 - Photo de profil cliquable (📷 changement direct)
 - Informations personnelles : prénom, nom (verrouillé), email, téléphone, adresse, date de naissance
-- ⚠️ Modification du nom uniquement via justificatif → `verification@livreo.fr`
+- ⚠️ Modification du nom uniquement via justificatif → `verification@kolisgo.fr`
 - Vérification identité 4 niveaux (badges visuels)
 - Changement de mot de passe
 - Déconnexion
@@ -427,7 +427,7 @@ Le livreur **doit** compléter ces 3 étapes dans l'ordre avant que le paiement 
 ### PWA
 - Manifest (installable sur Android et iOS)
 - Service Worker (fonctionne partiellement hors ligne)
-- Bouton "Installer Livreo" (beforeinstallprompt)
+- Bouton "Installer KolisGo" (beforeinstallprompt)
 - Favicon SVG
 
 ---
@@ -477,8 +477,8 @@ Le livreur **doit** compléter ces 3 étapes dans l'ordre avant que le paiement 
 
 ### Infrastructure
 - [ ] **Stripe KYC** — compléter sur dashboard.stripe.com (activer les paiements)
-- [ ] **Domaine livreo.fr** — OVH (~10€/an) + DNS Netlify
-- [ ] **Email verification@livreo.fr** — redirection OVH
+- [ ] **Domaine kolisgo.fr** — OVH (~10€/an) + DNS Netlify
+- [ ] **Email verification@kolisgo.fr** — redirection OVH
 - [ ] **Numéro Twilio FR** (+33) — remplacer numéro US
 - [ ] **Brevo API Key** — configurer pour SMS moins chers
 - [ ] **Google Play Store** — 25$ frais uniques, générer APK avec Capacitor
@@ -507,8 +507,8 @@ Le livreur **doit** compléter ces 3 étapes dans l'ordre avant que le paiement 
 | Supabase | Project ID: `wqhuaylfytdmhzjauvmv` | supabase.com |
 | Stripe | Account: `acct_1QLFSSFQ0erFJFSm` | dashboard.stripe.com |
 | Twilio | SID: `ACd847d9617a93d9d2a5ee4bc4ef2ecbc4` | console.twilio.com |
-| Admin app | `kouletiokevinfr@gmail.com` | livreo-app.netlify.app |
-| GitHub | `kouletiokevin/livreo-app` | github.com |
+| Admin app | `kouletiokevinfr@gmail.com` | kolisgo-app.netlify.app |
+| GitHub | `kouletiokevin/kolisgo-app` | github.com |
 
 ---
 
@@ -517,7 +517,7 @@ Le livreur **doit** compléter ces 3 étapes dans l'ordre avant que le paiement 
 ### Priorité 1 — Séparer le code
 Le fichier `index.html` fait ~2800 lignes. Il faut le séparer en modules :
 ```bash
-# Structure cible déjà partiellement créée dans livreo-code-structure.zip :
+# Structure cible déjà partiellement créée dans kolisgo-code-structure.zip :
 # - css/style.css ✅
 # - js/supabase.js ✅ 
 # - js/auth.js ✅

@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   LIVREO — Module Accueil / Dashboard
+   KOLISGO — Module Accueil / Dashboard
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 

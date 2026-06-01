@@ -1,4 +1,4 @@
-# netlify.toml — Configuration Livreo
+﻿# netlify.toml — Configuration KolisGo
 
 [build]
   publish = "."
@@ -51,9 +51,9 @@
   to = "/"
   status = 301
 
-# Redirection domaine principal (quand livreo.fr sera configuré)
+# Redirection domaine principal (quand kolisgo.fr sera configuré)
 # [[redirects]]
-#   from = "https://livreo.fr/*"
+#   from = "https://kolisgo.fr/*"
 #   to = "https://livreo-app.netlify.app/:splat"
 #   status = 301
 #   force = true

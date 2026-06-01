@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   LIVREO — Module Flow de livraison
+   KOLISGO — Module Flow de livraison
    Version 2.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -52,7 +52,7 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
           <div class="check-list">
             <div class="ci"><input type="checkbox" id="c1" onchange="checkAll()"><label for="c1">Le destinataire est bien ${eDest}</label></div>
             <div class="ci"><input type="checkbox" id="c2" onchange="checkAll()"><label for="c2">L'emballage est intact, aucun dommage visible</label></div>
-            <div class="ci"><input type="checkbox" id="c3" onchange="checkAll()"><label for="c3">Le colis correspond bien à la référence ${eRef}</label></div>
+            <div class="ci"><input type="checkbox" id="c3" onchange="checkAll()"><label for="c3">Le kolis correspond bien à la référence ${eRef}</label></div>
           </div>
         </div>
       </div>
@@ -210,7 +210,7 @@ function scanFrame(ref, dest, prix) {
 
   if (code) {
     stopCamera();
-    // Format QR Livreo : "LIVREO|LVR-XXXX|DEST:...|timestamp"
+    // Format QR KolisGo : "KOLISGO|LVR-XXXX|DEST:...|timestamp"
     const parts        = code.data.split('|');
     const detectedCode = (parts[1] || code.data).trim().toUpperCase();
     const qrInput      = document.getElementById('qr-man');
@@ -274,7 +274,7 @@ async function doScan(ref, dest, prix) {
     if (destSuc) destSuc.style.display = 'block';
 
     if (Notification.permission === 'granted') {
-      new Notification('Livreo — Passage confirmé ✅', {
+      new Notification('KolisGo — Passage confirmé ✅', {
         body: `Colis ${ref} remis à ${dest}. Paiement déclenché automatiquement.`
       });
     }

@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   LIVREO — Module Profil utilisateur
+   KOLISGO — Module Profil utilisateur
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -109,7 +109,7 @@ async function ouvrirSetupMFA() {
   try {
     const { data, error } = await db.auth.mfa.enroll({
       factorType: 'totp',
-      friendlyName: 'Livreo'
+      friendlyName: 'KolisGo'
     });
     if (error) throw new Error(error.message);
 
@@ -237,7 +237,7 @@ function ouvrirVerifIdentite() {
 
     <button class="btn p full" onclick="t('Documents envoyés ! Vérification sous 48h 📋','s');closeSheet()">Envoyer pour vérification</button>
     <div style="text-align:center;margin-top:10px;font-size:.72rem;color:var(--muted);">
-      Ou envoyez vos documents par email à <strong>verification@livreo.fr</strong>
+      Ou envoyez vos documents par email à <strong>verification@kolisgo.fr</strong>
     </div>
   `);
 }
