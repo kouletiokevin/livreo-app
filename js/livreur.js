@@ -131,7 +131,7 @@ function doPhoto() {
 }
 
 // ── Étape 2 : checklist ──────────────────
-function checkAll() {
+async function checkAll() {
   const cs = document.querySelectorAll('#ls-wrap .check-list input[type=checkbox]');
   let ok = true;
   cs.forEach(c => { if (!c.checked) ok = false; });
@@ -143,6 +143,8 @@ function checkAll() {
     document.getElementById('ls3').classList.add('active');
     document.getElementById('ls3-body').style.display = 'block';
     t('Checklist complète ✅ Activation caméra…', 's');
+    const camOk = await demanderCamera();
+    if (!camOk) return;
     startCameraScanner();
   }
 }

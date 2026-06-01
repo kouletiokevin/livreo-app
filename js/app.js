@@ -14,11 +14,6 @@ function closeSplash() {
   const s = document.getElementById('splash');
   s.classList.add('hide');
   setTimeout(() => { s.style.display = 'none'; }, 650);
-  if (!localStorage.getItem('kolisgo_perms_done')) {
-    setTimeout(() => {
-      document.getElementById('perm-ov').style.display = 'flex';
-    }, 700);
-  }
 }
 
 setTimeout(() => {
@@ -28,38 +23,49 @@ setTimeout(() => {
 
 // ── Permissions ──────────────────────────
 async function askPerms() {
-  async function trySet(id, fn) {
-    try {
-      const r = await fn();
-      const el = document.getElementById(id);
-      el.textContent = r ? '✅ Accordé' : 'Refusé';
-      if (r) el.style.color = 'var(--g500)';
-    } catch (e) {
-      document.getElementById(id).textContent = 'Refusé';
-    }
-  }
-  await trySet('ps-cam', async () => {
-    const s = await navigator.mediaDevices.getUserMedia({ video: true });
-    s.getTracks().forEach(t => t.stop()); return true;
-  });
-  await trySet('ps-mic', async () => {
-    const s = await navigator.mediaDevices.getUserMedia({ audio: true });
-    s.getTracks().forEach(t => t.stop()); return true;
-  });
-  await trySet('ps-loc', async () =>
-    new Promise(res => navigator.geolocation.getCurrentPosition(() => res(true), () => res(false)))
-  );
-  await trySet('ps-notif', async () => {
-    const r = await Notification.requestPermission();
-    return r === 'granted';
-  });
+  await demanderCamera();
+  await demanderLocalisation();
+  await demanderNotifications();
   localStorage.setItem('kolisgo_perms_done', '1');
-  setTimeout(() => {
-    const o = document.getElementById('perm-ov');
-    o.style.opacity = '0';
-    o.style.transition = 'opacity .4s';
-    setTimeout(() => o.style.display = 'none', 420);
-  }, 1000);
+  const o = document.getElementById('perm-ov');
+  o.style.opacity = '0';
+  o.style.transition = 'opacity .4s';
+  setTimeout(() => o.style.display = 'none', 420);
+}
+
+async function passerPerms() {
+  localStorage.setItem('kolisgo_perms_skipped', '1');
+  const o = document.getElementById('perm-ov');
+  o.style.opacity = '0';
+  o.style.transition = 'opacity .4s';
+  setTimeout(() => o.style.display = 'none', 420);
+}
+
+async function demanderCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    stream.getTracks().forEach(tr => tr.stop());
+    localStorage.setItem('kolisgo_perm_camera', '1');
+    return true;
+  } catch(e) {
+    t('Autorisez la caméra pour scanner le QR Code', 'e');
+    return false;
+  }
+}
+
+async function demanderLocalisation() {
+  return new Promise(res => {
+    navigator.geolocation.getCurrentPosition(
+      () => { localStorage.setItem('kolisgo_perm_loc', '1'); res(true); },
+      () => { t('Activez la localisation pour trouver la gare la plus proche', ''); res(false); }
+    );
+  });
+}
+
+async function demanderNotifications() {
+  const r = await Notification.requestPermission();
+  if (r === 'granted') localStorage.setItem('kolisgo_perm_notif', '1');
+  return r === 'granted';
 }
 
 // ── Navigation ───────────────────────────

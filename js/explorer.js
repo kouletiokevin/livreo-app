@@ -37,7 +37,7 @@ async function loadCards(dest = 'all') {
   if (!g) return;
   g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:.84rem;">Chargement...</div>';
   try {
-    let query = db.from('colis_marketplace')
+    let query = db.from('colis_public')
       .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge)')
       .eq('statut', 'en_attente')
       .order('created_at', { ascending: false })
@@ -122,31 +122,95 @@ async function flt(dest, el) {
 }
 
 // ── Détail colis ─────────────────────────
-function openDetail(id) {
-  const c = D.find(x => x.id === id);
-  if (!c) return;
-  const logged = user !== null;
+async function openDetail(id) {
+  let col = null;
+  try {
+    const { data, error } = await db.from('colis')
+      .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge)')
+      .eq('code_lvr', id)
+      .single();
+    if (!error && data) col = data;
+  } catch(e) { /* fallback démo */ }
+
+  if (!col) {
+    const c = D.find(x => x.id === id);
+    if (!c) { t('Détails indisponibles', ''); return; }
+    const logged = user !== null;
+    openSheet(`
+      <div style="font-size:1.1rem;font-weight:900;letter-spacing:-.5px;margin-bottom:3px;">${c.title}</div>
+      <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">${c.from} → ${c.to} · ${c.fmt} · ${c.w}</div>
+      <div style="background:var(--cream);border-radius:var(--r);padding:20px;text-align:center;font-size:3.5rem;margin-bottom:12px;">${c.em}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
+        <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Format</div><div style="font-weight:800;font-size:.84rem;">${c.fmt}</div></div>
+        <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Poids</div><div style="font-weight:800;font-size:.84rem;">${c.w}</div></div>
+        <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Date</div><div style="font-weight:800;font-size:.84rem;">${c.date}</div></div>
+        <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${c.price}€</div></div>
+      </div>
+      ${logged ? `
+        <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px;margin-bottom:11px;">
+          <div style="font-size:.66rem;font-weight:800;color:var(--g600);margin-bottom:6px;">📸 Contenu du colis</div>
+          <div style="font-size:.7rem;color:var(--muted);">Détails complets visibles après acceptation.</div>
+        </div>
+        <div style="background:var(--cream);border-radius:var(--r);padding:11px;margin-bottom:12px;">
+          <div style="font-size:.64rem;font-weight:800;color:var(--muted);margin-bottom:3px;">📞 Contact expéditeur (après acceptation)</div>
+          <div style="font-size:.82rem;font-weight:700;">${c.poster} · <span style="color:var(--g500);">06 ·· ·· ·· ··</span></div>
+        </div>
+        <button class="btn p full" onclick="accepterC('${c.id}')">🤝 Accepter de livrer ce kolis</button>
+      ` : `
+        <div style="background:var(--ink);border-radius:var(--r);padding:16px;text-align:center;margin-bottom:11px;">
+          <div style="font-size:1.5rem;margin-bottom:6px;">🔒</div>
+          <div style="color:#fff;font-size:.84rem;font-weight:700;margin-bottom:2px;">Connectez-vous pour voir les détails</div>
+          <div style="color:rgba(255,255,255,.38);font-size:.68rem;">Coordonnées et contenu privés jusqu'à l'acceptation.</div>
+        </div>
+        <button class="btn p full" onclick="closeSheet();goNav('auth')">Se connecter →</button>
+      `}
+    `);
+    return;
+  }
+
+  const logged     = user !== null;
+  const prenom     = escapeHtml(col.users?.prenom || 'Expéditeur');
+  const note       = col.users?.note_moyenne;
+  const badge      = col.users?.badge;
+  const fmt        = escapeHtml(col.format || 'Colis');
+  const poids      = escapeHtml(col.poids || '—');
+  const titre      = escapeHtml(col.titre || 'Kolis');
+  const dep        = escapeHtml(col.gare_depart || '');
+  const arr        = escapeHtml(col.gare_arrivee || '');
+  const prix       = parseFloat(col.prix) || 0;
+  const dt         = col.date_souhaitee
+    ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
+    : '—';
+  const emojis     = { 'Lettre': '✉️', 'Pochette': '📬', 'Colis': '📦', 'Bagage': '🧳' };
+  const em         = emojis[(col.format || '').split(' ')[0]] || '📦';
+  const photoUrl   = col.photo_emballee_url ? escapeHtml(col.photo_emballee_url) : null;
+  const codeLvrJs  = JSON.stringify(col.code_lvr);
+
   openSheet(`
-    <div style="font-size:1.1rem;font-weight:900;letter-spacing:-.5px;margin-bottom:3px;">${c.title}</div>
-    <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">${c.from} → ${c.to} · ${c.fmt} · ${c.w}</div>
-    <div style="background:var(--cream);border-radius:var(--r);padding:20px;text-align:center;font-size:3.5rem;margin-bottom:12px;">${c.em}</div>
+    <div style="font-size:1.1rem;font-weight:900;letter-spacing:-.5px;margin-bottom:3px;">${titre}</div>
+    <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">${dep} → ${arr} · ${fmt}</div>
+    <div style="background:var(--cream);border-radius:var(--r);padding:20px;text-align:center;margin-bottom:12px;">
+      ${photoUrl
+        ? `<img src="${photoUrl}" style="width:120px;height:120px;object-fit:cover;border-radius:10px;">`
+        : `<span style="font-size:3.5rem;">${em}</span>`}
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
-      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Format</div><div style="font-weight:800;font-size:.84rem;">${c.fmt}</div></div>
-      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Poids</div><div style="font-weight:800;font-size:.84rem;">${c.w}</div></div>
-      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Date</div><div style="font-weight:800;font-size:.84rem;">${c.date}</div></div>
-      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${c.price}€</div></div>
+      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Format</div><div style="font-weight:800;font-size:.84rem;">${fmt}</div></div>
+      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Poids</div><div style="font-weight:800;font-size:.84rem;">${poids}</div></div>
+      <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Date</div><div style="font-weight:800;font-size:.84rem;">${dt}</div></div>
+      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${prix.toFixed(2).replace('.',',')}€</div></div>
     </div>
     ${logged ? `
       <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px;margin-bottom:11px;">
         <div style="font-size:.66rem;font-weight:800;color:var(--g600);margin-bottom:6px;">📸 Contenu du colis</div>
-        <div style="display:flex;gap:5px;margin-bottom:5px;"><div class="prev-item">📦</div><div class="prev-item">📸</div></div>
         <div style="font-size:.7rem;color:var(--muted);">Détails complets visibles après acceptation.</div>
       </div>
       <div style="background:var(--cream);border-radius:var(--r);padding:11px;margin-bottom:12px;">
         <div style="font-size:.64rem;font-weight:800;color:var(--muted);margin-bottom:3px;">📞 Contact expéditeur (après acceptation)</div>
-        <div style="font-size:.82rem;font-weight:700;">${c.poster} · <span style="color:var(--g500);">06 ·· ·· ·· ··</span></div>
+        <div style="font-size:.82rem;font-weight:700;">${prenom}${note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : ''} · <span style="color:var(--g500);">06 ·· ·· ·· ··</span></div>
       </div>
-      <button class="btn p full" onclick="accepterC('${c.id}')">🤝 Accepter de livrer ce kolis</button>
+      ${badge && badge !== 'aucun' && typeof badgeHTML === 'function' ? '<div style="margin-bottom:12px;">' + badgeHTML(badge) + '</div>' : ''}
+      <button class="btn p full" onclick="accepterC(${codeLvrJs})">🤝 Accepter de livrer ce kolis</button>
     ` : `
       <div style="background:var(--ink);border-radius:var(--r);padding:16px;text-align:center;margin-bottom:11px;">
         <div style="font-size:1.5rem;margin-bottom:6px;">🔒</div>
