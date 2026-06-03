@@ -1,0 +1,26 @@
+{
+  "appId": "fr.kolisgo.app",
+  "appName": "KolisGo",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#0e1a10",
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "Camera": {
+      "permissions": ["camera"]
+    },
+    "Geolocation": {
+      "permissions": ["location"]
+    }
+  }
+}

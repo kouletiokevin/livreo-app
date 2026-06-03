@@ -2,3 +2,9 @@
 .env.local
 node_modules/
 *.log
+
+# Android
+android/
+*.keystore
+*.jks
+android-build.md
