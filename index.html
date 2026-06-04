@@ -242,6 +242,51 @@
   <div class="sheet" id="sh-content"><div class="sh"></div></div>
 </div>
 
+<!-- ════ ONBOARDING ════ -->
+<div id="ob-ov" style="display:none;">
+  <button id="ob-skip" onclick="finishOnboarding()">Passer</button>
+  <div id="ob-track">
+
+    <!-- Écran 1 -->
+    <div class="ob-slide">
+      <span class="ob-em">📦</span>
+      <div class="ob-title">La Poste c'est trop cher</div>
+      <div class="ob-sub">Envoyez vos kolis jusqu'à −45% moins cher grâce aux voyageurs</div>
+    </div>
+
+    <!-- Écran 2 -->
+    <div class="ob-slide">
+      <span class="ob-em">🚆</span>
+      <div class="ob-title">Quelqu'un prend le train</div>
+      <div class="ob-sub">Des passeurs transportent vos kolis sur leur trajet du jour</div>
+    </div>
+
+    <!-- Écran 3 -->
+    <div class="ob-slide">
+      <span class="ob-em">🔒</span>
+      <div class="ob-title">100% sécurisé</div>
+      <div class="ob-sub">Paiement bloqué jusqu'à la confirmation de remise par QR Code</div>
+    </div>
+
+    <!-- Écran 4 -->
+    <div class="ob-slide">
+      <span class="ob-em">🎉</span>
+      <div class="ob-title">Prêt à commencer ?</div>
+      <div class="ob-cta">
+        <button class="ob-btn-main" onclick="finishOnboarding('auth')">Créer mon compte gratuit</button>
+        <button class="ob-btn-link" onclick="finishOnboarding('auth')">J'ai déjà un compte</button>
+      </div>
+    </div>
+
+  </div>
+  <div id="ob-dots">
+    <div class="ob-dot on" onclick="obGoTo(0)"></div>
+    <div class="ob-dot" onclick="obGoTo(1)"></div>
+    <div class="ob-dot" onclick="obGoTo(2)"></div>
+    <div class="ob-dot" onclick="obGoTo(3)"></div>
+  </div>
+</div>
+
 <!-- ════ NAV ════ -->
 <nav>
   <div class="logo" onclick="goNav('home')" style="cursor:pointer;">

@@ -13,7 +13,10 @@ let livrPhoto = false, livrChecksOk = false;
 function closeSplash() {
   const s = document.getElementById('splash');
   s.classList.add('hide');
-  setTimeout(() => { s.style.display = 'none'; }, 650);
+  setTimeout(() => {
+    s.style.display = 'none';
+    if (!localStorage.getItem('kolisgo_onboarding_done')) showOnboarding();
+  }, 650);
 }
 
 setTimeout(() => {
@@ -66,6 +69,65 @@ async function demanderNotifications() {
   const r = await Notification.requestPermission();
   if (r === 'granted') localStorage.setItem('kolisgo_perm_notif', '1');
   return r === 'granted';
+}
+
+// ── Onboarding ───────────────────────────
+let _obIdx = 0;
+
+function showOnboarding() {
+  _obIdx = 0;
+  const ov = document.getElementById('ob-ov');
+  ov.style.display = 'flex';
+  obGoTo(0);
+  _obInitSwipe();
+}
+
+function obGoTo(n) {
+  _obIdx = Math.max(0, Math.min(3, n));
+  document.getElementById('ob-track').style.transform = `translateX(-${_obIdx * 25}%)`;
+  document.querySelectorAll('.ob-dot').forEach((d, i) => d.classList.toggle('on', i === _obIdx));
+  const skip = document.getElementById('ob-skip');
+  if (skip) skip.style.display = _obIdx === 3 ? 'none' : 'block';
+  // Rejouer l'animation des éléments du slide actif
+  const slides = document.querySelectorAll('.ob-slide');
+  ['.ob-em', '.ob-title', '.ob-sub', '.ob-cta'].forEach(sel => {
+    const el = slides[_obIdx]?.querySelector(sel);
+    if (!el) return;
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = 'obFadeIn .45s ease both';
+  });
+}
+
+function finishOnboarding(dest) {
+  localStorage.setItem('kolisgo_onboarding_done', '1');
+  const ov = document.getElementById('ob-ov');
+  ov.style.opacity = '0';
+  ov.style.transition = 'opacity .35s';
+  setTimeout(() => {
+    ov.style.display = 'none';
+    ov.style.opacity = '';
+    ov.style.transition = '';
+    if (dest) goNav(dest);
+  }, 370);
+}
+
+function _obInitSwipe() {
+  const ov = document.getElementById('ob-ov');
+  if (!ov || ov._swipeInited) return;
+  ov._swipeInited = true;
+  let startX = 0, startY = 0;
+  ov.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  ov.addEventListener('touchend', e => {
+    const dx = startX - e.changedTouches[0].clientX;
+    const dy = startY - e.changedTouches[0].clientY;
+    if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
+    if (dx > 0 && _obIdx < 3) obGoTo(_obIdx + 1);
+    else if (dx < 0 && _obIdx > 0) obGoTo(_obIdx - 1);
+  }, { passive: true });
 }
 
 // ── Navigation ───────────────────────────

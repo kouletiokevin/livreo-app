@@ -493,6 +493,76 @@ td strong { color: var(--ink); }
 #splash-enter  { opacity: 0; animation: enterAppear .4s ease 2.0s forwards; position: absolute; bottom: 48px; }
 @keyframes enterAppear { from { opacity: 0; } to { opacity: 1; } }
 
+/* ── ONBOARDING ── */
+#ob-ov {
+  position: fixed; inset: 0; z-index: 8500;
+  background: var(--ink);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  overflow: hidden;
+}
+#ob-skip {
+  position: absolute; top: calc(env(safe-area-inset-top) + 18px); right: 20px;
+  background: transparent; border: none; color: rgba(255,255,255,.45);
+  font-family: var(--sans); font-size: .82rem; font-weight: 600;
+  cursor: pointer; z-index: 10; padding: 8px 4px;
+}
+#ob-track {
+  display: flex; width: 400%; height: 100%;
+  transition: transform .38s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.ob-slide {
+  width: 25%; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 36px 120px; text-align: center;
+}
+.ob-em {
+  font-size: 5.5rem; margin-bottom: 32px; display: block;
+}
+.ob-title {
+  font-size: 1.65rem; font-weight: 900; letter-spacing: -.6px;
+  color: #fff; margin-bottom: 16px; line-height: 1.2;
+}
+.ob-sub {
+  font-size: .9rem; color: rgba(255,255,255,.6);
+  line-height: 1.7; max-width: 270px;
+}
+#ob-dots {
+  position: absolute; bottom: calc(env(safe-area-inset-bottom) + 44px);
+  display: flex; gap: 8px; align-items: center;
+}
+.ob-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,.22);
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+  cursor: pointer;
+}
+.ob-dot.on {
+  width: 26px; border-radius: 4px;
+  background: #2ecc71;
+}
+.ob-cta {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  margin-top: 36px; width: 100%; max-width: 280px;
+}
+.ob-btn-main {
+  width: 100%; padding: 16px; background: #2ecc71; color: var(--ink);
+  border: none; border-radius: 50px; font-family: var(--sans);
+  font-size: 1rem; font-weight: 900; cursor: pointer;
+  box-shadow: 0 4px 24px rgba(46,204,113,.4);
+  transition: transform .15s, box-shadow .15s; letter-spacing: -.2px;
+}
+.ob-btn-main:active { transform: scale(.97); box-shadow: 0 2px 12px rgba(46,204,113,.3); }
+.ob-btn-link {
+  background: transparent; border: none; color: rgba(255,255,255,.45);
+  font-family: var(--sans); font-size: .82rem; font-weight: 600;
+  cursor: pointer; padding: 8px; text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@keyframes obFadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 380px) {
   .f2   { grid-template-columns: 1fr; }
