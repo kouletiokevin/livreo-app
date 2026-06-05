@@ -390,11 +390,9 @@
     <!-- ACTIVITÉ RÉCENTE -->
     <div class="tc-table">
       <div class="tc-top"><h3>Activité récente</h3><button style="font-size:.7rem;color:var(--g500);background:none;border:none;cursor:pointer;font-weight:700;">Tout voir →</button></div>
-      <table><thead><tr><th>Réf.</th><th>Rôle</th><th>Trajet</th><th>€</th><th>Statut</th></tr></thead>
-      <tbody>
-        <tr><td><strong>LVR-7821</strong></td><td>Passeur</td><td>Paris→Lyon</td><td style="color:var(--g500);font-weight:800;">+18€</td><td><span class="pok">✓ Livré</span></td></tr>
-        <tr><td><strong>LVR-7809</strong></td><td>Expéditeur</td><td>Paris→Lille</td><td>-7€</td><td><span class="prt">🚆 Route</span></td></tr>
-        <tr><td><strong>LVR-7795</strong></td><td>Passeur</td><td>Paris→Bordeaux</td><td style="color:var(--g500);font-weight:800;">+24€</td><td><span class="pok">✓ Livré</span></td></tr>
+      <table><thead><tr><th>Réf.</th><th>Trajet</th><th>€</th><th>Statut</th></tr></thead>
+      <tbody id="activite-table">
+        <tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr>
       </tbody></table>
     </div>
   </div>

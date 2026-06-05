@@ -70,6 +70,36 @@ async function chargerLivraisonsEnCours(userId) {
   }
 }
 
+// ── Activité récente ─────────────────────
+async function chargerActiviteRecente() {
+  try {
+    const { data } = await db
+      .from('transactions')
+      .select('montant, statut, created_at, colis(code_lvr, gare_depart, gare_arrivee)')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    const tbody = document.getElementById('activite-table');
+    if (!tbody) return;
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucune activité pour le moment</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map(tx => `
+      <tr>
+        <td><strong>${escapeHtml(tx.colis?.code_lvr || '—')}</strong></td>
+        <td>${escapeHtml(tx.colis?.gare_depart || '?')} → ${escapeHtml(tx.colis?.gare_arrivee || '?')}</td>
+        <td style="color:var(--g500);font-weight:800;">${parseFloat(tx.montant || 0).toFixed(2)}€</td>
+        <td>${escapeHtml(tx.statut)}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    console.log('Activité:', e.message);
+  }
+}
+
 // ── KPIs dashboard ───────────────────────
 async function chargerKPIs(userId, profil) {
   const nbEnvoyes   = profil?.nb_colis_envoyes || 0;
