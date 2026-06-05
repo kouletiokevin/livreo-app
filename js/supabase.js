@@ -27,7 +27,6 @@ const db = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
 const ROLES = {
   ADMIN: 'admin',
   USER: 'user',
-  LIVREUR_VERIFIE: 'livreur_verifie',
 };
 
 // ── Vérification des rôles ──────────────
@@ -165,12 +164,6 @@ async function checkSession() {
     if (!session) return null;
 
     if (!isValidUUID(session.user.id)) {
-      await db.auth.signOut();
-      return null;
-    }
-
-    const expiresAt = session.expires_at * 1000;
-    if (Date.now() > expiresAt) {
       await db.auth.signOut();
       return null;
     }
