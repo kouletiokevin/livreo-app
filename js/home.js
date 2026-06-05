@@ -70,6 +70,24 @@ async function chargerLivraisonsEnCours(userId) {
   }
 }
 
+// ── Retrait de fonds ─────────────────────
+function ouvrirRetrait() {
+  openSheet(`
+    <div style="text-align:center;padding:20px;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">💸</div>
+      <div style="font-weight:900;font-size:1.1rem;margin-bottom:8px;">Retrait de fonds</div>
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:20px;line-height:1.6;">
+        Les virements automatiques vers votre compte bancaire seront disponibles prochainement via Stripe Connect.<br><br>
+        Pour retirer vos fonds dès maintenant, contactez-nous :
+      </div>
+      <a href="mailto:support@kolisgo.fr" style="display:block;padding:12px;background:var(--g500);color:#fff;border-radius:50px;font-weight:700;font-size:.86rem;text-decoration:none;margin-bottom:8px;">
+        📧 support@kolisgo.fr
+      </a>
+      <button onclick="closeSheet()" class="btn s full">Fermer</button>
+    </div>
+  `);
+}
+
 // ── Activité récente ─────────────────────
 async function chargerActiviteRecente(userId) {
   try {
