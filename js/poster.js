@@ -36,7 +36,7 @@ function onPrixInput(val, conseille) {
 }
 
 // ── Upload photo colis ───────────────────
-async function uploadPhotoColis(file, userId, colisId) {
+async function uploadPhotoColis(file, userId, colisId, isPrivate = false) {
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   const MAX_SIZE = 10 * 1024 * 1024;
   if (!ALLOWED_TYPES.includes(file.type)) {
@@ -49,10 +49,9 @@ async function uploadPhotoColis(file, userId, colisId) {
   const bytes = new Uint8Array(buffer);
   const hex = Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
   const isWebP = hex.startsWith('52494646') && hex.substring(16, 24) === '57455250';
-  const MAGIC = { 'ffd8ff': 'jpeg', '89504e47': 'png' };
-  const isValid = Object.keys(MAGIC).some(m => hex.startsWith(m)) || isWebP;
+  const isValid = hex.startsWith('ffd8ff') || hex.startsWith('89504e47') || isWebP;
   if (!isValid) {
-    throw new Error('Fichier invalide. Utilisez JPG, PNG ou WebP.');
+    throw new Error('Fichier invalide. Contenu ne correspond pas au format.');
   }
   const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
   const filename = `${userId}/${colisId}/${Date.now()}.${ext}`;
@@ -60,6 +59,13 @@ async function uploadPhotoColis(file, userId, colisId) {
     .from('photos-colis')
     .upload(filename, file, { contentType: file.type, upsert: false });
   if (error) throw new Error(error.message);
+  if (isPrivate) {
+    const { data: s, error: sErr } = await db.storage
+      .from('photos-colis')
+      .createSignedUrl(data.path, 3600);
+    if (sErr) throw new Error(sErr.message);
+    return s.signedUrl;
+  }
   return db.storage.from('photos-colis').getPublicUrl(data.path).data.publicUrl;
 }
 
@@ -190,7 +196,7 @@ async function publishColis() {
     // Photo privée (champ em) → photos_contenu_urls (visible après acceptation)
     if (window._photoEmballee) {
       try {
-        const url = await uploadPhotoColis(window._photoEmballee, user.id, data.id);
+        const url = await uploadPhotoColis(window._photoEmballee, user.id, data.id, true);
         if (url) await db.from('colis').update({ photos_contenu_urls: [url] }).eq('id', data.id);
       } catch (e) { t('Photo privée : ' + e.message, 'e'); }
     }
