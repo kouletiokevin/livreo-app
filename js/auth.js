@@ -63,8 +63,14 @@ async function doReg() {
     const { data, error } = await db.auth.signUp({ email: em, password: pw });
     if (error) { t('Erreur : ' + error.message, 'e'); return; }
 
+    if (!data.user?.id) {
+      t('✉️ Vérifiez votre email avant de vous connecter. Un lien de confirmation vous a été envoyé.', 's');
+      authTab('login', document.querySelector('.atab:first-child'));
+      return;
+    }
+
     const { error: profilErr } = await db.from('users').insert({
-      id: data.user?.id,
+      id: data.user.id,
       email: em,
       prenom: pn,
       nom: nm,
