@@ -26,6 +26,9 @@ async function chargerPortefeuille(userId) {
 
 // ── Livraisons en cours ──────────────────
 async function chargerLivraisonsEnCours(userId) {
+  const container = document.getElementById('livraisons-list');
+  if (!container) return;
+
   try {
     const { data } = await db.from('colis')
       .select('*')
@@ -36,10 +39,8 @@ async function chargerLivraisonsEnCours(userId) {
 
     if (!data || data.length === 0) return;
 
-    const container = document.querySelector('#home-dash .livr-item')?.parentNode;
-    if (!container) return;
-
-    container.querySelectorAll('.livr-item').forEach(el => el.remove());
+    const empty = document.getElementById('livraisons-empty');
+    if (empty) empty.remove();
 
     data.forEach(c => {
       const div = document.createElement('div');
@@ -60,16 +61,31 @@ async function chargerLivraisonsEnCours(userId) {
         </div>
         <div class="li-price">+${parseFloat(c.prix).toFixed(0)}€</div>
         <div class="li-arrow">›</div>`;
-      container.insertBefore(div, container.querySelector('.krow'));
+      container.appendChild(div);
     });
   } catch (e) {
     console.error('Livraisons:', e.message);
-    const container = document.querySelector('#home-dash .livr-item')?.parentNode;
-    if (container) {
-      const div = document.createElement('div');
-      div.style.cssText = 'text-align:center;padding:20px;font-size:.8rem;color:var(--muted);';
-      div.textContent = 'Impossible de charger vos passages.';
-      container.insertBefore(div, container.querySelector('.krow') || null);
-    }
+    const empty = document.getElementById('livraisons-empty');
+    if (empty) empty.textContent = 'Impossible de charger vos passages.';
   }
+}
+
+// ── KPIs dashboard ───────────────────────
+async function chargerKPIs(userId, profil) {
+  const nbEnvoyes   = profil?.nb_colis_envoyes || 0;
+  const nbLivraisons = profil?.nb_livraisons   || 0;
+  const note        = profil?.note_moyenne     || 0;
+
+  const { data } = await db.from('transactions')
+    .select('montant')
+    .eq('livreur_id', userId)
+    .eq('statut', 'libere');
+
+  const gains = (data || []).reduce((s, t) => s + parseFloat(t.montant || 0), 0);
+
+  const set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+  set('kpi-envoyes',    nbEnvoyes);
+  set('kpi-livraisons', nbLivraisons);
+  set('kpi-gains',      gains.toFixed(0) + '€');
+  set('kpi-note',       note > 0 ? note.toFixed(1) + '⭐' : '—');
 }

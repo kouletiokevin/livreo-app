@@ -230,6 +230,7 @@ async function onLoginSuccess(profil) {
   refreshHome();
   chargerPortefeuille(profil.id);
   chargerLivraisonsEnCours(profil.id);
+  chargerKPIs(profil.id, profil);
 }
 
 // ── Tabs auth ────────────────────────────

@@ -418,33 +418,16 @@
 
     <!-- LIVRAISONS EN COURS -->
     <div style="font-size:.74rem;font-weight:800;color:var(--ink);margin-bottom:8px;">🚆 Mes passages en cours</div>
-    <div class="livr-item" onclick="openLivrFlow('LVR-48291','Paris GDL → Lyon PDieu','TGV INOUI 6605','Marie Dupont','18')">
-      <div class="li-icon">📦</div>
-      <div style="flex:1;">
-        <div class="li-ref">LVR-48291</div>
-        <div class="li-detail">Paris GDL → Lyon PDieu · TGV INOUI 6605</div>
-        <div style="margin-top:3px;"><span class="prt">🚆 En transit</span></div>
-      </div>
-      <div class="li-price">+18€</div>
-      <div class="li-arrow">›</div>
-    </div>
-    <div class="livr-item" onclick="openLivrFlow('LVR-47850','Paris Nord → Lille Europe','TGV INOUI 7112','Sophie B.','7')">
-      <div class="li-icon">🎁</div>
-      <div style="flex:1;">
-        <div class="li-ref">LVR-47850</div>
-        <div class="li-detail">Paris Nord → Lille Europe · TGV 7112</div>
-        <div style="margin-top:3px;"><span class="pwt">⏳ En attente départ</span></div>
-      </div>
-      <div class="li-price">+7€</div>
-      <div class="li-arrow">›</div>
+    <div id="livraisons-list">
+      <div id="livraisons-empty" style="text-align:center;padding:20px 0;font-size:.8rem;color:var(--muted);">Aucun passage en cours.</div>
     </div>
 
     <!-- KPIs -->
     <div class="krow" style="margin-top:12px;">
-      <div class="kpi"><div class="kl">Kolis envoyés</div><div class="kv g">14</div><div class="kt">↑ 3 ce mois</div></div>
-      <div class="kpi"><div class="kl">Passages</div><div class="kv g">38</div><div class="kt">↑ 8 ce mois</div></div>
-      <div class="kpi"><div class="kl">Gains totaux</div><div class="kv g">312€</div></div>
-      <div class="kpi"><div class="kl">Ma note</div><div class="kv">4.9⭐</div></div>
+      <div class="kpi"><div class="kl">Kolis envoyés</div><div class="kv g" id="kpi-envoyes">0</div></div>
+      <div class="kpi"><div class="kl">Passages</div><div class="kv g" id="kpi-livraisons">0</div></div>
+      <div class="kpi"><div class="kl">Gains totaux</div><div class="kv g" id="kpi-gains">0€</div></div>
+      <div class="kpi"><div class="kl">Ma note</div><div class="kv" id="kpi-note">—</div></div>
     </div>
 
     <!-- ACTIVITÉ RÉCENTE -->
