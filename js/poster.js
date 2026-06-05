@@ -207,6 +207,8 @@ async function publishColis() {
       `Bonjour ${rnom} ! Un kolis vous est envoyé via KolisGo. ` +
       `Votre code : ${ref}. Ouvrez KolisGo → Suivi → entrez ce code pour votre QR Code. 🚆`
     );
+
+    localStorage.removeItem('pending_payment_' + data.id);
   } catch (e) {
     t('Erreur : ' + e.message, 'e');
   } finally {

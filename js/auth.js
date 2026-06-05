@@ -186,6 +186,15 @@ async function chargerProfil(userId) {
 
 // ── Après connexion réussie ──────────────
 async function onLoginSuccess(profil) {
+  // Nettoyer les pending_payment de plus de 24h
+  Object.keys(localStorage)
+    .filter(k => k.startsWith('pending_payment_'))
+    .forEach(k => {
+      const timestamp = k.split('_').pop();
+      const age = Date.now() - parseInt(timestamp);
+      if (age > 24 * 60 * 60 * 1000) localStorage.removeItem(k);
+    });
+
   user = profil;
   const role = await getUserRole(profil.id || profil.auth_id);
   user.role = role;
