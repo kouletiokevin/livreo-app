@@ -24,26 +24,7 @@ setTimeout(() => {
   if (s && s.style.display !== 'none') closeSplash();
 }, 4200);
 
-// ── Permissions ──────────────────────────
-async function askPerms() {
-  await demanderCamera();
-  await demanderLocalisation();
-  await demanderNotifications();
-  localStorage.setItem('kolisgo_perms_done', '1');
-  const o = document.getElementById('perm-ov');
-  o.style.opacity = '0';
-  o.style.transition = 'opacity .4s';
-  setTimeout(() => o.style.display = 'none', 420);
-}
-
-async function passerPerms() {
-  localStorage.setItem('kolisgo_perms_skipped', '1');
-  const o = document.getElementById('perm-ov');
-  o.style.opacity = '0';
-  o.style.transition = 'opacity .4s';
-  setTimeout(() => o.style.display = 'none', 420);
-}
-
+// ── Permissions contextuelles ─────────────
 async function demanderCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });

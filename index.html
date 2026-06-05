@@ -194,49 +194,6 @@
   </div>
 </div>
 
-<!-- ════ PERMISSIONS ════ -->
-<div id="perm-ov" style="display:none;">
-  <div class="perm-card">
-    <div style="text-align:center;margin-bottom:4px;">
-      <svg width="72" height="72" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto;display:block;">
-        <defs>
-          <linearGradient id="pb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0e1a10"/><stop offset="100%" style="stop-color:#1e3322"/></linearGradient>
-          <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#3dcf72"/><stop offset="100%" style="stop-color:#1a8044"/></linearGradient>
-        </defs>
-        <circle cx="200" cy="200" r="190" fill="url(#pb)"/>
-        <circle cx="200" cy="200" r="190" fill="none" stroke="#3dcf72" stroke-width="3" opacity="0.35"/>
-        <rect x="55" y="212" width="290" height="5" rx="2.5" fill="#3dcf72" opacity="0.5"/>
-        <rect x="55" y="228" width="290" height="5" rx="2.5" fill="#3dcf72" opacity="0.5"/>
-        <g transform="translate(90,148)">
-          <rect x="0" y="22" width="170" height="55" rx="11" fill="url(#pg)"/>
-          <ellipse cx="170" cy="49" rx="22" ry="27" fill="url(#pg)"/>
-          <rect x="18" y="30" width="30" height="22" rx="5" fill="rgba(255,255,255,.88)"/>
-          <rect x="58" y="30" width="30" height="22" rx="5" fill="rgba(255,255,255,.6)"/>
-          <rect x="98" y="30" width="30" height="22" rx="5" fill="rgba(255,255,255,.38)"/>
-          <circle cx="184" cy="40" r="7" fill="#fff"/><circle cx="184" cy="40" r="4" fill="#fde68a"/>
-        </g>
-        <text x="200" y="316" text-anchor="middle" fill="white" font-size="46" font-weight="900" font-family="Georgia,serif" font-style="italic" letter-spacing="-1">Livr<tspan fill="#3dcf72">Go</tspan></text>
-        <text x="200" y="344" text-anchor="middle" fill="#8eeaae" font-size="12" font-family="sans-serif" letter-spacing="3" opacity="0.6">LIVRAISON · PAR TRAIN</text>
-      </svg>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">
-      <svg width="44" height="44" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="120" height="120" rx="26" fill="#141c14"/><text x="60" y="82" text-anchor="middle" font-size="68" font-weight="900" fill="#2ecc71" font-family="Arial Black,Impact,sans-serif">L</text><rect x="14" y="88" width="92" height="5" rx="2.5" fill="#2ecc71"/><rect x="14" y="97" width="92" height="5" rx="2.5" fill="#2ecc71" opacity="0.35"/></svg>
-      <span style="font-family:var(--sans);font-size:1.6rem;font-weight:900;color:var(--ink);letter-spacing:-.5px;">Kolis<span style="color:var(--g500);">Go</span></span>
-    </div>
-    <div style="font-size:.74rem;color:var(--muted);text-align:center;margin-bottom:16px;font-style:italic;">"Quelqu'un prend le train. Votre kolis aussi."</div>
-    <div class="perm-title">Autorisations nécessaires</div>
-    <div class="perm-sub">Pour fonctionner correctement, KolisGo a besoin des autorisations suivantes.</div>
-    <div class="perm-list">
-      <div class="pi"><div class="pi-icon">📷</div><div><div class="pi-name">Caméra</div><div class="pi-why">Scanner QR Codes · Photo de remise</div></div><div class="pi-state" id="ps-cam">—</div></div>
-      <div class="pi"><div class="pi-icon">🎤</div><div><div class="pi-name">Microphone</div><div class="pi-why">Messages vocaux passeur/expéditeur</div></div><div class="pi-state" id="ps-mic">—</div></div>
-      <div class="pi"><div class="pi-icon">📍</div><div><div class="pi-name">Localisation</div><div class="pi-why">Gare la plus proche · Suivi de trajet</div></div><div class="pi-state" id="ps-loc">—</div></div>
-      <div class="pi"><div class="pi-icon">🔔</div><div><div class="pi-name">Notifications</div><div class="pi-why">Alertes passage · Confirmation paiement</div></div><div class="pi-state" id="ps-notif">—</div></div>
-    </div>
-    <button class="perm-btn" onclick="askPerms()">Autoriser et continuer →</button>
-    <button onclick="passerPerms()" style="width:100%;padding:10px;background:transparent;color:var(--muted);border:none;font-family:var(--sans);font-size:.78rem;cursor:pointer;margin-top:6px;">Passer cette étape</button>
-  </div>
-</div>
-
 <!-- ════ SHEET ════ -->
 <div class="ov" id="ov" onclick="cov(event)">
   <div class="sheet" id="sh-content"><div class="sh"></div></div>

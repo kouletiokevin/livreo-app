@@ -49,22 +49,6 @@ body {
   to   { opacity: 1; transform: translateY(0)  scale(1); }
 }
 
-/* ── PERMISSIONS ── */
-#perm-ov {
-  position: fixed; inset: 0; background: var(--ink);
-  z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 20px;
-}
-.perm-card { background: var(--white); border-radius: var(--rxl); padding: 28px; max-width: 360px; width: 100%; }
-.perm-title { font-size: 1rem; font-weight: 800; text-align: center; margin-bottom: 5px; }
-.perm-sub   { font-size: .78rem; color: var(--muted); text-align: center; margin-bottom: 20px; line-height: 1.6; }
-.perm-list  { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-.pi         { display: flex; align-items: center; gap: 10px; padding: 11px; background: var(--cream); border-radius: var(--r); }
-.pi-icon    { font-size: 1.2rem; width: 32px; text-align: center; }
-.pi-name    { font-size: .82rem; font-weight: 700; }
-.pi-why     { font-size: .68rem; color: var(--muted); margin-top: 1px; }
-.pi-state   { margin-left: auto; font-size: .68rem; font-weight: 700; color: var(--muted2); }
-.perm-btn   { width: 100%; padding: 13px; background: var(--g500); color: #fff; border: none; border-radius: 50px; font-family: var(--sans); font-size: .92rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 18px rgba(26,128,68,.3); }
-
 /* ── SHEET / OVERLAY ── */
 .ov {
   position: fixed; inset: 0; background: rgba(14,26,16,.5);
