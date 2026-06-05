@@ -16,7 +16,7 @@ async function saveProfil() {
 
   if (!pn) { t('Le prénom est obligatoire', 'e'); return; }
 
-  const updates = { prenom: pn, telephone: ph };
+  const updates = { prenom: pn, nom: nm, telephone: ph };
   if (adr) updates.adresse = adr;
   if (cp) updates.code_postal = cp;
   if (vil) updates.ville = vil;
