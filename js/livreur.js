@@ -3,10 +3,11 @@
    Version 2.0 — Mai 2026
 ═══════════════════════════════════════ */
 
-let _currentLivraison = null;
-let _scanStream       = null;
-let _scanRaf          = null;
-let _remisePhotoUrl   = null;
+let _currentLivraison    = null;
+let _scanStream          = null;
+let _scanRaf             = null;
+let _remisePhotoUrl      = null;
+let _lastScannedQrSecret = null;
 
 // ── Ouvrir le flow de livraison ──────────
 function openLivrFlow(ref, trajet, train, dest, prix) {
@@ -212,9 +213,10 @@ function scanFrame(ref, dest, prix) {
 
   if (code) {
     stopCamera();
-    // Format QR KolisGo : "KOLISGO|LVR-XXXX|DEST:...|timestamp"
+    // Format QR KolisGo : "KOLISGO|LVR-XXXX|secret|timestamp"
     const parts        = code.data.split('|');
     const detectedCode = (parts[1] || code.data).trim().toUpperCase();
+    _lastScannedQrSecret = parts[2] || null;
     const qrInput      = document.getElementById('qr-man');
     if (qrInput) qrInput.value = detectedCode;
     t('QR Code détecté ✅', 's');
@@ -239,6 +241,24 @@ async function doScan(ref, dest, prix) {
 
   const input = document.getElementById('qr-man');
   const code  = input ? input.value.trim().toUpperCase() : ref;
+
+  // Vérification serveur du secret QR (si scan caméra)
+  if (_lastScannedQrSecret) {
+    try {
+      const { data: check } = await db.rpc('verify_qr_secret', {
+        p_code_lvr:  code,
+        p_qr_secret: _lastScannedQrSecret
+      });
+      if (!check?.valid) {
+        t('QR Code invalide ❌', 'e');
+        _lastScannedQrSecret = null;
+        return;
+      }
+    } catch (e) {
+      console.log('verify_qr_secret:', e.message);
+    }
+    _lastScannedQrSecret = null;
+  }
 
   document.getElementById('ls3').classList.remove('active');
   document.getElementById('ls3').classList.add('done');

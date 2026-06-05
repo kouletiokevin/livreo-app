@@ -11,7 +11,7 @@ async function loadSuivi() {
   const val = document.getElementById('sv-input').value.trim().toUpperCase();
   if (!val) { t('Entrez votre numéro de suivi', 'e'); return; }
 
-  const { data: colis, error } = await db.from('colis').select('*').eq('code_lvr', val).single();
+  const { data: colis, error } = await db.from('colis_public').select('*').eq('code_lvr', val).single();
   if (error || !colis) { t('Code LVR introuvable. Vérifiez le code reçu par SMS.', 'e'); return; }
 
   _currentColis = colis;
@@ -34,13 +34,17 @@ async function loadSuivi() {
 }
 
 // ── Génération QR Code ───────────────────
-function loadQR(colis) {
+async function loadQR(colis) {
   if (qrLoaded) return;
   qrLoaded = true;
   const d = document.getElementById('qr-canvas');
   d.innerHTML = '';
-  // qr_secret généré côté serveur à la création du colis — fallback UUID si absent
-  const secret = colis.qr_secret || crypto.randomUUID();
+  // qr_secret non exposé dans colis_public — récupéré via RPC serveur
+  let secret = crypto.randomUUID();
+  try {
+    const { data: s } = await db.rpc('get_qr_secret', { p_code_lvr: colis.code_lvr });
+    if (s?.secret) secret = s.secret;
+  } catch (e) { /* fallback UUID si RPC indisponible */ }
   const qrText = `KOLISGO|${colis.code_lvr}|${secret}|${Date.now()}`;
   try {
     new QRCode(d, {
