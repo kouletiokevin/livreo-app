@@ -71,15 +71,16 @@ async function chargerLivraisonsEnCours(userId) {
 }
 
 // ── Activité récente ─────────────────────
-async function chargerActiviteRecente() {
+async function chargerActiviteRecente(userId) {
   try {
     const { data } = await db
       .from('transactions')
       .select('montant, statut, created_at, colis(code_lvr, gare_depart, gare_arrivee)')
+      .or(`expediteur_id.eq.${userId},livreur_id.eq.${userId}`)
       .order('created_at', { ascending: false })
-      .limit(10);
+      .limit(5);
 
-    const tbody = document.getElementById('activite-table');
+    const tbody = document.getElementById('activity-tbody');
     if (!tbody) return;
 
     if (!data || data.length === 0) {
@@ -90,9 +91,9 @@ async function chargerActiviteRecente() {
     tbody.innerHTML = data.map(tx => `
       <tr>
         <td><strong>${escapeHtml(tx.colis?.code_lvr || '—')}</strong></td>
-        <td>${escapeHtml(tx.colis?.gare_depart || '?')} → ${escapeHtml(tx.colis?.gare_arrivee || '?')}</td>
+        <td style="font-size:.76rem;">${escapeHtml(tx.colis?.gare_depart || '?')} → ${escapeHtml(tx.colis?.gare_arrivee || '?')}</td>
         <td style="color:var(--g500);font-weight:800;">${parseFloat(tx.montant || 0).toFixed(2)}€</td>
-        <td>${escapeHtml(tx.statut)}</td>
+        <td>${escapeHtml(tx.statut || '—')}</td>
       </tr>
     `).join('');
   } catch (e) {
