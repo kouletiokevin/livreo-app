@@ -74,10 +74,9 @@ async function doReg() {
       role: ROLES.USER,
     });
 
-    const profil = { id: data.user?.id, prenom: pn, nom: nm, email: em, telephone: ph };
-    await onLoginSuccess(profil);
-    t(`Compte créé ! Bienvenue ${pn} 🎉`, 's');
-    goNav('home');
+    t('✉️ Vérifiez votre email avant de vous connecter. Un lien de confirmation vous a été envoyé.', 's');
+    goNav('auth');
+    authTab('login', document.querySelector('.atab:first-child'));
 
   } catch (e) {
     t(e.message || 'Erreur lors de l\'inscription', 'e');
