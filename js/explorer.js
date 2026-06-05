@@ -237,7 +237,7 @@ async function openDetail(id) {
     <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;">${dep} → ${arr} · ${fmt}</div>
     <div style="background:var(--cream);border-radius:var(--r);padding:20px;text-align:center;margin-bottom:12px;">
       ${photoUrl
-        ? `<img src="${photoUrl}" style="width:120px;height:120px;object-fit:cover;border-radius:10px;">`
+        ? `<img loading="lazy" src="${photoUrl}" style="width:120px;height:120px;object-fit:cover;border-radius:10px;">`
         : `<span style="font-size:3.5rem;">${em}</span>`}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
