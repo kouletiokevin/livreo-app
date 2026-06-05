@@ -85,6 +85,7 @@ function fakeUp(type) {
       let html = '';
       for (const f of files.slice(0, 4)) {
         const url = URL.createObjectURL(f);
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
         html += `<div class="prev-locked" style="position:relative;overflow:hidden;">
           <img src="${url}" style="width:100%;height:100%;object-fit:cover;opacity:.5;border-radius:7px;">
           <div style="position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:.4rem;font-weight:900;color:#fff;letter-spacing:.3px;">PRIVÉ</div>
