@@ -31,23 +31,38 @@ function cardHTML(c) {
   </div>`;
 }
 
+// ── Pagination ────────────────────────────
+let currentPage = 0;
+const PAGE_SIZE = 20;
+
 // ── Chargement des colis ─────────────────
-async function loadCards(dest = 'all') {
+async function loadCards(dest = 'all', reset = true) {
+  if (reset) currentPage = 0;
+
   const g = document.getElementById('cgrid');
   if (!g) return;
-  g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:.84rem;">Chargement...</div>';
+
+  // Retirer le bouton "Voir plus" précédent
+  const oldWrap = document.getElementById('load-more-wrap');
+  if (oldWrap) oldWrap.remove();
+
+  if (reset) {
+    g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:.84rem;">Chargement...</div>';
+  }
+
   try {
     let query = db.from('colis_public')
       .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge)')
-      .eq('statut', 'en_attente')
       .order('created_at', { ascending: false })
-      .limit(20);
+      .range(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE - 1);
+
     if (dest !== 'all') query = query.ilike('gare_arrivee', '%' + dest + '%');
 
     const { data, error } = await query;
+
     if (error) {
       console.error('Explorer:', error.message);
-      g.innerHTML = `
+      if (reset) g.innerHTML = `
         <div style="text-align:center;padding:40px 20px;">
           <div style="font-size:2.5rem;margin-bottom:12px;">📭</div>
           <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">Impossible de charger les colis</div>
@@ -56,32 +71,43 @@ async function loadCards(dest = 'all') {
         </div>`;
       return;
     }
+
     if (!data || data.length === 0) {
-      g.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);">Aucun kolis sur ce trajet pour le moment.<br>Soyez le premier à en poster un ! 📦</div>';
+      if (reset) g.innerHTML = `
+        <div style="text-align:center;padding:40px 20px;">
+          <div style="font-size:2.5rem;">📭</div>
+          <div style="font-weight:800;font-size:.95rem;margin-top:12px;">Aucun kolis disponible</div>
+          <div style="color:var(--muted);font-size:.8rem;margin-top:6px;">Soyez le premier à poster un kolis !</div>
+        </div>`;
       return;
     }
 
+    if (reset) g.innerHTML = '';
+
     const emojis = { 'Lettre': '✉️', 'Pochette': '📬', 'Colis': '📦', 'Bagage': '🧳' };
-    g.innerHTML = data.map(col => {
-      const prix = parseFloat(col.prix) || 7;
-      const fmt = escapeHtml(col.format || 'Colis');
-      const em = emojis[(col.format || '').split(' ')[0]] || '📦';
-      const prenom = escapeHtml(col.users?.prenom || 'Utilisateur');
-      const note = col.users?.note_moyenne;
-      const badge = col.users?.badge;
-      const dep = escapeHtml((col.gare_depart || '').split(' ')[0]);
-      const arr = escapeHtml((col.gare_arrivee || '').split(' ')[0]);
-      const dt = col.date_souhaitee
+
+    data.forEach(col => {
+      const prix     = parseFloat(col.prix) || 7;
+      const fmt      = escapeHtml(col.format || 'Colis');
+      const em       = emojis[(col.format || '').split(' ')[0]] || '📦';
+      const prenom   = escapeHtml(col.users?.prenom || 'Utilisateur');
+      const note     = col.users?.note_moyenne;
+      const badge    = col.users?.badge;
+      const dep      = escapeHtml((col.gare_depart  || '').split(' ')[0]);
+      const arr      = escapeHtml((col.gare_arrivee || '').split(' ')[0]);
+      const dt       = col.date_souhaitee
         ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
         : '';
-      const titre = escapeHtml(col.titre || 'Colis');
-      const poids = escapeHtml(col.poids || '');
+      const titre    = escapeHtml(col.titre || 'Colis');
+      const poids    = escapeHtml(col.poids || '');
       const photoUrl = col.photo_emballee_url ? escapeHtml(col.photo_emballee_url) : null;
       const codeLvrJs = JSON.stringify(col.code_lvr);
-      return '<div class="cc" onclick="openDetail(' + codeLvrJs + ')">'
+
+      g.insertAdjacentHTML('beforeend',
+        '<div class="cc" onclick="openDetail(' + codeLvrJs + ')">'
         + '<div class="cc-img">'
         + (photoUrl
-          ? '<img src="' + photoUrl + '" style="width:100%;height:100%;object-fit:cover;">'
+          ? '<img src="' + photoUrl + '" style="width:100%;height:100%;object-fit:cover;" loading="lazy">'
           : '<span style="font-size:3rem;">' + em + '</span>')
         + '<div class="cc-bdg new">NOUVEAU</div>'
         + '</div>'
@@ -100,11 +126,23 @@ async function loadCards(dest = 'all') {
         + '<div class="pname">' + prenom + (note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : '') + '</div>'
         + '</div>'
         + (badge && badge !== 'aucun' && typeof badgeHTML === 'function' ? badgeHTML(badge) : '')
-        + '</div></div></div></div>';
-    }).join('');
+        + '</div></div></div></div>'
+      );
+    });
+
+    // Bouton "Voir plus" si la page est pleine
+    if (data.length === PAGE_SIZE) {
+      const destSafe = dest.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      g.insertAdjacentHTML('afterend',
+        '<div id="load-more-wrap" style="text-align:center;padding:16px 0 24px;">'
+        + '<button id="load-more-btn" onclick="loadMore(\'' + destSafe + '\')" class="btn s" style="padding:10px 28px;">Voir plus de kolis</button>'
+        + '</div>'
+      );
+    }
+
   } catch (e) {
     console.error('Explorer:', e.message);
-    g.innerHTML = `
+    if (reset) g.innerHTML = `
       <div style="text-align:center;padding:40px 20px;">
         <div style="font-size:2.5rem;margin-bottom:12px;">📭</div>
         <div style="font-weight:800;font-size:.95rem;margin-bottom:6px;">Impossible de charger les colis</div>
@@ -112,6 +150,12 @@ async function loadCards(dest = 'all') {
         <button onclick="loadCards()" style="padding:10px 24px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.84rem;font-weight:700;cursor:pointer;">Réessayer</button>
       </div>`;
   }
+}
+
+// ── Page suivante ─────────────────────────
+async function loadMore(dest) {
+  currentPage++;
+  await loadCards(dest, false);
 }
 
 // ── Filtre destination ───────────────────
