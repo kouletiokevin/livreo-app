@@ -160,6 +160,19 @@ async function publishColis() {
 
     if (error) { t('Erreur : ' + error.message, 'e'); return; }
 
+    try {
+      const payment = await callEdgeFunction('create-payment', {
+        amount: Math.round(parseFloat(prix) * 100),
+        colis_id: data.id,
+        expediteur_id: user.id
+      });
+      if (payment?.client_secret) {
+        localStorage.setItem('pending_payment_' + data.id, payment.client_secret);
+      }
+    } catch (e) {
+      console.log('Paiement en attente:', e.message);
+    }
+
     const ref = data.code_lvr;
     document.getElementById('suc-ref').textContent = ref;
     document.getElementById('poster-form').style.display = 'none';
