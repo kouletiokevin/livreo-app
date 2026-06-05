@@ -109,8 +109,14 @@ function initPhotoRemise() {
           .from('photos-colis')
           .upload(path, file, { upsert: false, contentType: file.type });
         if (!error) {
-          const { data: urlData } = db.storage.from('photos-colis').getPublicUrl(path);
-          _remisePhotoUrl = urlData.publicUrl;
+          const { data: signedData, error: signErr } = await db.storage
+            .from('photos-colis')
+            .createSignedUrl(path, 3600);
+          if (signErr) {
+            console.error('URL signée impossible:', signErr);
+          } else {
+            _remisePhotoUrl = signedData.signedUrl;
+          }
         }
       } catch (e) { console.log('Upload photo remise:', e.message); }
     }
