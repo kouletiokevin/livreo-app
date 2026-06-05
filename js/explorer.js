@@ -31,9 +31,10 @@ function cardHTML(c) {
   </div>`;
 }
 
-// ── Pagination ────────────────────────────
+// ── Pagination & filtre actif ─────────────
 let currentPage = 0;
 const PAGE_SIZE = 20;
+let currentFilter = 'all';
 
 // ── Chargement des colis ─────────────────
 async function loadCards(dest = 'all', reset = true) {
@@ -162,6 +163,7 @@ async function loadMore(dest) {
 async function flt(dest, el) {
   document.querySelectorAll('.ftag').forEach(b => b.classList.remove('on'));
   el.classList.add('on');
+  currentFilter = dest;
   await loadCards(dest);
 }
 
@@ -265,6 +267,15 @@ async function openDetail(id) {
     `}
   `);
 }
+
+// ── Realtime — mise à jour automatique ───
+db.channel('colis_realtime')
+  .on(
+    'postgres_changes',
+    { event: '*', schema: 'public', table: 'colis' },
+    () => { loadCards(currentFilter, true); }
+  )
+  .subscribe();
 
 // ── Accepter un kolis ────────────────────
 async function accepterC(id) {
