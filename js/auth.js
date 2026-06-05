@@ -40,6 +40,9 @@ async function doLogin() {
 
 // ── Inscription ──────────────────────────
 async function doReg() {
+  const cgu = document.getElementById('accept-cgu')?.checked;
+  if (!cgu) { t('Vous devez accepter les CGU pour créer un compte', 'e'); return; }
+
   const pn = sanitize(document.getElementById('r-pn')?.value.trim());
   const nm = sanitize(document.getElementById('r-nm')?.value.trim());
   const em = document.getElementById('r-em')?.value.trim().toLowerCase();

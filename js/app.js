@@ -260,6 +260,20 @@ window.addEventListener('load', () => {
   }
 });
 
+// ── Cookies RGPD ─────────────────────────
+function acceptCookies() {
+  localStorage.setItem('cookie_consent', '1');
+  const b = document.getElementById('cookie-banner');
+  if (b) b.style.display = 'none';
+}
+
+if (!localStorage.getItem('cookie_consent')) {
+  setTimeout(() => {
+    const b = document.getElementById('cookie-banner');
+    if (b) b.style.display = 'block';
+  }, 2000);
+}
+
 // ── Service Worker PWA ───────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {

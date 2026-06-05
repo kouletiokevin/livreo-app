@@ -901,8 +901,11 @@
           <input type="password" placeholder="8 caractères minimum" id="r-pw" autocomplete="new-password">
           <span onclick="togglePw('r-pw',this)" style="position:absolute;right:14px;top:34px;cursor:pointer;font-size:1rem;color:var(--muted2);">👁️</span>
         </div>
-        <div class="fhint" style="margin-bottom:14px;line-height:1.6;">
-          En créant un compte vous acceptez les <a style="color:var(--g500);cursor:pointer;">CGU</a> et la <a style="color:var(--g500);cursor:pointer;">politique de confidentialité</a> de KolisGo.
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;">
+          <input type="checkbox" id="accept-cgu" style="margin-top:3px;width:16px;height:16px;cursor:pointer;">
+          <label for="accept-cgu" style="font-size:.78rem;color:var(--muted);line-height:1.5;cursor:pointer;">
+            J'accepte les <a href="#" style="color:var(--g500);">CGU</a> et la <a href="#" style="color:var(--g500);">politique de confidentialité</a> de KolisGo
+          </label>
         </div>
         <button class="btn p full" id="reg-btn" onclick="doReg()">Créer mon compte gratuitement</button>
         <div style="text-align:center;margin-top:14px;font-size:.76rem;color:var(--muted);">
@@ -973,6 +976,12 @@
 <script src="/js/profil.js"></script>
 <script src="/js/livreur.js"></script>
 <script src="/js/admin.js"></script>
+
+<!-- ════ BANNIÈRE COOKIES ════ -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px;z-index:4000;box-shadow:0 4px 20px rgba(0,0,0,.3);">
+  <div style="font-size:.8rem;margin-bottom:10px;">🍪 KolisGo utilise des cookies essentiels pour fonctionner correctement.</div>
+  <button onclick="acceptCookies()" style="padding:8px 20px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;">Accepter</button>
+</div>
 
 </body>
 </html>
