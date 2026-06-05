@@ -18,22 +18,22 @@
 [[headers]]
   for = "/*.html"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "max-age=0, must-revalidate"
 
 [[headers]]
-  for = "/*.js"
+  for = "/js/*.js"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "max-age=0, must-revalidate"
 
 [[headers]]
-  for = "/*.css"
+  for = "/css/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "max-age=0, must-revalidate"
 
 [[headers]]
-  for = "/*.svg"
+  for = "/assets/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "max-age=31536000, immutable"
 
 # ══ REDIRECTIONS ══
 [[redirects]]
