@@ -48,10 +48,11 @@ async function uploadPhotoColis(file, userId, colisId) {
   const buffer = await file.slice(0, 4).arrayBuffer();
   const bytes = new Uint8Array(buffer);
   const hex = Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
-  const MAGIC = { 'ffd8ff': 'jpeg', '89504e47': 'png', '52494646': 'webp' };
-  const isValid = Object.keys(MAGIC).some(magic => hex.startsWith(magic));
+  const isWebP = hex.startsWith('52494646') && hex.substring(16, 24) === '57455250';
+  const MAGIC = { 'ffd8ff': 'jpeg', '89504e47': 'png' };
+  const isValid = Object.keys(MAGIC).some(m => hex.startsWith(m)) || isWebP;
   if (!isValid) {
-    throw new Error('Fichier invalide. Contenu ne correspond pas au format.');
+    throw new Error('Fichier invalide. Utilisez JPG, PNG ou WebP.');
   }
   const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
   const filename = `${userId}/${colisId}/${Date.now()}.${ext}`;
