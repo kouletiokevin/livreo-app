@@ -127,7 +127,21 @@ async function publishColis() {
   if (!dep || !arr) { t('Choisissez les gares', 'e'); return; }
   if (!titre) { t('Décrivez ce que c\'est', 'e'); return; }
   if (prix <= 0) { t('Entrez un prix valide', 'e'); return; }
-  if (!rnom || !rtel) { t('Renseignez le destinataire', 'e'); return; }
+  if (!rnom) { t('Renseignez le nom du destinataire', 'e'); return; }
+  if (!rtel || !validatePhone(rtel)) {
+    t('Numéro de téléphone du destinataire invalide. Format attendu : 06XXXXXXXX ou +336XXXXXXXX', 'e');
+    const telEl = document.getElementById('pf-rphone');
+    if (telEl) {
+      telEl.style.borderColor = 'var(--danger)';
+      telEl.style.boxShadow = '0 0 0 3px rgba(220,38,38,.15)';
+      telEl.focus();
+      telEl.addEventListener('input', () => {
+        telEl.style.borderColor = '';
+        telEl.style.boxShadow = '';
+      }, { once: true });
+    }
+    return;
+  }
   if (!coUp) { t('Ajoutez la photo publique du colis 📸', 'e'); return; }
 
   const btn = document.querySelector('#poster-form .btn.p.full');
