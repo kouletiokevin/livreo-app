@@ -494,7 +494,7 @@ td strong { color: var(--ink); }
 @keyframes enterAppear { from { opacity: 0; } to { opacity: 1; } }
 
 /* ── ONBOARDING ── */
-#ob-ov {
+#onboarding-ov {
   position: fixed; inset: 0; z-index: 8500;
   background: var(--ink);
   display: flex; flex-direction: column;

@@ -76,7 +76,7 @@ let _obIdx = 0;
 
 function showOnboarding() {
   _obIdx = 0;
-  const ov = document.getElementById('ob-ov');
+  const ov = document.getElementById('onboarding-ov');
   ov.style.display = 'flex';
   obGoTo(0);
   _obInitSwipe();
@@ -99,21 +99,25 @@ function obGoTo(n) {
   });
 }
 
-function finishOnboarding(dest) {
+function finishOnboarding(action) {
   localStorage.setItem('kolisgo_onboarding_done', '1');
-  const ov = document.getElementById('ob-ov');
-  ov.style.opacity = '0';
-  ov.style.transition = 'opacity .35s';
-  setTimeout(() => {
-    ov.style.display = 'none';
-    ov.style.opacity = '';
-    ov.style.transition = '';
-    if (dest) goNav(dest);
-  }, 370);
+  const ov = document.getElementById('onboarding-ov');
+  if (ov) {
+    ov.style.opacity = '0';
+    ov.style.transition = 'opacity .4s';
+    setTimeout(() => ov.style.display = 'none', 420);
+  }
+  if (action === 'register') {
+    goNav('auth');
+    setTimeout(() => authTab('register', document.querySelector('.atab:last-child')), 500);
+  } else if (action === 'login') {
+    goNav('auth');
+    setTimeout(() => authTab('login', document.querySelector('.atab:first-child')), 500);
+  }
 }
 
 function _obInitSwipe() {
-  const ov = document.getElementById('ob-ov');
+  const ov = document.getElementById('onboarding-ov');
   if (!ov || ov._swipeInited) return;
   ov._swipeInited = true;
   let startX = 0, startY = 0;
