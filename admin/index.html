@@ -503,6 +503,37 @@ function escapeHtml(val) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
+// ── INIT — session partagée depuis app principale ──
+async function initAdmin() {
+  const { data: { session } } = await db.auth.getSession();
+
+  if (!session) {
+    window.location.href = '/#auth';
+    return;
+  }
+
+  const { data: role } = await db
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', session.user.id)
+    .single();
+
+  if (role?.role !== 'admin') {
+    window.location.href = '/';
+    return;
+  }
+
+  // Session admin valide — afficher le dashboard
+  const { data: profil } = await db.from('users').select('*').eq('id', session.user.id).single();
+  adminUser = profil;
+  if (profil) {
+    document.getElementById('admin-name').textContent = (profil.prenom || '') + ' ' + (profil.nom || '');
+  }
+  document.getElementById('admin-login').style.display = 'none';
+  document.getElementById('admin-dashboard').style.display = 'block';
+  loadDashboard();
+}
+
 // ── LOGIN ────────────────────────────────
 async function adminLogin() {
   const email = document.getElementById('admin-email').value.trim();
@@ -991,6 +1022,8 @@ setInterval(() => {
   const activeSection = document.querySelector('.section.active')?.id?.replace('section-', '');
   if (activeSection === 'overview') loadDashboard();
 }, 60000);
+
+document.addEventListener('DOMContentLoaded', initAdmin);
 </script>
 </body>
 </html>
