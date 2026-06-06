@@ -132,6 +132,8 @@ async function publishColis() {
 
   if (!dep || !arr) { t('Choisissez les gares', 'e'); return; }
   if (!titre) { t('Décrivez ce que c\'est', 'e'); return; }
+  if (titre.length > 100) { t('Titre trop long (100 caractères max)', 'e'); return; }
+  if (desc.length > 500) { t('Description trop longue (500 caractères max)', 'e'); return; }
   if (prix <= 0) { t('Entrez un prix valide', 'e'); return; }
   if (!rnom) { t('Renseignez le nom du destinataire', 'e'); return; }
   if (!rtel || !validatePhone(rtel)) {
