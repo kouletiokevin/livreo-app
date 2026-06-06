@@ -135,6 +135,7 @@ async function callEdgeFunction(name, body) {
   const { data: { session } } = await db.auth.getSession();
   const headers = {
     'Content-Type': 'application/json',
+    'X-CSRF-Token': csrfToken,
   };
   if (session?.access_token) {
     headers['Authorization'] = `Bearer ${session.access_token}`;
