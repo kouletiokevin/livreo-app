@@ -171,7 +171,7 @@ async function flt(dest, el) {
 async function openDetail(id) {
   let col = null;
   try {
-    const { data, error } = await db.from('colis')
+    const { data, error } = await db.from('colis_public')
       .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge)')
       .eq('code_lvr', id)
       .single();
