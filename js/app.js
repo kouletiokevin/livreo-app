@@ -188,7 +188,7 @@ db.auth.onAuthStateChange(async (event, session) => {
         verifie: false,
         statut: 'actif'
       };
-      await db.from('users').insert(newUser).onConflict('id').ignore();
+      await db.from('users').upsert(newUser, { onConflict: 'id', ignoreDuplicates: true });
       await onLoginSuccess(newUser);
       t(`Bienvenue ${newUser.prenom} ! 🎉`, 's');
     }
