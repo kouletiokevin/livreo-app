@@ -24,6 +24,20 @@ async function loadSuivi() {
   if (isExp) {
     document.getElementById('sv-exp').style.display = 'block';
     document.getElementById('sv-dest').style.display = 'none';
+
+    // Proposer de noter le passeur si la livraison est confirmée
+    const expEl = document.getElementById('sv-exp');
+    const existingBtn = document.getElementById('sv-noter-btn');
+    if (existingBtn) existingBtn.remove();
+    if (colis.statut === 'livre' && colis.livreur_id && expEl) {
+      const btn = document.createElement('button');
+      btn.id = 'sv-noter-btn';
+      btn.className = 'btn p full';
+      btn.style.marginTop = '16px';
+      btn.textContent = '⭐ Notez votre passeur';
+      btn.onclick = () => ouvrirNotation(colis.id, colis.livreur_id, 'le passeur');
+      expEl.appendChild(btn);
+    }
   } else {
     document.getElementById('sv-exp').style.display = 'none';
     document.getElementById('sv-dest').style.display = 'block';

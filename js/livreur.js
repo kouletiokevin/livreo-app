@@ -10,9 +10,9 @@ let _remisePhotoUrl      = null;
 let _lastScannedQrSecret = null;
 
 // ── Ouvrir le flow de livraison ──────────
-function openLivrFlow(ref, trajet, train, dest, prix) {
+function openLivrFlow(ref, trajet, train, dest, prix, colisId = null, expediteurId = null) {
   stopCamera();
-  _currentLivraison = { ref, dest, prix };
+  _currentLivraison = { ref, dest, prix, colisId, expediteurId };
   _remisePhotoUrl   = null;
   livrPhoto         = false;
   livrChecksOk      = false;
@@ -306,5 +306,71 @@ async function doScan(ref, dest, prix) {
         body: `Colis ${ref} remis à ${dest}. Paiement déclenché automatiquement.`
       });
     }
+
+    // Proposer de noter l'expéditeur
+    if (_currentLivraison?.colisId && _currentLivraison?.expediteurId) {
+      setTimeout(() => ouvrirNotation(
+        _currentLivraison.colisId,
+        _currentLivraison.expediteurId,
+        'l\'expéditeur'
+      ), 1400);
+    }
   }, 700);
+}
+
+// ── Système de notation ──────────────────
+let _selectedNote = 0;
+
+function ouvrirNotation(colisId, cibleId, cibleRole) {
+  const eRole = escapeHtml(cibleRole);
+  openSheet(`
+    <div style="text-align:center;padding:8px 0 4px;">
+      <div style="font-size:2rem;margin-bottom:8px;">⭐</div>
+      <div style="font-weight:900;font-size:1rem;margin-bottom:4px;">Notez ${eRole}</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:20px;">Comment s'est déroulé ce passage ?</div>
+    </div>
+    <div id="star-wrap" style="display:flex;justify-content:center;gap:14px;margin-bottom:24px;">
+      ${[1, 2, 3, 4, 5].map(n =>
+        `<span id="star-${n}" onclick="selectStar(${n})"
+          style="font-size:2.4rem;cursor:pointer;opacity:.25;transition:opacity .15s;">⭐</span>`
+      ).join('')}
+    </div>
+    <button id="noter-btn" class="btn p full" onclick="soumettreNote('${escapeHtml(colisId)}','${escapeHtml(cibleId)}')" disabled>
+      Valider la note
+    </button>
+    <button onclick="closeSheet()" class="btn s full" style="margin-top:8px;">Plus tard</button>
+  `);
+  _selectedNote = 0;
+}
+
+function selectStar(n) {
+  _selectedNote = n;
+  for (let i = 1; i <= 5; i++) {
+    const s = document.getElementById('star-' + i);
+    if (s) s.style.opacity = i <= n ? '1' : '.25';
+  }
+  const btn = document.getElementById('noter-btn');
+  if (btn) btn.disabled = false;
+}
+
+async function soumettreNote(colisId, cibleId) {
+  if (!_selectedNote || !user) return;
+  const btn = document.getElementById('noter-btn');
+  if (btn) { btn.textContent = 'Envoi...'; btn.disabled = true; }
+  try {
+    const { data, error } = await db.rpc('noter_utilisateur', {
+      p_auteur_id: user.id,
+      p_cible_id:  cibleId,
+      p_colis_id:  colisId,
+      p_note:      _selectedNote
+    });
+    if (error) throw new Error(error.message);
+    if (data?.error) throw new Error(data.error);
+    closeSheet();
+    t('Note envoyée ✅ Merci !', 's');
+    _selectedNote = 0;
+  } catch (e) {
+    t('Erreur : ' + e.message, 'e');
+    if (btn) { btn.textContent = 'Valider la note'; btn.disabled = false; }
+  }
 }
