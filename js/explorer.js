@@ -297,7 +297,6 @@ async function accepterC(id) {
       t('Erreur : ' + (data.error || 'Réessayez'), 'e');
     }
   } catch (e) {
-    t(`Colis ${id} accepté ! Coordonnées débloquées ✅`, 's');
-    setTimeout(() => goNav('dashboard'), 800);
+    t('Erreur réseau. Réessayez dans quelques secondes.', 'e');
   }
 }
