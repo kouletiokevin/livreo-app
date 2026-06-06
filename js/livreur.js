@@ -69,7 +69,7 @@ function openLivrFlow(ref, trajet, train, dest, prix) {
           </div>
           <div class="div-or">ou entrer manuellement</div>
           <div class="man-scan">
-            <input type="text" id="qr-man" placeholder="${eRef}" value="${eRef}">
+            <input type="text" id="qr-man" placeholder="${eRef}">
             <button onclick="doScan(${jRef},${jDest},${jPrix})">Scanner ▶</button>
           </div>
         </div>
