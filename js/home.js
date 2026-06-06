@@ -30,8 +30,8 @@ async function chargerLivraisonsEnCours(userId) {
   if (!container) return;
 
   try {
-    const { data } = await db.from('colis')
-      .select('*')
+    const { data } = await db.from('colis_public')
+      .select('code_lvr, gare_depart, gare_arrivee, statut, prix, num_train, destinataire_nom')
       .eq('livreur_id', userId)
       .in('statut', ['livreur_accepte', 'en_transit'])
       .order('created_at', { ascending: false })
