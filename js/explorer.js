@@ -197,7 +197,10 @@ async function openDetail(id) {
         <div style="font-size:.82rem;font-weight:700;">${prenom}${note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : ''} · <span style="color:var(--g500);">06 ·· ·· ·· ··</span></div>
       </div>
       ${badge && badge !== 'aucun' && typeof badgeHTML === 'function' ? '<div style="margin-bottom:12px;">' + badgeHTML(badge) + '</div>' : ''}
-      <button class="btn p full" onclick="accepterC(${codeLvrJs})">🤝 Accepter de livrer ce kolis</button>
+      ${col.statut === 'en_attente'
+        ? `<button class="btn p full" onclick="accepterC(${codeLvrJs})">🤝 Accepter de livrer ce kolis</button>`
+        : `<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:var(--r);padding:14px;text-align:center;font-size:.84rem;font-weight:700;color:#166534;">✅ Ce kolis a déjà un passeur assigné</div>`
+      }
     ` : `
       <div style="background:var(--ink);border-radius:var(--r);padding:16px;text-align:center;margin-bottom:11px;">
         <div style="font-size:1.5rem;margin-bottom:6px;">🔒</div>
