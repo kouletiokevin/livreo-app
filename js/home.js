@@ -6,9 +6,11 @@
 // ── Portefeuille ─────────────────────────
 async function chargerPortefeuille(userId) {
   try {
+    // TODO: remplacer par RPC get_wallet_summary() pour éviter de charger toutes les lignes
     const { data } = await db.from('transactions')
       .select('montant, statut')
-      .eq('livreur_id', userId);
+      .eq('livreur_id', userId)
+      .limit(500);
 
     if (!data) return;
 
@@ -125,10 +127,12 @@ async function chargerKPIs(userId, profil) {
   const nbLivraisons = profil?.nb_livraisons   || 0;
   const note        = profil?.note_moyenne     || 0;
 
+  // TODO: remplacer par RPC get_kpi_gains() pour un SUM() côté SQL
   const { data } = await db.from('transactions')
     .select('montant')
     .eq('livreur_id', userId)
-    .eq('statut', 'libere');
+    .eq('statut', 'libere')
+    .limit(500);
 
   const gains = (data || []).reduce((s, t) => s + parseFloat(t.montant || 0), 0);
 
