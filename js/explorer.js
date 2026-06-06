@@ -213,13 +213,21 @@ async function openDetail(id) {
 }
 
 // ── Realtime — mise à jour automatique ───
-db.channel('colis_realtime')
-  .on(
-    'postgres_changes',
-    { event: '*', schema: 'public', table: 'colis' },
-    () => { loadCards(currentFilter, true); }
-  )
-  .subscribe();
+function initRealtimeExplorer() {
+  db.channel('colis_realtime')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'colis' },
+      () => { loadCards(currentFilter, true); }
+    )
+    .subscribe();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initRealtimeExplorer);
+} else {
+  initRealtimeExplorer();
+}
 
 // ── Accepter un kolis ────────────────────
 async function accepterC(id) {
