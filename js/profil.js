@@ -28,7 +28,7 @@ async function saveProfil() {
   document.getElementById('moi-name').textContent = pn + ' ' + nm;
   document.getElementById('moi-av-txt').textContent = pn[0].toUpperCase();
   document.getElementById('nav-av').textContent = pn[0].toUpperCase();
-  document.getElementById('dash-h').innerHTML = `Bonjour <em>${pn}</em> 👋`;
+  document.getElementById('dash-h').innerHTML = `Bonjour <em>${escapeHtml(pn)}</em> 👋`;
   if (user) user.prenom = pn;
   t('Profil mis à jour ✅', 's');
 }
