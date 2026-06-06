@@ -1,59 +1,7 @@
-﻿# netlify.toml — Configuration KolisGo
-
 [build]
   publish = "."
 
-# ══ HEADERS DE SÉCURITÉ ══
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(self), microphone=(self), geolocation=(self)"
-    Content-Security-Policy = "default-src 'self' https: data: blob: 'unsafe-inline'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://js.stripe.com https://fonts.googleapis.com; connect-src 'self' https://*.supabase.co https://api.stripe.com wss://*.supabase.co; img-src 'self' data: blob: https://*.supabase.co https://*.supabase.in; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none'"
-
-# Cache long pour les assets statiques
-[[headers]]
-  for = "/*.html"
-  [headers.values]
-    Cache-Control = "max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/js/*.js"
-  [headers.values]
-    Cache-Control = "max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/css/*.css"
-  [headers.values]
-    Cache-Control = "max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "max-age=31536000, immutable"
-
-# ══ REDIRECTIONS ══
 [[redirects]]
-  from = "/app"
-  to = "/"
-  status = 301
-
-[[redirects]]
-  from = "/livraison-colis-train"
-  to = "/"
-  status = 301
-
-[[redirects]]
-  from = "/envoyer-colis"
-  to = "/"
-  status = 301
-
-# Redirection domaine principal (quand kolisgo.fr sera configuré)
-# [[redirects]]
-#   from = "https://kolisgo.fr/*"
-#   to = "https://livreo-app.netlify.app/:splat"
-#   status = 301
-#   force = true
+  from = "/*"
+  to = "/index.html"
+  status = 200
