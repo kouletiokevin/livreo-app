@@ -190,9 +190,13 @@ async function onLoginSuccess(profil) {
   Object.keys(localStorage)
     .filter(k => k.startsWith('pending_payment_'))
     .forEach(k => {
-      const timestamp = k.split('_').pop();
-      const age = Date.now() - parseInt(timestamp);
-      if (age > 24 * 60 * 60 * 1000) localStorage.removeItem(k);
+      try {
+        const val = JSON.parse(localStorage.getItem(k));
+        const age = Date.now() - (val?.ts || 0);
+        if (age > 24 * 60 * 60 * 1000) localStorage.removeItem(k);
+      } catch {
+        localStorage.removeItem(k);
+      }
     });
 
   user = profil;

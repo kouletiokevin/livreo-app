@@ -173,7 +173,7 @@ async function publishColis() {
         expediteur_id: user.id
       });
       if (payment?.client_secret) {
-        localStorage.setItem('pending_payment_' + data.id, payment.client_secret);
+        localStorage.setItem('pending_payment_' + data.id, JSON.stringify({ secret: payment.client_secret, ts: Date.now() }));
       }
     } catch (e) {
       console.log('Paiement en attente:', e.message);
