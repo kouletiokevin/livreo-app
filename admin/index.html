@@ -365,6 +365,89 @@ td strong { color: var(--ink); }
       </div>
     </div>
 
+    <!-- ── NOTIFICATIONS ── -->
+    <div id="section-notifications" class="section">
+      <div class="page-header">
+        <h1>Notifications</h1>
+        <p>Envoyer des SMS et notifications aux utilisateurs</p>
+      </div>
+
+      <!-- Envoyer un SMS ciblé -->
+      <div class="table-card" style="margin-bottom:20px;">
+        <div class="table-header"><h3>Envoyer un SMS</h3></div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Destinataire</label>
+              <select id="notif-target" onchange="toggleNotifRecipient()"
+                style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.86rem;outline:none;background:var(--white);cursor:pointer;">
+                <option value="single">Un utilisateur (email)</option>
+                <option value="telephone">Un numéro direct</option>
+              </select>
+            </div>
+            <div id="notif-recipient-wrap">
+              <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Email ou téléphone</label>
+              <input type="text" id="notif-recipient" placeholder="user@email.com ou 06XXXXXXXX"
+                style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.86rem;outline:none;">
+            </div>
+          </div>
+          <div>
+            <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Message SMS</label>
+            <textarea id="notif-message" maxlength="160" rows="3" placeholder="Message SMS (160 caractères max)"
+              oninput="document.getElementById('notif-chars').textContent=this.value.length+'/160'"
+              style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.86rem;outline:none;resize:vertical;"></textarea>
+            <div id="notif-chars" style="font-size:.7rem;color:var(--muted);text-align:right;margin-top:3px;">0/160</div>
+          </div>
+          <button class="action-btn green" style="padding:11px 24px;font-size:.86rem;align-self:flex-start;" onclick="envoyerNotification()">
+            Envoyer le SMS →
+          </button>
+        </div>
+      </div>
+
+      <!-- Notifications automatiques PWA -->
+      <div class="table-card" style="margin-bottom:20px;">
+        <div class="table-header"><h3>Notifications push automatiques</h3></div>
+        <div style="padding:20px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+            <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:14px;">
+              <div style="font-size:.72rem;font-weight:800;color:var(--g600);margin-bottom:4px;">ACCEPTATION COLIS</div>
+              <div style="font-size:.82rem;color:var(--muted);">Envoyée automatiquement à l'expéditeur quand un passeur accepte.</div>
+              <div style="margin-top:8px;"><span class="badge green">Active</span></div>
+            </div>
+            <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:14px;">
+              <div style="font-size:.72rem;font-weight:800;color:var(--g600);margin-bottom:4px;">LIVRAISON CONFIRMÉE</div>
+              <div style="font-size:.82rem;color:var(--muted);">Envoyée à l'expéditeur et passeur à la confirmation du passage.</div>
+              <div style="margin-top:8px;"><span class="badge green">Active</span></div>
+            </div>
+            <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:14px;">
+              <div style="font-size:.72rem;font-weight:800;color:var(--g600);margin-bottom:4px;">CODE SUIVI DESTINATAIRE</div>
+              <div style="font-size:.82rem;color:var(--muted);">SMS envoyé au destinataire avec son code QR lors de la publication.</div>
+              <div style="margin-top:8px;"><span class="badge green">Active</span></div>
+            </div>
+            <div style="background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:14px;">
+              <div style="font-size:.72rem;font-weight:800;color:var(--muted);margin-bottom:4px;">BROADCAST UTILISATEURS</div>
+              <div style="font-size:.82rem;color:var(--muted);">Notification envoyée à tous les utilisateurs. Nécessite une Edge Function dédiée.</div>
+              <div style="margin-top:8px;"><span class="badge grey">À implémenter</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historique SMS envoyés -->
+      <div class="table-card">
+        <div class="table-header">
+          <h3>SMS envoyés manuellement</h3>
+          <span class="count" id="notif-history-count">0</span>
+        </div>
+        <table>
+          <thead><tr><th>Destinataire</th><th>Message</th><th>Statut</th><th>Date</th></tr></thead>
+          <tbody id="notif-history-table">
+            <tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucun SMS envoyé depuis l'admin</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- ── CONFIGURATION ── -->
     <div id="section-config" class="section">
       <div class="page-header">
@@ -589,6 +672,7 @@ function showSection(name) {
     transactions: loadTransactions,
     verifications: loadVerifications,
     litiges: loadLitiges,
+    notifications: loadNotifications,
     config: loadConfig,
     security: loadSecurity,
     roles: loadRoles,
@@ -780,6 +864,83 @@ async function loadLitiges() {
       <td><button class="action-btn orange" onclick="resolveLitige(${jId})">Résoudre</button></td>
     </tr>`;
   }).join('');
+}
+
+// ── NOTIFICATIONS ────────────────────────
+const _notifHistory = [];
+
+function loadNotifications() {
+  updateNotifHistoryTable();
+}
+
+function toggleNotifRecipient() {
+  const target = document.getElementById('notif-target')?.value;
+  const wrap = document.getElementById('notif-recipient-wrap');
+  const inp = document.getElementById('notif-recipient');
+  if (!wrap || !inp) return;
+  if (target === 'single') {
+    inp.placeholder = 'user@email.com';
+    inp.type = 'email';
+  } else {
+    inp.placeholder = '06XXXXXXXX ou +336XXXXXXXX';
+    inp.type = 'tel';
+  }
+}
+
+async function envoyerNotification() {
+  const target = document.getElementById('notif-target')?.value;
+  const recipient = document.getElementById('notif-recipient')?.value.trim();
+  const message = document.getElementById('notif-message')?.value.trim();
+
+  if (!recipient) { toast('Entrez un destinataire', 'e'); return; }
+  if (!message)   { toast('Entrez un message', 'e'); return; }
+  if (message.length > 160) { toast('Message trop long (160 caractères max)', 'e'); return; }
+
+  let telephone = recipient;
+
+  if (target === 'single') {
+    const { data: u } = await db.from('users').select('telephone, prenom').ilike('email', recipient).single();
+    if (!u?.telephone) { toast('Utilisateur introuvable ou sans numéro', 'e'); return; }
+    telephone = u.telephone;
+  }
+
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    const res = await fetch(`${SUPA_URL}/functions/v1/send-sms`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session?.access_token },
+      body: JSON.stringify({ telephone, message })
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) throw new Error(result.error || 'Erreur serveur');
+
+    toast('SMS envoyé ✅', 's');
+    _notifHistory.unshift({ recipient, message, statut: 'envoyé', date: new Date() });
+    document.getElementById('notif-message').value = '';
+    document.getElementById('notif-chars').textContent = '0/160';
+    document.getElementById('notif-recipient').value = '';
+    updateNotifHistoryTable();
+  } catch (e) {
+    toast('Erreur : ' + e.message, 'e');
+  }
+}
+
+function updateNotifHistoryTable() {
+  const tbody = document.getElementById('notif-history-table');
+  const count = document.getElementById('notif-history-count');
+  if (!tbody) return;
+  if (count) count.textContent = _notifHistory.length;
+  if (_notifHistory.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucun SMS envoyé depuis l\'admin</td></tr>';
+    return;
+  }
+  tbody.innerHTML = _notifHistory.map(n => `
+    <tr>
+      <td><strong>${escapeHtml(n.recipient)}</strong></td>
+      <td style="font-size:.78rem;">${escapeHtml(n.message.substring(0, 60))}${n.message.length > 60 ? '…' : ''}</td>
+      <td><span class="badge green">${escapeHtml(n.statut)}</span></td>
+      <td style="font-size:.74rem;">${n.date.toLocaleString('fr-FR')}</td>
+    </tr>`).join('');
 }
 
 // ── CHARGEMENT CONFIG ─────────────────────

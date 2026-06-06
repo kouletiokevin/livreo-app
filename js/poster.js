@@ -150,7 +150,7 @@ async function publishColis() {
     }
     return;
   }
-  if (!coUp) { t('Ajoutez la photo publique du colis 📸', 'e'); return; }
+  if (!emUp) { t('Ajoutez la photo de l\'emballage (visible sur la marketplace) 📸', 'e'); return; }
 
   const btn = document.querySelector('#poster-form .btn.p.full');
   if (btn) { btn.textContent = 'Publication...'; btn.disabled = true; }
@@ -188,19 +188,19 @@ async function publishColis() {
     document.getElementById('content').scrollTop = 0;
     t(`Kolis publié ! Code : ${ref} 🚀`, 's');
 
-    // Photo publique (champ co) → photo_emballee_url (visible marketplace)
-    if (window._photosContenu && window._photosContenu.length) {
-      try {
-        const url = await uploadPhotoColis(window._photosContenu[0], user.id, data.id);
-        if (url) await db.from('colis').update({ photo_emballee_url: url }).eq('id', data.id);
-      } catch (e) { t('Photo publique : ' + e.message, 'e'); }
-    }
-    // Photo privée (champ em) → photos_contenu_urls (visible après acceptation)
+    // Photo emballage (champ em) → photo_emballee_url — visible sur la marketplace
     if (window._photoEmballee) {
       try {
-        const url = await uploadPhotoColis(window._photoEmballee, user.id, data.id, true);
+        const url = await uploadPhotoColis(window._photoEmballee, user.id, data.id, false);
+        if (url) await db.from('colis').update({ photo_emballee_url: url }).eq('id', data.id);
+      } catch (e) { t('Photo emballage : ' + e.message, 'e'); }
+    }
+    // Photos contenu (champ co) → photos_contenu_urls — privées, visibles après acceptation
+    if (window._photosContenu && window._photosContenu.length) {
+      try {
+        const url = await uploadPhotoColis(window._photosContenu[0], user.id, data.id, true);
         if (url) await db.from('colis').update({ photos_contenu_urls: [url] }).eq('id', data.id);
-      } catch (e) { t('Photo privée : ' + e.message, 'e'); }
+      } catch (e) { t('Photo contenu : ' + e.message, 'e'); }
     }
     window._photoEmballee = null;
     window._photosContenu = null;

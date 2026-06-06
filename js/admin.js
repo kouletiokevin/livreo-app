@@ -12,7 +12,7 @@ async function chargerAdminStats() {
   try {
     const [usersRes, colisRes, verifRes] = await Promise.all([
       db.from('users').select('id', { count: 'exact', head: true }),
-      db.from('colis').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente'),
+      db.from('colis_public').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente'),
       db.from('verifications_identite').select('id', { count: 'exact', head: true }).eq('statut', 'en_attente'),
     ]);
 

@@ -1,6 +1,18 @@
 ﻿/* KolisGo — Service Worker v1 */
-const CACHE = 'kolisgo-v1';
-const ASSETS = ['/'];
+const CACHE = 'kolisgo-v2';
+const ASSETS = [
+  '/',
+  '/js/supabase.js',
+  '/js/app.js',
+  '/js/auth.js',
+  '/js/home.js',
+  '/js/explorer.js',
+  '/js/livreur.js',
+  '/js/suivi.js',
+  '/js/poster.js',
+  '/js/profil.js',
+  '/js/admin.js',
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));

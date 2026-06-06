@@ -78,10 +78,11 @@ async function doReg() {
     });
     if (profilErr) { t('Erreur création profil : ' + profilErr.message, 'e'); return; }
 
-    await db.from('user_roles').insert({
+    const { error: roleErr } = await db.from('user_roles').insert({
       user_id: data.user?.id,
       role: ROLES.USER,
     });
+    if (roleErr) console.warn('user_roles insert:', roleErr.message);
 
     t('✉️ Vérifiez votre email avant de vous connecter. Un lien de confirmation vous a été envoyé.', 's');
     goNav('auth');

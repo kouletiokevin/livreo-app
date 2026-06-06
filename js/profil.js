@@ -44,6 +44,14 @@ async function previewPhoto(input) {
   if (file.size > 5 * 1024 * 1024) { t('Photo trop lourde (max 5MB)', 'e'); return; }
   const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
   if (!ALLOWED.includes(file.type)) { t('Format non autorisé (JPG, PNG, WebP uniquement)', 'e'); return; }
+  const buffer = await file.slice(0, 4).arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  const isWebP = hex.startsWith('52494646') && hex.substring(16, 24) === '57455250';
+  if (!hex.startsWith('ffd8ff') && !hex.startsWith('89504e47') && !isWebP) {
+    t('Fichier invalide. Le contenu ne correspond pas au format déclaré.', 'e');
+    return;
+  }
 
   const reader = new FileReader();
   reader.onload = async function (e) {

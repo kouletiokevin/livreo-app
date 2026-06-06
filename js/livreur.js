@@ -282,9 +282,10 @@ async function doScan(ref, dest, prix) {
       })
     });
     const data = await res.json();
-    if (!res.ok && data.error) { t('Erreur : ' + data.error, 'e'); return; }
+    if (!res.ok || data.error) { t('Erreur : ' + (data.error || 'Réessayez'), 'e'); return; }
   } catch (e) {
-    console.log('Edge Function non accessible en démo:', e.message);
+    t('Erreur réseau. Vérifiez votre connexion et réessayez.', 'e');
+    return;
   }
 
   setTimeout(() => {

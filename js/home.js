@@ -89,6 +89,7 @@ function ouvrirRetrait() {
 
 // ── Activité récente ─────────────────────
 async function chargerActiviteRecente(userId) {
+  if (!isValidUUID(userId)) return;
   try {
     const { data } = await db
       .from('transactions')
