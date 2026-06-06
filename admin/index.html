@@ -162,29 +162,6 @@ td strong { color: var(--ink); }
 
 <div id="admin-toast"></div>
 
-<!-- ════ MOBILE TOP BAR (visible < 768px) ════ -->
-<div id="mob-bar">
-  <div id="mob-bar-top">
-    <div>
-      <h2>Kolis<span>Go</span> Admin</h2>
-      <div id="mob-section-title">Vue d'ensemble</div>
-    </div>
-    <button onclick="adminLogout()" style="background:rgba(220,38,38,.25);color:#fca5a5;border:none;border-radius:50px;padding:7px 13px;font-family:var(--sans);font-size:.72rem;font-weight:700;cursor:pointer;">Déco</button>
-  </div>
-  <div id="mob-nav-scroll">
-    <button class="mob-nav-btn active" data-section="overview"       onclick="showSection('overview')">📊 Aperçu</button>
-    <button class="mob-nav-btn"        data-section="users"          onclick="showSection('users')">👥 Utilisateurs</button>
-    <button class="mob-nav-btn"        data-section="colis"          onclick="showSection('colis')">📦 Kolis</button>
-    <button class="mob-nav-btn"        data-section="transactions"   onclick="showSection('transactions')">💳 Paiements</button>
-    <button class="mob-nav-btn"        data-section="verifications"  onclick="showSection('verifications')">🛡️ Vérifs</button>
-    <button class="mob-nav-btn"        data-section="litiges"        onclick="showSection('litiges')">⚖️ Litiges</button>
-    <button class="mob-nav-btn"        data-section="notifications"  onclick="showSection('notifications')">🔔 Notifs</button>
-    <button class="mob-nav-btn"        data-section="config"         onclick="showSection('config')">⚙️ Config</button>
-    <button class="mob-nav-btn"        data-section="security"       onclick="showSection('security')">🔐 Sécu</button>
-    <button class="mob-nav-btn"        data-section="roles"          onclick="showSection('roles')">👑 Rôles</button>
-  </div>
-</div>
-
 <!-- ════ LOGIN ════ -->
 <div id="admin-login">
   <div class="login-card">
@@ -208,6 +185,29 @@ td strong { color: var(--ink); }
 
 <!-- ════ DASHBOARD ════ -->
 <div id="admin-dashboard">
+
+  <!-- MOBILE TOP BAR (visible < 768px, caché quand login affiché) -->
+  <div id="mob-bar">
+    <div id="mob-bar-top">
+      <div>
+        <h2>Kolis<span>Go</span> Admin</h2>
+        <div id="mob-section-title">Vue d'ensemble</div>
+      </div>
+      <button onclick="adminLogout()" style="background:rgba(220,38,38,.25);color:#fca5a5;border:none;border-radius:50px;padding:7px 13px;font-family:var(--sans);font-size:.72rem;font-weight:700;cursor:pointer;">Déco</button>
+    </div>
+    <div id="mob-nav-scroll">
+      <button class="mob-nav-btn active" data-section="overview"       onclick="showSection('overview')">📊 Aperçu</button>
+      <button class="mob-nav-btn"        data-section="users"          onclick="showSection('users')">👥 Utilisateurs</button>
+      <button class="mob-nav-btn"        data-section="colis"          onclick="showSection('colis')">📦 Kolis</button>
+      <button class="mob-nav-btn"        data-section="transactions"   onclick="showSection('transactions')">💳 Paiements</button>
+      <button class="mob-nav-btn"        data-section="verifications"  onclick="showSection('verifications')">🛡️ Vérifs</button>
+      <button class="mob-nav-btn"        data-section="litiges"        onclick="showSection('litiges')">⚖️ Litiges</button>
+      <button class="mob-nav-btn"        data-section="notifications"  onclick="showSection('notifications')">🔔 Notifs</button>
+      <button class="mob-nav-btn"        data-section="config"         onclick="showSection('config')">⚙️ Config</button>
+      <button class="mob-nav-btn"        data-section="security"       onclick="showSection('security')">🔐 Sécu</button>
+      <button class="mob-nav-btn"        data-section="roles"          onclick="showSection('roles')">👑 Rôles</button>
+    </div>
+  </div>
 
   <!-- SIDEBAR -->
   <div class="sidebar">
