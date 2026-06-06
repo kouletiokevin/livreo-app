@@ -6,16 +6,11 @@
 // ── Portefeuille ─────────────────────────
 async function chargerPortefeuille(userId) {
   try {
-    // TODO: remplacer par RPC get_wallet_summary() pour éviter de charger toutes les lignes
-    const { data } = await db.from('transactions')
-      .select('montant, statut')
-      .eq('livreur_id', userId)
-      .limit(500);
+    const { data, error } = await db.rpc('get_wallet_summary', { p_user_id: userId });
+    if (error) throw new Error(error.message);
 
-    if (!data) return;
-
-    const libere = data.filter(t => t.statut === 'libere').reduce((s, t) => s + parseFloat(t.montant || 0), 0);
-    const escrow = data.filter(t => t.statut === 'escrow').reduce((s, t) => s + parseFloat(t.montant || 0), 0);
+    const libere = parseFloat(data?.libere || 0);
+    const escrow = parseFloat(data?.escrow || 0);
 
     const walletEl = document.getElementById('wallet-amount');
     const pendingEl = document.getElementById('wallet-pending');
@@ -127,14 +122,8 @@ async function chargerKPIs(userId, profil) {
   const nbLivraisons = profil?.nb_livraisons   || 0;
   const note        = profil?.note_moyenne     || 0;
 
-  // TODO: remplacer par RPC get_kpi_gains() pour un SUM() côté SQL
-  const { data } = await db.from('transactions')
-    .select('montant')
-    .eq('livreur_id', userId)
-    .eq('statut', 'libere')
-    .limit(500);
-
-  const gains = (data || []).reduce((s, t) => s + parseFloat(t.montant || 0), 0);
+  const { data: gainsData } = await db.rpc('get_kpi_gains', { p_user_id: userId });
+  const gains = parseFloat(gainsData || 0);
 
   const set = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
   set('kpi-envoyes',    nbEnvoyes);

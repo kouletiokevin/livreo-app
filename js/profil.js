@@ -217,27 +217,47 @@ function ouvrirVerifIdentite() {
 
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
       <div style="font-size:.76rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Étape 1 — Pièce d'identité</div>
-      <div class="upz" onclick="t('Fonctionnalité disponible sur l\\'app mobile 📱','')">
+      <div class="upz" onclick="t('Upload de documents disponible sur l\\'app mobile 📱 — ou envoyez par email','')">
         <div class="upz-icon">🪪</div>
         <div class="upz-txt">CNI ou Passeport (recto-verso)</div>
-        <div class="upz-sub">JPG, PNG, PDF — max 10MB</div>
+        <div class="upz-sub">Disponible sur l'app mobile · ou par email</div>
       </div>
 
       <div style="font-size:.76rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:8px;margin-bottom:4px;">Étape 2 — Selfie avec votre pièce d'identité</div>
-      <div class="upz" onclick="t('Fonctionnalité disponible sur l\\'app mobile 📱','')">
+      <div class="upz" onclick="t('Upload de documents disponible sur l\\'app mobile 📱 — ou envoyez par email','')">
         <div class="upz-icon">🤳</div>
         <div class="upz-txt">Photo de vous tenant votre CNI/Passeport</div>
-        <div class="upz-sub">Visage et document clairement visibles</div>
+        <div class="upz-sub">Disponible sur l'app mobile · ou par email</div>
       </div>
     </div>
 
     <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:10px 12px;font-size:.72rem;color:#92400e;margin-bottom:14px;line-height:1.6;">
-      ⏱ Vérification sous 24-48h après réception des documents. Vous recevrez un SMS de confirmation.
+      ⏱ Vérification sous 24-48h après réception des documents. Vous recevrez un SMS de confirmation.<br><br>
+      Envoyez vos documents par email à <strong>verification@kolisgo.fr</strong> en précisant votre référence compte.
     </div>
 
-    <button class="btn p full" onclick="t('Documents envoyés ! Vérification sous 48h 📋','s');closeSheet()">Envoyer pour vérification</button>
-    <div style="text-align:center;margin-top:10px;font-size:.72rem;color:var(--muted);">
-      Ou envoyez vos documents par email à <strong>verification@kolisgo.fr</strong>
-    </div>
+    <button id="verif-btn" class="btn p full" onclick="soumettreVerifIdentite()">📋 Soumettre une demande de vérification</button>
+    <button onclick="closeSheet()" class="btn s full" style="margin-top:8px;">Annuler</button>
   `);
+}
+
+async function soumettreVerifIdentite() {
+  if (!user) { t('Connectez-vous d\'abord', 'e'); return; }
+  const btn = document.getElementById('verif-btn');
+  if (btn) { btn.textContent = 'Envoi...'; btn.disabled = true; }
+  try {
+    const { data, error } = await db.rpc('soumettre_verif_identite', {
+      p_user_id: user.id,
+      p_type: 'demande_web',
+      p_note: 'Documents à envoyer par email à verification@kolisgo.fr'
+    });
+    if (error) throw new Error(error.message);
+    if (data?.error) throw new Error(data.error);
+    closeSheet();
+    t('Demande enregistrée ✅ Envoyez vos documents par email. Vérification sous 48h.', 's');
+    await logSecurityEvent('verif_identite_demande', { user_id: user.id });
+  } catch (e) {
+    t('Erreur : ' + e.message, 'e');
+    if (btn) { btn.textContent = '📋 Soumettre une demande de vérification'; btn.disabled = false; }
+  }
 }
