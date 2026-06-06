@@ -134,13 +134,56 @@ td strong { color: var(--ink); }
 .modal h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; }
 .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
 
+/* KPI CLIQUABLE */
+.kpi-card.clickable { cursor: pointer; transition: border-color .15s, transform .15s, box-shadow .15s; }
+.kpi-card.clickable:hover { border-color: var(--g400); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.07); }
+.kpi-card.clickable:active { transform: translateY(0); }
+
+/* MOBILE TOP BAR */
+#mob-bar { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: var(--ink); }
+#mob-bar-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
+#mob-bar-top h2 { color: #fff; font-size: 1.05rem; font-weight: 900; }
+#mob-bar-top h2 span { color: var(--g300); }
+#mob-section-title { color: rgba(255,255,255,.5); font-size: .74rem; font-weight: 600; }
+#mob-nav-scroll { display: flex; gap: 4px; padding: 6px 12px 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+#mob-nav-scroll::-webkit-scrollbar { display: none; }
+.mob-nav-btn { flex-shrink: 0; padding: 7px 14px; background: rgba(255,255,255,.07); border: none; border-radius: 50px; color: rgba(255,255,255,.55); font-family: var(--sans); font-size: .74rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: .15s; }
+.mob-nav-btn.active { background: var(--g500); color: #fff; }
+
 @media (max-width: 1024px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 768px) { .sidebar { display: none; } .main { margin-left: 0; } }
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding-top: 112px; }
+  #mob-bar { display: block; }
+}
 </style>
 </head>
 <body>
 
 <div id="admin-toast"></div>
+
+<!-- ════ MOBILE TOP BAR (visible < 768px) ════ -->
+<div id="mob-bar">
+  <div id="mob-bar-top">
+    <div>
+      <h2>Kolis<span>Go</span> Admin</h2>
+      <div id="mob-section-title">Vue d'ensemble</div>
+    </div>
+    <button onclick="adminLogout()" style="background:rgba(220,38,38,.25);color:#fca5a5;border:none;border-radius:50px;padding:7px 13px;font-family:var(--sans);font-size:.72rem;font-weight:700;cursor:pointer;">Déco</button>
+  </div>
+  <div id="mob-nav-scroll">
+    <button class="mob-nav-btn active" data-section="overview"       onclick="showSection('overview')">📊 Aperçu</button>
+    <button class="mob-nav-btn"        data-section="users"          onclick="showSection('users')">👥 Utilisateurs</button>
+    <button class="mob-nav-btn"        data-section="colis"          onclick="showSection('colis')">📦 Kolis</button>
+    <button class="mob-nav-btn"        data-section="transactions"   onclick="showSection('transactions')">💳 Paiements</button>
+    <button class="mob-nav-btn"        data-section="verifications"  onclick="showSection('verifications')">🛡️ Vérifs</button>
+    <button class="mob-nav-btn"        data-section="litiges"        onclick="showSection('litiges')">⚖️ Litiges</button>
+    <button class="mob-nav-btn"        data-section="notifications"  onclick="showSection('notifications')">🔔 Notifs</button>
+    <button class="mob-nav-btn"        data-section="config"         onclick="showSection('config')">⚙️ Config</button>
+    <button class="mob-nav-btn"        data-section="security"       onclick="showSection('security')">🔐 Sécu</button>
+    <button class="mob-nav-btn"        data-section="roles"          onclick="showSection('roles')">👑 Rôles</button>
+  </div>
+</div>
 
 <!-- ════ LOGIN ════ -->
 <div id="admin-login">
@@ -229,16 +272,16 @@ td strong { color: var(--ink); }
         <p id="last-update">Chargement...</p>
       </div>
       <div class="kpi-grid">
-        <div class="kpi-card"><div class="label">Utilisateurs</div><div class="value green" id="k-users">—</div><div class="trend" id="k-users-7j">— cette semaine</div></div>
-        <div class="kpi-card"><div class="label">Colis actifs</div><div class="value" id="k-colis">—</div><div class="trend" id="k-colis-livres">— livrés</div></div>
-        <div class="kpi-card"><div class="label">Revenus</div><div class="value green" id="k-revenus">—</div><div class="trend" id="k-revenus-30j">— ce mois</div></div>
+        <div class="kpi-card clickable" onclick="showSection('users')" title="Voir les utilisateurs"><div class="label">Utilisateurs</div><div class="value green" id="k-users">—</div><div class="trend" id="k-users-7j">— cette semaine</div></div>
+        <div class="kpi-card clickable" onclick="showSection('colis')" title="Voir les kolis"><div class="label">Colis actifs</div><div class="value" id="k-colis">—</div><div class="trend" id="k-colis-livres">— livrés</div></div>
+        <div class="kpi-card clickable" onclick="showSection('transactions')" title="Voir les transactions"><div class="label">Revenus</div><div class="value green" id="k-revenus">—</div><div class="trend" id="k-revenus-30j">— ce mois</div></div>
         <div class="kpi-card"><div class="label">Note plateforme</div><div class="value" id="k-note">—</div><div class="trend">Moyenne générale</div></div>
       </div>
       <div class="kpi-grid">
-        <div class="kpi-card"><div class="label">Paiements en attente</div><div class="value" id="k-escrow">—</div></div>
-        <div class="kpi-card"><div class="label">Paiements libérés</div><div class="value green" id="k-paiements">—</div></div>
-        <div class="kpi-card"><div class="label">Vérifications à traiter</div><div class="value" id="k-verif" style="color:var(--warn)">—</div></div>
-        <div class="kpi-card"><div class="label">Litiges ouverts</div><div class="value" id="k-litiges" style="color:var(--danger)">—</div></div>
+        <div class="kpi-card clickable" onclick="showSection('transactions')" title="Voir les paiements"><div class="label">Paiements en attente</div><div class="value" id="k-escrow">—</div></div>
+        <div class="kpi-card clickable" onclick="showSection('transactions')" title="Voir les paiements"><div class="label">Paiements libérés</div><div class="value green" id="k-paiements">—</div></div>
+        <div class="kpi-card clickable" onclick="showSection('verifications')" title="Traiter les vérifications"><div class="label">Vérifications à traiter</div><div class="value" id="k-verif" style="color:var(--warn)">—</div></div>
+        <div class="kpi-card clickable" onclick="showSection('litiges')" title="Voir les litiges"><div class="label">Litiges ouverts</div><div class="value" id="k-litiges" style="color:var(--danger)">—</div></div>
       </div>
 
       <!-- Activité récente -->
@@ -659,11 +702,26 @@ async function adminLogout() {
 }
 
 // ── NAVIGATION ───────────────────────────
+const _sectionTitles = {
+  overview: 'Vue d\'ensemble', users: 'Utilisateurs', colis: 'Kolis',
+  transactions: 'Transactions', verifications: 'Vérifications', litiges: 'Litiges',
+  notifications: 'Notifications', config: 'Configuration', security: 'Sécurité', roles: 'Rôles'
+};
+
 function showSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+
   document.getElementById('section-' + name)?.classList.add('active');
-  event?.target?.closest('a')?.classList.add('active');
+  document.querySelector(`nav a[onclick="showSection('${name}')"]`)?.classList.add('active');
+  document.querySelector(`.mob-nav-btn[data-section="${name}"]`)?.classList.add('active');
+
+  const titleEl = document.getElementById('mob-section-title');
+  if (titleEl) titleEl.textContent = _sectionTitles[name] || '';
+
+  document.querySelector('.main')?.scrollTo?.(0, 0);
+  window.scrollTo(0, 0);
 
   const loaders = {
     overview: loadDashboard,
