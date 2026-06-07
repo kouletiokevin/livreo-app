@@ -30,6 +30,7 @@ async function doLogin() {
     await onLoginSuccess(profil);
     t(`Bienvenue ${profil.prenom} ! 👋`, 's');
     goNav('home');
+    refreshHome(); // force dashboard après navigation
 
   } catch (e) {
     t(e.message || 'Erreur de connexion', 'e');

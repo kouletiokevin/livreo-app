@@ -210,7 +210,7 @@ db.auth.onAuthStateChange(async (event, session) => {
     const { data: profil } = await db.from('users').select('*').eq('email', session.user.email).single();
     if (profil) {
       await onLoginSuccess(profil);
-      if (event === 'SIGNED_IN') t(`Bienvenue ${profil.prenom} ! 👋`, 's');
+      if (event === 'SIGNED_IN') { goNav('home'); refreshHome(); t(`Bienvenue ${profil.prenom} ! 👋`, 's'); }
     } else if (event === 'SIGNED_IN') {
       const meta = session.user.user_metadata;
       const newUser = {
@@ -224,6 +224,7 @@ db.auth.onAuthStateChange(async (event, session) => {
       };
       await db.from('users').upsert(newUser, { onConflict: 'id', ignoreDuplicates: true });
       await onLoginSuccess(newUser);
+      goNav('home'); refreshHome();
       t(`Bienvenue ${newUser.prenom} ! 🎉`, 's');
     }
   }
@@ -249,6 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const profil = await checkSession();
   if (profil) {
     await onLoginSuccess(profil);
+    refreshHome(); // afficher le dashboard si déjà connecté
   }
 });
 

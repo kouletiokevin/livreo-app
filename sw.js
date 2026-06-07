@@ -1,5 +1,5 @@
 /* KolisGo � Service Worker v1 */
-const CACHE = 'kolisgo-v6';
+const CACHE = 'kolisgo-v7';
 const ASSETS = [
   '/',
   '/css/style.css',
