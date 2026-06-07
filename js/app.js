@@ -244,13 +244,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   loadCards();
-  refreshHome();
 
-  // Vérifier session existante au démarrage
+  // Affichage INSTANTANÉ : si le localStorage indique une session précédente,
+  // on affiche le dashboard tout de suite sans attendre checkSession (~300ms)
+  const wasLoggedIn = localStorage.getItem('kolisgo_logged_in') === '1';
+  if (wasLoggedIn) {
+    const landing = document.getElementById('home-landing');
+    const dash    = document.getElementById('home-dash');
+    if (landing) landing.style.display = 'none';
+    if (dash)    dash.style.display    = 'block';
+  } else {
+    refreshHome();
+  }
+
+  // Vérifier session existante au démarrage (confirmation réseau)
   const profil = await checkSession();
   if (profil) {
+    localStorage.setItem('kolisgo_logged_in', '1');
     await onLoginSuccess(profil);
-    refreshHome(); // afficher le dashboard si déjà connecté
+    // Force affichage dashboard — garanti même si onLoginSuccess a un bug
+    const landing = document.getElementById('home-landing');
+    const dash    = document.getElementById('home-dash');
+    if (landing) landing.style.display = 'none';
+    if (dash)    dash.style.display    = 'block';
+  } else {
+    localStorage.removeItem('kolisgo_logged_in');
+    refreshHome(); // pas de session → landing
   }
 });
 

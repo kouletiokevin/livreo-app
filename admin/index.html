@@ -1,1246 +1,259 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KolisGo — Admin Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KolisGo — Admin</title>
 <style>
-:root {
-  --ink: #0e1a10; --ink2: #1e3322;
-  --g500: #1a8044; --g400: #22a857; --g300: #3dcf72;
-  --g100: #d4f5e2; --g50: #edfaf3;
-  --cream: #f7f4ef; --white: #fff;
-  --muted: #6b7e70; --border: #dde8e0;
-  --danger: #dc2626; --warn: #f59e0b;
-  --sans: system-ui, sans-serif;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: var(--sans); background: var(--cream); color: var(--ink); }
-
-/* LOGIN */
-#admin-login {
-  min-height: 100vh; display: flex; align-items: center;
-  justify-content: center; padding: 20px;
-}
-.login-card {
-  background: var(--white); border-radius: 20px;
-  padding: 40px; width: 100%; max-width: 400px;
-  box-shadow: 0 8px 40px rgba(14,26,16,.12);
-  border: 1.5px solid var(--border);
-}
-.login-logo { text-align: center; margin-bottom: 8px; }
-.login-logo h1 { font-size: 2rem; font-weight: 900; color: var(--ink); }
-.login-logo h1 span { color: var(--g500); }
-.login-logo p { font-size: .8rem; color: var(--muted); margin-top: 2px; }
-.field { margin-bottom: 14px; }
-.field label { display: block; font-size: .7rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .5px; }
-.field input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--sans); font-size: .9rem; outline: none; background: var(--cream); transition: .16s; }
-.field input:focus { border-color: var(--g400); background: var(--white); }
-.btn-login { width: 100%; padding: 13px; background: var(--ink); color: #fff; border: none; border-radius: 50px; font-family: var(--sans); font-size: .9rem; font-weight: 700; cursor: pointer; transition: .18s; }
-.btn-login:hover { background: var(--ink2); }
-.error-msg { color: var(--danger); font-size: .78rem; text-align: center; margin-top: 10px; display: none; }
-
-/* DASHBOARD */
-#admin-dashboard { display: none; min-height: 100vh; }
-
-/* SIDEBAR */
-.sidebar {
-  position: fixed; left: 0; top: 0; bottom: 0;
-  width: 240px; background: var(--ink);
-  padding: 24px 16px; z-index: 100;
-  display: flex; flex-direction: column;
-}
-.sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
-.sidebar-logo h2 { color: #fff; font-size: 1.2rem; font-weight: 900; }
-.sidebar-logo h2 span { color: var(--g300); }
-.sidebar-logo small { color: rgba(255,255,255,.35); font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; }
-nav a {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 14px; border-radius: 10px;
-  color: rgba(255,255,255,.55); text-decoration: none;
-  font-size: .84rem; font-weight: 600; margin-bottom: 4px;
-  transition: .15s; cursor: pointer;
-}
-nav a:hover, nav a.active { background: rgba(255,255,255,.08); color: #fff; }
-nav a.active { background: var(--g500); color: #fff; }
-nav a .icon { font-size: 1.1rem; width: 20px; text-align: center; }
-.sidebar-bottom { margin-top: auto; }
-.admin-info { padding: 12px; background: rgba(255,255,255,.06); border-radius: 10px; margin-bottom: 8px; }
-.admin-info p { color: rgba(255,255,255,.7); font-size: .74rem; }
-.admin-info strong { color: #fff; }
-.btn-logout { width: 100%; padding: 9px; background: rgba(220,38,38,.2); color: #fca5a5; border: 1px solid rgba(220,38,38,.3); border-radius: 50px; font-family: var(--sans); font-size: .78rem; font-weight: 700; cursor: pointer; }
-
-/* MAIN */
-.main { margin-left: 240px; padding: 28px; }
-.page-header { margin-bottom: 24px; }
-.page-header h1 { font-size: 1.6rem; font-weight: 900; letter-spacing: -.5px; }
-.page-header p { color: var(--muted); font-size: .84rem; margin-top: 3px; }
-
-/* SECTION */
-.section { display: none; }
-.section.active { display: block; animation: fadeIn .2s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-/* KPI GRID */
-.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-.kpi-card { background: var(--white); border-radius: 16px; padding: 20px; border: 1.5px solid var(--border); }
-.kpi-card .label { font-size: .68rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
-.kpi-card .value { font-size: 2rem; font-weight: 900; letter-spacing: -1px; color: var(--ink); }
-.kpi-card .value.green { color: var(--g500); }
-.kpi-card .trend { font-size: .72rem; color: var(--g500); font-weight: 700; margin-top: 4px; }
-
-/* TABLE */
-.table-card { background: var(--white); border-radius: 16px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 20px; }
-.table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.table-header h3 { font-size: .92rem; font-weight: 800; }
-.table-header .count { font-size: .74rem; color: var(--muted); background: var(--cream); padding: 3px 10px; border-radius: 50px; }
-table { width: 100%; border-collapse: collapse; }
-th { text-align: left; padding: 10px 16px; font-size: .64rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: .5px; background: var(--cream); border-bottom: 1px solid var(--border); }
-td { padding: 12px 16px; font-size: .82rem; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: middle; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: var(--cream); }
-td strong { color: var(--ink); }
-.badge { font-size: .65rem; font-weight: 800; padding: 3px 9px; border-radius: 50px; display: inline-block; }
-.badge.green { background: var(--g100); color: var(--g500); }
-.badge.orange { background: #fef3c7; color: #92400e; }
-.badge.blue { background: #dbeafe; color: #1e40af; }
-.badge.red { background: #fee2e2; color: var(--danger); }
-.badge.grey { background: var(--cream); color: var(--muted); }
-
-/* ACTION BUTTONS */
-.action-btn { padding: 5px 12px; border-radius: 50px; font-family: var(--sans); font-size: .72rem; font-weight: 700; cursor: pointer; border: none; transition: .15s; margin-right: 4px; }
-.action-btn.green { background: var(--g50); color: var(--g500); border: 1px solid var(--g100); }
-.action-btn.red { background: #fee2e2; color: var(--danger); border: 1px solid #fecaca; }
-.action-btn.orange { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-
-/* SEARCH BAR */
-.search-bar { display: flex; gap: 10px; margin-bottom: 16px; }
-.search-bar input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--sans); font-size: .88rem; outline: none; background: var(--white); }
-.search-bar input:focus { border-color: var(--g400); }
-.search-bar select { padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: var(--sans); font-size: .84rem; outline: none; background: var(--white); cursor: pointer; }
-
-/* TOAST ADMIN */
-#admin-toast { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
-.at { background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 10px; font-size: .82rem; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.2); animation: slideIn .3s ease; }
-.at.s { background: var(--g500); }
-.at.e { background: var(--danger); }
-@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-
-/* MODAL */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--white); border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; }
-.modal h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; }
-.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-
-/* KPI CLIQUABLE */
-.kpi-card.clickable { cursor: pointer; transition: border-color .15s, transform .15s, box-shadow .15s; }
-.kpi-card.clickable:hover { border-color: var(--g400); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.07); }
-.kpi-card.clickable:active { transform: translateY(0); }
-
-/* MOBILE TOP BAR */
-#mob-bar { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: var(--ink); }
-#mob-bar-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; }
-#mob-bar-top h2 { color: #fff; font-size: 1.05rem; font-weight: 900; }
-#mob-bar-top h2 span { color: var(--g300); }
-#mob-section-title { color: rgba(255,255,255,.5); font-size: .74rem; font-weight: 600; }
-#mob-nav-scroll { display: flex; gap: 4px; padding: 6px 12px 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-#mob-nav-scroll::-webkit-scrollbar { display: none; }
-.mob-nav-btn { flex-shrink: 0; padding: 7px 14px; background: rgba(255,255,255,.07); border: none; border-radius: 50px; color: rgba(255,255,255,.55); font-family: var(--sans); font-size: .74rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: .15s; }
-.mob-nav-btn.active { background: var(--g500); color: #fff; }
-
-@media (max-width: 1024px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main { margin-left: 0; padding-top: 112px; }
-  #mob-bar { display: block; }
-}
+  :root{--g:#2ecc71;--ink:#111;--muted:#666;--border:#e5e7eb;--bg:#f7f7f5;--white:#fff;--danger:#dc2626;--warn:#f59e0b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+  #auth-wall{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;padding:24px;text-align:center;}
+  #app{display:none;}
+  nav{background:#111;color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+  nav .logo{font-size:1.1rem;font-weight:900;letter-spacing:-.5px;}nav .logo span{color:#2ecc71;}
+  nav .info{font-size:.76rem;opacity:.6;}
+  .logout-btn{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.76rem;font-family:inherit;}
+  .content{max-width:1100px;margin:0 auto;padding:24px 16px;}
+  h1{font-size:1.3rem;font-weight:900;margin-bottom:20px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px;}
+  .stat-card{background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:18px;text-align:center;}
+  .stat-card .val{font-size:2rem;font-weight:900;color:#2ecc71;line-height:1;}
+  .stat-card .lbl{font-size:.68rem;color:var(--muted);margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;}
+  .card{background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:20px;margin-bottom:20px;}
+  .card h2{font-size:.9rem;font-weight:900;margin-bottom:14px;}
+  table{width:100%;border-collapse:collapse;font-size:.78rem;}
+  th{text-align:left;padding:8px 10px;background:var(--bg);font-weight:800;font-size:.65rem;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);}
+  td{padding:10px;border-top:1px solid var(--border);vertical-align:middle;}
+  tr:hover td{background:#fafafa;}
+  .badge{display:inline-block;padding:3px 8px;border-radius:50px;font-size:.63rem;font-weight:700;}
+  .badge.admin{background:#fef3c7;color:#92400e;}
+  .badge.user{background:#f0fdf4;color:#166534;}
+  .badge.actif,.badge.accepte,.badge.livre,.badge.libere{background:#f0fdf4;color:#166534;}
+  .badge.suspendu,.badge.refuse{background:#fef2f2;color:#991b1b;}
+  .badge.en_attente{background:#fffbeb;color:#92400e;}
+  .badge.escrow{background:#f0f9ff;color:#0369a1;}
+  .btn{display:inline-block;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;font-size:.73rem;font-weight:700;font-family:inherit;}
+  .btn.g{background:#2ecc71;color:#fff;}
+  .btn.d{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
+  .search{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;width:100%;max-width:320px;margin-bottom:14px;font-family:inherit;}
+  .tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+  .tab{padding:8px 16px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:.76rem;font-weight:700;font-family:inherit;}
+  .tab.on{background:#111;color:#fff;border-color:#111;}
+  .empty{text-align:center;padding:28px;color:var(--muted);font-size:.8rem;}
+  #toast{position:fixed;top:16px;right:16px;background:#111;color:#fff;padding:12px 20px;border-radius:10px;font-size:.8rem;font-weight:700;z-index:9999;display:none;box-shadow:0 4px 20px rgba(0,0,0,.3);}
 </style>
 </head>
 <body>
 
-<div id="admin-toast"></div>
+<div id="auth-wall">
+  <div style="font-size:2.5rem;">⚙️</div>
+  <div style="font-size:1.2rem;font-weight:900;">KolisGo Admin</div>
+  <div id="auth-msg" style="color:var(--muted);font-size:.82rem;">Vérification de l'accès en cours…</div>
+  <div id="auth-error" style="color:#dc2626;font-size:.82rem;display:none;max-width:320px;line-height:1.6;"></div>
+  <a href="/" id="back-link" style="display:none;color:#2ecc71;font-size:.8rem;text-decoration:none;">← Retour à KolisGo</a>
+</div>
 
-<!-- ════ LOGIN ════ -->
-<div id="admin-login">
-  <div class="login-card">
-    <div class="login-logo">
-      <h1>Kolis<span>Go</span></h1>
-      <p>🔐 Espace Administrateur</p>
+<div id="app">
+  <nav>
+    <div class="logo">Kolis<span>Go</span> <span style="font-size:.65rem;opacity:.4;font-weight:400;">ADMIN</span></div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span class="info" id="admin-email"></span>
+      <a href="/" style="color:rgba(255,255,255,.5);font-size:.74rem;text-decoration:none;">← App</a>
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
     </div>
-    <br>
-    <div class="field">
-      <label>Email administrateur</label>
-      <input type="email" id="admin-email" placeholder="Email administrateur" autocomplete="email">
+  </nav>
+  <div class="content">
+    <div class="tabs">
+      <button class="tab on" onclick="showTab('dashboard',this)">📊 Dashboard</button>
+      <button class="tab" onclick="showTab('users',this)">👥 Utilisateurs</button>
+      <button class="tab" onclick="showTab('colis',this)">📦 Kolis</button>
+      <button class="tab" onclick="showTab('transactions',this)">💳 Transactions</button>
     </div>
-    <div class="field">
-      <label>Mot de passe</label>
-      <input type="password" id="admin-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()">
+
+    <div id="tab-dashboard">
+      <h1>📊 Vue d'ensemble</h1>
+      <div class="grid">
+        <div class="stat-card"><div class="val" id="s-users">—</div><div class="lbl">Utilisateurs</div></div>
+        <div class="stat-card"><div class="val" id="s-colis">—</div><div class="lbl">Kolis en attente</div></div>
+        <div class="stat-card"><div class="val" id="s-livres">—</div><div class="lbl">Kolis livrés</div></div>
+        <div class="stat-card"><div class="val" id="s-tx">—</div><div class="lbl">Transactions</div></div>
+        <div class="stat-card"><div class="val" id="s-rev">—</div><div class="lbl">Revenus (€, 15%)</div></div>
+      </div>
+      <div class="card"><h2>🕐 Derniers inscrits</h2>
+        <table><thead><tr><th>Nom</th><th>Email</th><th>Statut</th><th>Date</th></tr></thead>
+        <tbody id="recent-users"><tr><td colspan="4" class="empty">Chargement…</td></tr></tbody></table>
+      </div>
+      <div class="card"><h2>📦 Derniers kolis</h2>
+        <table><thead><tr><th>Réf</th><th>Destination</th><th>Prix</th><th>Statut</th><th>Date</th></tr></thead>
+        <tbody id="recent-colis"><tr><td colspan="5" class="empty">Chargement…</td></tr></tbody></table>
+      </div>
     </div>
-    <button class="btn-login" onclick="adminLogin()">Accéder au dashboard →</button>
-    <p class="error-msg" id="login-error">Accès refusé. Compte admin requis.</p>
+
+    <div id="tab-users" style="display:none;">
+      <h1>👥 Utilisateurs</h1>
+      <input type="text" class="search" placeholder="Rechercher…" oninput="filterUsers(this.value)">
+      <div class="card"><table><thead><tr><th>Nom</th><th>Email</th><th>Tél</th><th>Statut</th><th>Inscrit</th><th>Action</th></tr></thead>
+        <tbody id="users-list"><tr><td colspan="6" class="empty">Chargement…</td></tr></tbody></table></div>
+    </div>
+
+    <div id="tab-colis" style="display:none;">
+      <h1>📦 Kolis</h1>
+      <div class="card"><table><thead><tr><th>Réf</th><th>Destination</th><th>Prix</th><th>Paiement</th><th>Statut</th><th>Date</th></tr></thead>
+        <tbody id="colis-list"><tr><td colspan="6" class="empty">Chargement…</td></tr></tbody></table></div>
+    </div>
+
+    <div id="tab-transactions" style="display:none;">
+      <h1>💳 Transactions</h1>
+      <div class="card"><table><thead><tr><th>Référence</th><th>Montant</th><th>Commission 15%</th><th>Statut</th><th>Date</th></tr></thead>
+        <tbody id="tx-list"><tr><td colspan="5" class="empty">Chargement…</td></tr></tbody></table></div>
+    </div>
   </div>
 </div>
 
-<!-- ════ DASHBOARD ════ -->
-<div id="admin-dashboard">
+<div id="toast"></div>
 
-  <!-- MOBILE TOP BAR (visible < 768px, caché quand login affiché) -->
-  <div id="mob-bar">
-    <div id="mob-bar-top">
-      <div>
-        <h2>Kolis<span>Go</span> Admin</h2>
-        <div id="mob-section-title">Vue d'ensemble</div>
-      </div>
-      <button onclick="adminLogout()" style="background:rgba(220,38,38,.25);color:#fca5a5;border:none;border-radius:50px;padding:7px 13px;font-family:var(--sans);font-size:.72rem;font-weight:700;cursor:pointer;">Déco</button>
-    </div>
-    <div id="mob-nav-scroll">
-      <button class="mob-nav-btn active" data-section="overview"       onclick="showSection('overview')">📊 Aperçu</button>
-      <button class="mob-nav-btn"        data-section="users"          onclick="showSection('users')">👥 Utilisateurs</button>
-      <button class="mob-nav-btn"        data-section="colis"          onclick="showSection('colis')">📦 Kolis</button>
-      <button class="mob-nav-btn"        data-section="transactions"   onclick="showSection('transactions')">💳 Paiements</button>
-      <button class="mob-nav-btn"        data-section="verifications"  onclick="showSection('verifications')">🛡️ Vérifs</button>
-      <button class="mob-nav-btn"        data-section="litiges"        onclick="showSection('litiges')">⚖️ Litiges</button>
-      <button class="mob-nav-btn"        data-section="notifications"  onclick="showSection('notifications')">🔔 Notifs</button>
-      <button class="mob-nav-btn"        data-section="config"         onclick="showSection('config')">⚙️ Config</button>
-      <button class="mob-nav-btn"        data-section="security"       onclick="showSection('security')">🔐 Sécu</button>
-      <button class="mob-nav-btn"        data-section="roles"          onclick="showSection('roles')">👑 Rôles</button>
-    </div>
-  </div>
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-logo">
-      <div>
-        <h2>Kolis<span>Go</span></h2>
-        <small>Admin Dashboard</small>
-      </div>
-    </div>
-
-    <nav>
-      <a class="active" onclick="showSection('overview')">
-        <span class="icon">📊</span> Vue d'ensemble
-      </a>
-      <a onclick="showSection('users')">
-        <span class="icon">👥</span> Utilisateurs
-      </a>
-      <a onclick="showSection('colis')">
-        <span class="icon">📦</span> Colis
-      </a>
-      <a onclick="showSection('transactions')">
-        <span class="icon">💳</span> Transactions
-      </a>
-      <a onclick="showSection('verifications')">
-        <span class="icon">🛡️</span> Vérifications
-        <span id="verif-badge" style="margin-left:auto;background:var(--danger);color:#fff;font-size:.6rem;padding:1px 6px;border-radius:50px;display:none;">0</span>
-      </a>
-      <a onclick="showSection('litiges')">
-        <span class="icon">⚖️</span> Litiges
-      </a>
-      <a onclick="showSection('notifications')">
-        <span class="icon">🔔</span> Notifications
-      </a>
-      <a onclick="showSection('config')">
-        <span class="icon">⚙️</span> Configuration
-      </a>
-      <a onclick="showSection('security')">
-        <span class="icon">🔐</span> Sécurité
-      </a>
-      <a onclick="showSection('roles')">
-        <span class="icon">👑</span> Gestion des rôles
-      </a>
-    </nav>
-
-    <div class="sidebar-bottom">
-      <div class="admin-info">
-        <p>Connecté en tant que</p>
-        <strong id="admin-name">Kevin KOULETIO</strong>
-        <p style="margin-top:2px;font-size:.65rem;color:rgba(255,255,255,.3);" id="admin-role-badge">👑 Administrateur</p>
-      </div>
-      <button class="btn-logout" onclick="adminLogout()">Se déconnecter</button>
-    </div>
-  </div>
-
-  <!-- MAIN -->
-  <div class="main">
-
-    <!-- ── VUE D'ENSEMBLE ── -->
-    <div id="section-overview" class="section active">
-      <div class="page-header">
-        <h1>Vue d'ensemble</h1>
-        <p id="last-update">Chargement...</p>
-      </div>
-      <div class="kpi-grid">
-        <div class="kpi-card clickable" onclick="showSection('users')" title="Voir les utilisateurs"><div class="label">Utilisateurs</div><div class="value green" id="k-users">—</div><div class="trend" id="k-users-7j">— cette semaine</div></div>
-        <div class="kpi-card clickable" onclick="showSection('colis')" title="Voir les kolis"><div class="label">Colis actifs</div><div class="value" id="k-colis">—</div><div class="trend" id="k-colis-livres">— livrés</div></div>
-        <div class="kpi-card clickable" onclick="showSection('transactions')" title="Voir les transactions"><div class="label">Revenus</div><div class="value green" id="k-revenus">—</div><div class="trend" id="k-revenus-30j">— ce mois</div></div>
-        <div class="kpi-card"><div class="label">Note plateforme</div><div class="value" id="k-note">—</div><div class="trend">Moyenne générale</div></div>
-      </div>
-      <div class="kpi-grid">
-        <div class="kpi-card clickable" onclick="showSection('transactions')" title="Voir les paiements"><div class="label">Paiements en attente</div><div class="value" id="k-escrow">—</div></div>
-        <div class="kpi-card clickable" onclick="showSection('transactions')" title="Voir les paiements"><div class="label">Paiements libérés</div><div class="value green" id="k-paiements">—</div></div>
-        <div class="kpi-card clickable" onclick="showSection('verifications')" title="Traiter les vérifications"><div class="label">Vérifications à traiter</div><div class="value" id="k-verif" style="color:var(--warn)">—</div></div>
-        <div class="kpi-card clickable" onclick="showSection('litiges')" title="Voir les litiges"><div class="label">Litiges ouverts</div><div class="value" id="k-litiges" style="color:var(--danger)">—</div></div>
-      </div>
-
-      <!-- Activité récente -->
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Activité récente</h3>
-          <span class="count" id="activity-count">0 kolis</span>
-        </div>
-        <table>
-          <thead><tr><th>Code LVR</th><th>Expéditeur</th><th>Trajet</th><th>Passeur</th><th>Prix</th><th>Statut</th></tr></thead>
-          <tbody id="activity-table"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── UTILISATEURS ── -->
-    <div id="section-users" class="section">
-      <div class="page-header">
-        <h1>Utilisateurs</h1>
-        <p>Gérer tous les comptes de la plateforme</p>
-      </div>
-      <div class="search-bar">
-        <input type="text" id="user-search" placeholder="Rechercher par nom, email, téléphone..." oninput="searchUsers()">
-        <select onchange="filterUsers(this.value)">
-          <option value="all">Tous les statuts</option>
-          <option value="actif">Actifs</option>
-          <option value="suspendu">Suspendus</option>
-          <option value="bloqué">Bloqués</option>
-        </select>
-      </div>
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Liste des utilisateurs</h3>
-          <span class="count" id="users-count">0 utilisateurs</span>
-        </div>
-        <table>
-          <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Passages</th><th>Note</th><th>Certification</th><th>Statut</th><th>Actions</th></tr></thead>
-          <tbody id="users-table"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── COLIS ── -->
-    <div id="section-colis" class="section">
-      <div class="page-header">
-        <h1>Kolis</h1>
-        <p>Suivre toutes les annonces et passages</p>
-      </div>
-      <div class="search-bar">
-        <input type="text" id="colis-search" placeholder="Rechercher par code LVR, gare, titre..." oninput="searchColis()">
-        <select onchange="filterColis(this.value)">
-          <option value="all">Tous les statuts</option>
-          <option value="en_attente">En attente</option>
-          <option value="livreur_accepte">Passeur assigné</option>
-          <option value="en_transit">En transit</option>
-          <option value="livre">Livré</option>
-          <option value="annule">Annulé</option>
-          <option value="litige">Litige</option>
-        </select>
-      </div>
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Tous les kolis</h3>
-          <span class="count" id="colis-count">0 kolis</span>
-        </div>
-        <table>
-          <thead><tr><th>Code LVR</th><th>Titre</th><th>Trajet</th><th>Prix</th><th>Expéditeur</th><th>Passeur</th><th>Statut</th><th>Actions</th></tr></thead>
-          <tbody id="colis-table"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── TRANSACTIONS ── -->
-    <div id="section-transactions" class="section">
-      <div class="page-header">
-        <h1>Transactions</h1>
-        <p>Suivi des paiements et de l'argent en circulation</p>
-      </div>
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Toutes les transactions</h3>
-          <span class="count" id="tx-count">0 transactions</span>
-        </div>
-        <table>
-          <thead><tr><th>Colis</th><th>Montant</th><th>Expéditeur</th><th>Passeur</th><th>Stripe ID</th><th>Statut</th><th>Date</th></tr></thead>
-          <tbody id="tx-table"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── VÉRIFICATIONS ── -->
-    <div id="section-verifications" class="section">
-      <div class="page-header">
-        <h1>Vérifications d'identité</h1>
-        <p>Traiter les demandes de vérification des passeurs</p>
-      </div>
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Demandes en attente</h3>
-          <span class="count" id="verif-count">0 demandes</span>
-        </div>
-        <table>
-          <thead><tr><th>Utilisateur</th><th>Type document</th><th>Date demande</th><th>Statut</th><th>Actions</th></tr></thead>
-          <tbody id="verif-table"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Aucune demande en attente ✅</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── LITIGES ── -->
-    <div id="section-litiges" class="section">
-      <div class="page-header">
-        <h1>Litiges</h1>
-        <p>Résoudre les conflits entre utilisateurs</p>
-      </div>
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Litiges actifs</h3>
-          <span class="count" id="litiges-count">0 litiges</span>
-        </div>
-        <table>
-          <thead><tr><th>Colis</th><th>Plaignant</th><th>Motif</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead>
-          <tbody id="litiges-table"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Aucun litige actif ✅</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── NOTIFICATIONS ── -->
-    <div id="section-notifications" class="section">
-      <div class="page-header">
-        <h1>Notifications</h1>
-        <p>Envoyer des SMS et notifications aux utilisateurs</p>
-      </div>
-
-      <!-- Envoyer un SMS ciblé -->
-      <div class="table-card" style="margin-bottom:20px;">
-        <div class="table-header"><h3>Envoyer un SMS</h3></div>
-        <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div>
-              <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Destinataire</label>
-              <select id="notif-target" onchange="toggleNotifRecipient()"
-                style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.86rem;outline:none;background:var(--white);cursor:pointer;">
-                <option value="single">Un utilisateur (email)</option>
-                <option value="telephone">Un numéro direct</option>
-              </select>
-            </div>
-            <div id="notif-recipient-wrap">
-              <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Email ou téléphone</label>
-              <input type="text" id="notif-recipient" placeholder="user@email.com ou 06XXXXXXXX"
-                style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.86rem;outline:none;">
-            </div>
-          </div>
-          <div>
-            <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Message SMS</label>
-            <textarea id="notif-message" maxlength="160" rows="3" placeholder="Message SMS (160 caractères max)"
-              oninput="document.getElementById('notif-chars').textContent=this.value.length+'/160'"
-              style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.86rem;outline:none;resize:vertical;"></textarea>
-            <div id="notif-chars" style="font-size:.7rem;color:var(--muted);text-align:right;margin-top:3px;">0/160</div>
-          </div>
-          <button class="action-btn green" style="padding:11px 24px;font-size:.86rem;align-self:flex-start;" onclick="envoyerNotification()">
-            Envoyer le SMS →
-          </button>
-        </div>
-      </div>
-
-      <!-- Notifications automatiques PWA -->
-      <div class="table-card" style="margin-bottom:20px;">
-        <div class="table-header"><h3>Notifications push automatiques</h3></div>
-        <div style="padding:20px;">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
-            <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:14px;">
-              <div style="font-size:.72rem;font-weight:800;color:var(--g600);margin-bottom:4px;">ACCEPTATION COLIS</div>
-              <div style="font-size:.82rem;color:var(--muted);">Envoyée automatiquement à l'expéditeur quand un passeur accepte.</div>
-              <div style="margin-top:8px;"><span class="badge green">Active</span></div>
-            </div>
-            <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:14px;">
-              <div style="font-size:.72rem;font-weight:800;color:var(--g600);margin-bottom:4px;">LIVRAISON CONFIRMÉE</div>
-              <div style="font-size:.82rem;color:var(--muted);">Envoyée à l'expéditeur et passeur à la confirmation du passage.</div>
-              <div style="margin-top:8px;"><span class="badge green">Active</span></div>
-            </div>
-            <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:14px;">
-              <div style="font-size:.72rem;font-weight:800;color:var(--g600);margin-bottom:4px;">CODE SUIVI DESTINATAIRE</div>
-              <div style="font-size:.82rem;color:var(--muted);">SMS envoyé au destinataire avec son code QR lors de la publication.</div>
-              <div style="margin-top:8px;"><span class="badge green">Active</span></div>
-            </div>
-            <div style="background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:14px;">
-              <div style="font-size:.72rem;font-weight:800;color:var(--muted);margin-bottom:4px;">BROADCAST UTILISATEURS</div>
-              <div style="font-size:.82rem;color:var(--muted);">Notification envoyée à tous les utilisateurs. Nécessite une Edge Function dédiée.</div>
-              <div style="margin-top:8px;"><span class="badge grey">À implémenter</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Historique SMS envoyés -->
-      <div class="table-card">
-        <div class="table-header">
-          <h3>SMS envoyés manuellement</h3>
-          <span class="count" id="notif-history-count">0</span>
-        </div>
-        <table>
-          <thead><tr><th>Destinataire</th><th>Message</th><th>Statut</th><th>Date</th></tr></thead>
-          <tbody id="notif-history-table">
-            <tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucun SMS envoyé depuis l'admin</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── CONFIGURATION ── -->
-    <div id="section-config" class="section">
-      <div class="page-header">
-        <h1>Configuration</h1>
-        <p>Paramètres globaux de l'application</p>
-      </div>
-      <div class="table-card">
-        <div class="table-header"><h3>Paramètres app</h3></div>
-        <table>
-          <thead><tr><th>Clé</th><th>Valeur</th><th>Description</th><th>Action</th></tr></thead>
-          <tbody id="config-table"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── SÉCURITÉ ── -->
-    <div id="section-security" class="section">
-      <div class="page-header">
-        <h1>Sécurité</h1>
-        <p>Logs de sécurité et tentatives suspectes</p>
-      </div>
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Logs récents</h3>
-          <span class="count" id="logs-count">0 événements</span>
-        </div>
-        <table>
-          <thead><tr><th>Type</th><th>Utilisateur</th><th>Détails</th><th>Date</th></tr></thead>
-          <tbody id="security-table"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucun événement de sécurité ✅</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ── GESTION DES RÔLES ── -->
-    <div id="section-roles" class="section">
-      <div class="page-header">
-        <h1>👑 Gestion des rôles</h1>
-        <p>Attribuer ou révoquer des rôles aux utilisateurs</p>
-      </div>
-
-      <!-- Attribuer un rôle -->
-      <div class="table-card" style="margin-bottom:20px;">
-        <div class="table-header"><h3>Attribuer un rôle</h3></div>
-        <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
-          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;">
-            <div>
-              <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Email de l'utilisateur</label>
-              <input type="email" id="role-email" placeholder="utilisateur@email.com"
-                style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.88rem;outline:none;">
-            </div>
-            <div>
-              <label style="display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Rôle à attribuer</label>
-              <select id="role-select" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.88rem;outline:none;background:white;cursor:pointer;">
-                <option value="user">👤 User — Utilisateur standard</option>
-                <option value="livreur_verifie">✅ Passeur vérifié — Peut livrer</option>
-                <option value="support">💬 Support — Peut voir les litiges</option>
-                <option value="moderateur">🛡️ Modérateur — Peut modérer</option>
-                <option value="admin">👑 Admin — Accès total</option>
-              </select>
-            </div>
-            <button class="action-btn green" style="padding:10px 20px;font-size:.84rem;" onclick="assignRole()">
-              Attribuer →
-            </button>
-          </div>
-          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;font-size:.78rem;color:#92400e;">
-            ⚠️ <strong>Admin</strong> donne accès à tout — ne l'attribuer qu'à des personnes de confiance absolue.
-          </div>
-        </div>
-      </div>
-
-      <!-- Liste des rôles actuels -->
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Rôles actuels</h3>
-          <span class="count" id="roles-count">0 rôles</span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Utilisateur</th>
-              <th>Email</th>
-              <th>Téléphone</th>
-              <th>Rôle</th>
-              <th>Attribué le</th>
-              <th>Par</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="roles-table">
-            <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Description des rôles -->
-      <div class="table-card" style="margin-top:20px;">
-        <div class="table-header"><h3>Description des rôles</h3></div>
-        <table>
-          <thead><tr><th>Rôle</th><th>Permissions</th></tr></thead>
-          <tbody>
-            <tr><td><span class="badge grey">👤 User</span></td><td>Peut envoyer et recevoir des colis. Accès à son profil uniquement.</td></tr>
-            <tr><td><span class="badge blue">✅ Passeur vérifié</span></td><td>Identité vérifiée. Peut accepter des colis et les transporter. Badge visible sur son profil.</td></tr>
-            <tr><td><span class="badge orange">💬 Support</span></td><td>Peut voir les litiges et les vérifications d'identité. Aide les utilisateurs.</td></tr>
-            <tr><td><span class="badge orange">🛡️ Modérateur</span></td><td>Peut suspendre des utilisateurs, annuler des colis, résoudre des litiges.</td></tr>
-            <tr><td><span class="badge red">👑 Admin</span></td><td>Accès total à tout. Peut attribuer et révoquer tous les rôles.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div><!-- /main -->
-</div><!-- /admin-dashboard -->
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const SUPA_URL = 'https://wqhuaylfytdmhzjauvmv.supabase.co';
-const SUPA_KEY = 'sb_publishable_pq9e6TM3kHwpZhoI8Fsq8Q_iIoKBPQ4';
-const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-let adminUser = null;
+const db = supabase.createClient(
+  'https://wqhuaylfytdmhzjauvmv.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaHVheWxmeXRkbWh6amF1dm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4NTY1MDcsImV4cCI6MjA2MjQzMjUwN30.vUwHBgBFx_-fXLyFMGfcNwvZEwJO0pRqgOuTPZbfRfM'
+);
 
-// ── TOAST ────────────────────────────────
-function toast(msg, type = '') {
-  const c = document.getElementById('admin-toast');
-  const d = document.createElement('div');
-  d.className = 'at ' + type;
-  d.textContent = msg;
-  c.appendChild(d);
-  setTimeout(() => { d.style.opacity = '0'; d.style.transition = '.3s'; }, 3000);
-  setTimeout(() => d.remove(), 3400);
+let _allUsers = [];
+
+function toast(msg){ const e=document.getElementById('toast'); e.textContent=msg; e.style.display='block'; setTimeout(()=>e.style.display='none',3000); }
+function fmt(d){ if(!d)return'—'; return new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}); }
+function badge(s){ return `<span class="badge ${s||''}">${s||'—'}</span>`; }
+
+function showTab(name,el){
+  ['dashboard','users','colis','transactions'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display = t===name?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  if(el) el.classList.add('on');
+  if(name==='users' && _allUsers.length===0) loadUsers();
+  if(name==='colis') loadColis();
+  if(name==='transactions') loadTransactions();
 }
 
-// ── PROTECTION XSS ───────────────────────
-function escapeHtml(val) {
-  if (val == null) return '';
-  return String(val)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+async function loadDashboard(){
+  const [u,cp,cl,tx] = await Promise.all([
+    db.from('users').select('id',{count:'exact',head:true}),
+    db.from('colis').select('id',{count:'exact',head:true}).eq('statut','en_attente'),
+    db.from('colis').select('id',{count:'exact',head:true}).eq('statut','livre'),
+    db.from('transactions').select('id,montant',{count:'exact'}).limit(500),
+  ]);
+  document.getElementById('s-users').textContent = u.count??'—';
+  document.getElementById('s-colis').textContent = cp.count??'—';
+  document.getElementById('s-livres').textContent = cl.count??'—';
+  document.getElementById('s-tx').textContent = tx.count??'—';
+  const rev = (tx.data||[]).reduce((s,t)=>s+(parseFloat(t.montant||0)*0.15),0);
+  document.getElementById('s-rev').textContent = rev.toFixed(2);
+
+  const {data:ru} = await db.from('users').select('*').order('created_at',{ascending:false}).limit(8);
+  document.getElementById('recent-users').innerHTML = (ru||[]).map(u=>`<tr>
+    <td style="font-weight:700">${u.prenom||''} ${u.nom||''}</td>
+    <td>${u.email}</td>
+    <td>${badge(u.statut||'actif')}</td>
+    <td>${fmt(u.created_at)}</td>
+  </tr>`).join('') || '<tr><td colspan="4" class="empty">Aucun</td></tr>';
+
+  const {data:rc} = await db.from('colis').select('*').order('created_at',{ascending:false}).limit(8);
+  document.getElementById('recent-colis').innerHTML = (rc||[]).map(c=>`<tr>
+    <td style="font-weight:700;font-family:monospace">${c.code_lvr||c.id?.substring(0,8)||'—'}</td>
+    <td>${c.gare_arrivee||'—'}</td>
+    <td style="font-weight:700">${parseFloat(c.prix||0).toFixed(2)}€</td>
+    <td>${badge(c.statut)}</td>
+    <td>${fmt(c.created_at)}</td>
+  </tr>`).join('') || '<tr><td colspan="5" class="empty">Aucun</td></tr>';
 }
 
-// ── INIT — session partagée depuis app principale ──
-async function initAdmin() {
-  const { data: { session } } = await db.auth.getSession();
-
-  if (!session) {
-    window.location.href = '/#auth';
-    return;
-  }
-
-  const { data: role } = await db
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', session.user.id)
-    .single();
-
-  if (role?.role !== 'admin') {
-    window.location.href = '/';
-    return;
-  }
-
-  // Session admin valide — afficher le dashboard
-  const { data: profil } = await db.from('users').select('*').eq('id', session.user.id).single();
-  adminUser = profil;
-  if (profil) {
-    document.getElementById('admin-name').textContent = (profil.prenom || '') + ' ' + (profil.nom || '');
-  }
-  document.getElementById('admin-login').style.display = 'none';
-  document.getElementById('admin-dashboard').style.display = 'block';
-  loadDashboard();
+async function loadUsers(){
+  const {data} = await db.from('users').select('*').order('created_at',{ascending:false}).limit(300);
+  _allUsers = data||[];
+  renderUsers(_allUsers);
 }
 
-// ── LOGIN ────────────────────────────────
-async function adminLogin() {
-  const email = document.getElementById('admin-email').value.trim();
-  const pw = document.getElementById('admin-pw').value;
-  const errEl = document.getElementById('login-error');
-  errEl.style.display = 'none';
+function renderUsers(users){
+  document.getElementById('users-list').innerHTML = users.map(u=>`<tr>
+    <td style="font-weight:700">${u.prenom||''} ${u.nom||''}</td>
+    <td>${u.email}</td>
+    <td>${u.telephone||'—'}</td>
+    <td>${badge(u.statut||'actif')}</td>
+    <td>${fmt(u.created_at)}</td>
+    <td>${u.statut==='suspendu'
+      ? `<button class="btn g" onclick="setStatut('${u.id}','actif')">Réactiver</button>`
+      : `<button class="btn d" onclick="setStatut('${u.id}','suspendu')">Suspendre</button>`}
+    </td>
+  </tr>`).join('') || '<tr><td colspan="6" class="empty">Aucun utilisateur</td></tr>';
+}
 
+function filterUsers(q){
+  q=q.toLowerCase();
+  renderUsers(_allUsers.filter(u=>(u.email||'').toLowerCase().includes(q)||(u.prenom||'').toLowerCase().includes(q)||(u.nom||'').toLowerCase().includes(q)));
+}
+
+async function setStatut(id,statut){
+  const {error} = await db.from('users').update({statut}).eq('id',id);
+  if(error){toast('Erreur : '+error.message);return;}
+  toast('Statut mis à jour ✅'); loadUsers();
+}
+
+async function loadColis(){
+  const {data} = await db.from('colis').select('*').order('created_at',{ascending:false}).limit(100);
+  document.getElementById('colis-list').innerHTML = (data||[]).map(c=>`<tr>
+    <td style="font-weight:700;font-family:monospace">${c.code_lvr||c.id?.substring(0,8)||'—'}</td>
+    <td>${c.gare_arrivee||'—'}</td>
+    <td style="font-weight:700">${parseFloat(c.prix||0).toFixed(2)}€</td>
+    <td>${c.moyen_paiement||'—'}</td>
+    <td>${badge(c.statut)}</td>
+    <td>${fmt(c.created_at)}</td>
+  </tr>`).join('') || '<tr><td colspan="6" class="empty">Aucun kolis</td></tr>';
+}
+
+async function loadTransactions(){
+  const {data} = await db.from('transactions').select('*').order('created_at',{ascending:false}).limit(100).catch(()=>({data:[]}));
+  document.getElementById('tx-list').innerHTML = (data||[]).map(tx=>`<tr>
+    <td style="font-family:monospace;font-size:.7rem">${tx.id?.substring(0,16)||'—'}…</td>
+    <td style="font-weight:700">${parseFloat(tx.montant||0).toFixed(2)}€</td>
+    <td style="color:#2ecc71;font-weight:700">${(parseFloat(tx.montant||0)*0.15).toFixed(2)}€</td>
+    <td>${badge(tx.statut)}</td>
+    <td>${fmt(tx.created_at)}</td>
+  </tr>`).join('') || '<tr><td colspan="5" class="empty">Aucune transaction</td></tr>';
+}
+
+async function logout(){ await db.auth.signOut(); window.location.href='/'; }
+
+// ── AUTH ─────────────────────────────────
+(async()=>{
   try {
-    const { data, error } = await db.auth.signInWithPassword({ email, password: pw });
-    if (error) throw new Error(error.message);
-
-    // Vérifier que c'est bien un admin
-    const { data: role } = await db.from('user_roles').select('role').eq('user_id', data.user.id).single();
-    if (!role || role.role !== 'admin') {
-      await db.auth.signOut();
-      errEl.style.display = 'block';
+    const {data:{session}} = await db.auth.getSession();
+    if(!session){
+      document.getElementById('auth-msg').style.display='none';
+      document.getElementById('auth-error').textContent='Non connecté. Connectez-vous sur KolisGo d\'abord, puis revenez ici.';
+      document.getElementById('auth-error').style.display='block';
+      document.getElementById('back-link').style.display='block';
       return;
     }
-
-    // Charger le profil
-    const { data: profil } = await db.from('users').select('*').eq('id', data.user.id).single();
-    adminUser = profil;
-    document.getElementById('admin-name').textContent = (profil.prenom || '') + ' ' + (profil.nom || '');
-
-    // Afficher le dashboard
-    document.getElementById('admin-login').style.display = 'none';
-    document.getElementById('admin-dashboard').style.display = 'block';
-
-    loadDashboard();
-  } catch (e) {
-    errEl.style.display = 'block';
-    errEl.textContent = e.message;
-  }
-}
-
-async function adminLogout() {
-  await db.auth.signOut();
-  document.getElementById('admin-login').style.display = 'flex';
-  document.getElementById('admin-dashboard').style.display = 'none';
-}
-
-// ── NAVIGATION ───────────────────────────
-const _sectionTitles = {
-  overview: 'Vue d\'ensemble', users: 'Utilisateurs', colis: 'Kolis',
-  transactions: 'Transactions', verifications: 'Vérifications', litiges: 'Litiges',
-  notifications: 'Notifications', config: 'Configuration', security: 'Sécurité', roles: 'Rôles'
-};
-
-function showSection(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
-
-  document.getElementById('section-' + name)?.classList.add('active');
-  document.querySelector(`nav a[onclick="showSection('${name}')"]`)?.classList.add('active');
-  document.querySelector(`.mob-nav-btn[data-section="${name}"]`)?.classList.add('active');
-
-  const titleEl = document.getElementById('mob-section-title');
-  if (titleEl) titleEl.textContent = _sectionTitles[name] || '';
-
-  document.querySelector('.main')?.scrollTo?.(0, 0);
-  window.scrollTo(0, 0);
-
-  const loaders = {
-    overview: loadDashboard,
-    users: loadUsers,
-    colis: loadColis,
-    transactions: loadTransactions,
-    verifications: loadVerifications,
-    litiges: loadLitiges,
-    notifications: loadNotifications,
-    config: loadConfig,
-    security: loadSecurity,
-    roles: loadRoles,
-  };
-  loaders[name]?.();
-}
-
-// ── CHARGEMENT DASHBOARD ─────────────────
-async function loadDashboard() {
-  try {
-    const { data } = await db.from('admin_dashboard').select('*').single();
-    if (!data) return;
-
-    document.getElementById('k-users').textContent = data.total_users;
-    document.getElementById('k-users-7j').textContent = '+' + data.users_7j + ' cette semaine';
-    document.getElementById('k-colis').textContent = data.colis_disponibles;
-    document.getElementById('k-colis-livres').textContent = data.colis_livres + ' livrés';
-    document.getElementById('k-revenus').textContent = parseFloat(data.revenus_total || 0).toFixed(2) + '€';
-    document.getElementById('k-revenus-30j').textContent = parseFloat(data.revenus_30j || 0).toFixed(2) + '€ ce mois';
-    document.getElementById('k-note').textContent = parseFloat(data.note_moyenne_plateforme || 0).toFixed(1) + '⭐';
-    document.getElementById('k-escrow').textContent = data.paiements_en_attente;
-    document.getElementById('k-paiements').textContent = data.paiements_liberes;
-    document.getElementById('k-verif').textContent = data.verifications_a_traiter;
-    document.getElementById('k-litiges').textContent = data.litiges_ouverts || 0;
-    document.getElementById('last-update').textContent = 'Mis à jour le ' + new Date(data.derniere_maj).toLocaleString('fr-FR');
-
-    if (data.verifications_a_traiter > 0) {
-      const badge = document.getElementById('verif-badge');
-      badge.textContent = data.verifications_a_traiter;
-      badge.style.display = 'inline';
+    const {data:roleData} = await db.from('user_roles').select('role').eq('user_id',session.user.id).single();
+    if(!roleData || roleData.role!=='admin'){
+      document.getElementById('auth-msg').style.display='none';
+      document.getElementById('auth-error').textContent='Accès refusé. Votre compte n\'a pas les droits administrateur.';
+      document.getElementById('auth-error').style.display='block';
+      document.getElementById('back-link').style.display='block';
+      return;
     }
-
-    const { data: colis } = await db.from('colis_actifs').select('*').limit(10);
-    const tbody = document.getElementById('activity-table');
-    if (colis && colis.length > 0) {
-      document.getElementById('activity-count').textContent = colis.length + ' kolis';
-      tbody.innerHTML = colis.map(c => `
-        <tr>
-          <td><strong>${escapeHtml(c.code_lvr) || '—'}</strong></td>
-          <td>${escapeHtml(c.expediteur) || '—'}</td>
-          <td style="font-size:.76rem;">${escapeHtml(c.gare_depart) || '?'} → ${escapeHtml(c.gare_arrivee) || '?'}</td>
-          <td>${c.livreur ? escapeHtml(c.livreur) : '<span style="color:var(--muted);">Non assigné</span>'}</td>
-          <td style="color:var(--g500);font-weight:800;">${parseFloat(c.prix || 0).toFixed(2)}€</td>
-          <td>${statusBadge(c.statut)}</td>
-        </tr>`).join('');
-    } else {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Aucun colis pour le moment</td></tr>';
-    }
-  } catch (e) {
-    console.error('loadDashboard:', e);
-  }
-}
-
-// ── CHARGEMENT UTILISATEURS ───────────────
-async function loadUsers() {
-  const { data } = await db.from('users').select('*, user_roles(role)').order('created_at', { ascending: false });
-  const tbody = document.getElementById('users-table');
-  document.getElementById('users-count').textContent = (data?.length || 0) + ' utilisateurs';
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Aucun utilisateur</td></tr>';
-    return;
-  }
-  const CERT_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-left:4px;flex-shrink:0;"><path fill="#1D9BF0" d="M12 1L9.5 3.5 6 3l-1 3.5L2 8l1.5 3.5L2 15l3 1 1 3.5 3.5-1L12 21l2.5-2.5 3.5 1 1-3.5 3-1-1.5-3.5L23 8l-3-1.5L19 3l-3.5.5z"/><path fill="white" d="M9 12l2 2 4-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`;
-  tbody.innerHTML = data.map(u => {
-    const jId = JSON.stringify(u.id); const jEm = JSON.stringify(u.email || '');
-    const certified = u.is_certified === true;
-    const certCell = certified
-      ? `<div style="display:flex;align-items:center;gap:6px;">${CERT_SVG}<button class="action-btn red" onclick="toggleCertification(${jId},false)">Révoquer</button></div>`
-      : `<button class="action-btn" onclick="toggleCertification(${jId},true)" style="background:var(--cream);color:var(--muted);border:1px solid var(--border);">Certifier</button>`;
-    return `
-    <tr>
-      <td><div style="display:flex;align-items:center;gap:2px;"><strong>${escapeHtml(u.prenom)} ${escapeHtml(u.nom)}</strong>${certified ? CERT_SVG : ''}</div><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(u.id?.substring(0,8))}...</span></td>
-      <td>${escapeHtml(u.email) || '—'}</td>
-      <td>${escapeHtml(u.telephone) || '—'}</td>
-      <td>${u.nb_livraisons || 0}</td>
-      <td>${u.note_moyenne > 0 ? '⭐' + u.note_moyenne : '—'}</td>
-      <td>${certCell}</td>
-      <td>${statusBadge(u.statut || 'actif')}</td>
-      <td>
-        <button class="action-btn orange" onclick="suspendUser(${jId},${jEm})">Suspendre</button>
-        <button class="action-btn red" onclick="blockUser(${jId},${jEm})">Bloquer</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-async function toggleCertification(id, certify) {
-  const action = certify ? 'certifier' : 'révoquer la certification de';
-  if (!confirm(`Voulez-vous ${action} cet utilisateur ?`)) return;
-  try {
-    const { error } = await db.from('users').update({ is_certified: certify }).eq('id', id);
-    if (error) throw new Error(error.message);
-    toast(certify ? 'Utilisateur certifié ✅' : 'Certification révoquée', certify ? 's' : 'e');
-    loadUsers();
-  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
-}
-
-// ── CHARGEMENT COLIS ─────────────────────
-async function loadColis() {
-  const { data } = await db.from('colis_actifs').select('*').order('created_at', { ascending: false });
-  const tbody = document.getElementById('colis-table');
-  document.getElementById('colis-count').textContent = (data?.length || 0) + ' kolis';
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Aucun kolis</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.map(c => {
-    const jCode = JSON.stringify(c.code_lvr);
-    return `
-    <tr>
-      <td><strong>${escapeHtml(c.code_lvr)}</strong></td>
-      <td>${escapeHtml(c.titre) || '—'}</td>
-      <td style="font-size:.76rem;">${escapeHtml(c.gare_depart) || '?'} → ${escapeHtml(c.gare_arrivee) || '?'}</td>
-      <td style="color:var(--g500);font-weight:800;">${parseFloat(c.prix || 0).toFixed(2)}€</td>
-      <td>${escapeHtml(c.expediteur) || '—'}</td>
-      <td>${c.livreur ? escapeHtml(c.livreur) : '<span style="color:var(--muted);">—</span>'}</td>
-      <td>${statusBadge(c.statut)}</td>
-      <td><button class="action-btn red" onclick="cancelColis(${jCode})">Annuler</button></td>
-    </tr>`;
-  }).join('');
-}
-
-// ── CHARGEMENT TRANSACTIONS ───────────────
-async function loadTransactions() {
-  const { data } = await db.from('transactions').select('*, colis(code_lvr), exp:users!transactions_expediteur_id_fkey(prenom), liv:users!transactions_livreur_id_fkey(prenom)').order('created_at', { ascending: false }).limit(50);
-  const tbody = document.getElementById('tx-table');
-  document.getElementById('tx-count').textContent = (data?.length || 0) + ' transactions';
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Aucune transaction</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.map(t => `
-    <tr>
-      <td><strong>${escapeHtml(t.colis?.code_lvr) || '—'}</strong></td>
-      <td style="color:var(--g500);font-weight:800;">${parseFloat(t.montant || 0).toFixed(2)}€</td>
-      <td>${escapeHtml(t.exp?.prenom) || '—'}</td>
-      <td>${escapeHtml(t.liv?.prenom) || '—'}</td>
-      <td style="font-size:.7rem;color:var(--muted);">${escapeHtml(t.stripe_payment_intent?.substring(0,20)) || '—'}...</td>
-      <td>${statusBadge(t.statut)}</td>
-      <td style="font-size:.74rem;">${new Date(t.created_at).toLocaleDateString('fr-FR')}</td>
-    </tr>`).join('');
-}
-
-// ── CHARGEMENT VÉRIFICATIONS ──────────────
-async function loadVerifications() {
-  const { data } = await db.from('verifications_identite').select('*, users(prenom, nom, email)').order('created_at', { ascending: false });
-  const tbody = document.getElementById('verif-table');
-  document.getElementById('verif-count').textContent = (data?.length || 0) + ' demandes';
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">Aucune demande en attente ✅</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.map(v => {
-    const jId = JSON.stringify(v.id);
-    return `
-    <tr>
-      <td><strong>${escapeHtml(v.users?.prenom)} ${escapeHtml(v.users?.nom)}</strong><br><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(v.users?.email)}</span></td>
-      <td>${escapeHtml(v.type_document) || '—'}</td>
-      <td>${new Date(v.created_at).toLocaleDateString('fr-FR')}</td>
-      <td>${statusBadge(v.statut)}</td>
-      <td>
-        <button class="action-btn green" onclick="approveVerif(${jId})">✅ Approuver</button>
-        <button class="action-btn red" onclick="rejectVerif(${jId})">❌ Refuser</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-// ── CHARGEMENT LITIGES ────────────────────
-async function loadLitiges() {
-  const { data } = await db.from('litiges').select('*, colis(code_lvr), users!litiges_plaignant_id_fkey(prenom,nom)').order('created_at', { ascending: false });
-  const tbody = document.getElementById('litiges-table');
-  document.getElementById('litiges-count').textContent = (data?.length || 0) + ' litiges';
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Aucun litige actif ✅</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.map(l => {
-    const jId = JSON.stringify(l.id);
-    return `
-    <tr>
-      <td><strong>${escapeHtml(l.colis?.code_lvr) || '—'}</strong></td>
-      <td>${escapeHtml(l.users?.prenom)} ${escapeHtml(l.users?.nom)}</td>
-      <td>${escapeHtml(l.motif) || '—'}</td>
-      <td>${statusBadge(l.statut)}</td>
-      <td>${new Date(l.created_at).toLocaleDateString('fr-FR')}</td>
-      <td><button class="action-btn orange" onclick="resolveLitige(${jId})">Résoudre</button></td>
-    </tr>`;
-  }).join('');
-}
-
-// ── NOTIFICATIONS ────────────────────────
-const _notifHistory = [];
-
-function loadNotifications() {
-  updateNotifHistoryTable();
-}
-
-function toggleNotifRecipient() {
-  const target = document.getElementById('notif-target')?.value;
-  const wrap = document.getElementById('notif-recipient-wrap');
-  const inp = document.getElementById('notif-recipient');
-  if (!wrap || !inp) return;
-  if (target === 'single') {
-    inp.placeholder = 'user@email.com';
-    inp.type = 'email';
-  } else {
-    inp.placeholder = '06XXXXXXXX ou +336XXXXXXXX';
-    inp.type = 'tel';
-  }
-}
-
-async function envoyerNotification() {
-  const target = document.getElementById('notif-target')?.value;
-  const recipient = document.getElementById('notif-recipient')?.value.trim();
-  const message = document.getElementById('notif-message')?.value.trim();
-
-  if (!recipient) { toast('Entrez un destinataire', 'e'); return; }
-  if (!message)   { toast('Entrez un message', 'e'); return; }
-  if (message.length > 160) { toast('Message trop long (160 caractères max)', 'e'); return; }
-
-  let telephone = recipient;
-
-  if (target === 'single') {
-    const { data: u } = await db.from('users').select('telephone, prenom').ilike('email', recipient).single();
-    if (!u?.telephone) { toast('Utilisateur introuvable ou sans numéro', 'e'); return; }
-    telephone = u.telephone;
-  }
-
-  try {
-    const { data: { session } } = await db.auth.getSession();
-    const res = await fetch(`${SUPA_URL}/functions/v1/send-sms`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session?.access_token },
-      body: JSON.stringify({ telephone, message })
-    });
-    const result = await res.json();
-    if (!res.ok || result.error) throw new Error(result.error || 'Erreur serveur');
-
-    toast('SMS envoyé ✅', 's');
-    _notifHistory.unshift({ recipient, message, statut: 'envoyé', date: new Date() });
-    document.getElementById('notif-message').value = '';
-    document.getElementById('notif-chars').textContent = '0/160';
-    document.getElementById('notif-recipient').value = '';
-    updateNotifHistoryTable();
-  } catch (e) {
-    toast('Erreur : ' + e.message, 'e');
-  }
-}
-
-function updateNotifHistoryTable() {
-  const tbody = document.getElementById('notif-history-table');
-  const count = document.getElementById('notif-history-count');
-  if (!tbody) return;
-  if (count) count.textContent = _notifHistory.length;
-  if (_notifHistory.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucun SMS envoyé depuis l\'admin</td></tr>';
-    return;
-  }
-  tbody.innerHTML = _notifHistory.map(n => `
-    <tr>
-      <td><strong>${escapeHtml(n.recipient)}</strong></td>
-      <td style="font-size:.78rem;">${escapeHtml(n.message.substring(0, 60))}${n.message.length > 60 ? '…' : ''}</td>
-      <td><span class="badge green">${escapeHtml(n.statut)}</span></td>
-      <td style="font-size:.74rem;">${n.date.toLocaleString('fr-FR')}</td>
-    </tr>`).join('');
-}
-
-// ── CHARGEMENT CONFIG ─────────────────────
-async function loadConfig() {
-  const { data } = await db.from('app_config').select('*').order('key');
-  const tbody = document.getElementById('config-table');
-  if (!data) return;
-  tbody.innerHTML = data.map(c => {
-    const jKey = JSON.stringify(c.key);
-    return `
-    <tr>
-      <td><strong>${escapeHtml(c.key)}</strong></td>
-      <td><input type="text" value="${escapeHtml(c.value || '')}" id="cfg-${escapeHtml(c.key)}" style="border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.82rem;width:100%;"></td>
-      <td style="font-size:.74rem;color:var(--muted);">${escapeHtml(c.description || '')}</td>
-      <td><button class="action-btn green" onclick="saveConfig(${jKey})">Sauver</button></td>
-    </tr>`;
-  }).join('');
-}
-
-async function saveConfig(key) {
-  const val = document.getElementById('cfg-' + key)?.value;
-  await db.from('app_config').update({ value: val, updated_at: new Date().toISOString() }).eq('key', key);
-  toast('Sauvegardé ✅', 's');
-}
-
-// ── CHARGEMENT SÉCURITÉ ───────────────────
-async function loadSecurity() {
-  const { data } = await db.from('security_logs').select('*').order('timestamp', { ascending: false }).limit(50);
-  const tbody = document.getElementById('security-table');
-  document.getElementById('logs-count').textContent = (data?.length || 0) + ' événements';
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucun événement de sécurité ✅</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.map(l => `
-    <tr>
-      <td><span class="badge ${l.type?.includes('fail') ? 'red' : 'grey'}">${escapeHtml(l.type)}</span></td>
-      <td>${escapeHtml(l.user_id?.substring(0,8) || 'Anonyme')}...</td>
-      <td style="font-size:.74rem;">${escapeHtml(JSON.stringify(l.details || {}).substring(0,80))}</td>
-      <td>${new Date(l.timestamp).toLocaleString('fr-FR')}</td>
-    </tr>`).join('');
-}
-
-// ── ACTIONS ADMIN ────────────────────────
-async function adminRPC(action, targetId = null, value = null) {
-  const { data, error } = await db.rpc('admin_action', {
-    p_action: action,
-    p_target_id: targetId,
-    p_value: value
-  });
-  if (error) throw new Error(error.message);
-  if (!data.success) throw new Error(data.error);
-  return data;
-}
-
-async function suspendUser(id, email) {
-  if (!confirm(`Suspendre ${email} ?`)) return;
-  try {
-    await adminRPC('suspend_user', id);
-    toast('Utilisateur suspendu', 'e');
-    loadUsers();
-  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
-}
-
-async function blockUser(id, email) {
-  if (!confirm(`⚠️ Bloquer définitivement ${email} ?`)) return;
-  try {
-    await adminRPC('block_user', id);
-    toast('Utilisateur bloqué', 'e');
-    loadUsers();
-  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
-}
-
-async function cancelColis(code) {
-  if (!confirm(`Annuler le kolis ${code} ?`)) return;
-  try {
-    const { data: c } = await db.from('colis').select('id').eq('code_lvr', code).single();
-    await adminRPC('cancel_colis', c.id);
-    toast('Kolis annulé', 'e');
-    loadColis();
-  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
-}
-
-async function approveVerif(id) {
-  try {
-    await adminRPC('approve_verif', id);
-    toast('Vérification approuvée ✅', 's');
-    loadVerifications();
+    document.getElementById('auth-wall').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('admin-email').textContent=session.user.email;
     loadDashboard();
-  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
-}
-
-async function rejectVerif(id) {
-  const note = prompt('Raison du refus :');
-  if (!note) return;
-  try {
-    await adminRPC('reject_verif', id, note);
-    toast('Vérification refusée', 'e');
-    loadVerifications();
-  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
-}
-
-async function resolveLitige(id) {
-  const decision = prompt('Décision (remboursement / passeur / partage) :');
-  if (!decision) return;
-  try {
-    await adminRPC('resolve_litige', id, decision);
-    toast('Litige résolu ✅', 's');
-    loadLitiges();
-  } catch(e) { toast('Erreur : ' + e.message, 'e'); }
-}
-
-// ── HELPERS ──────────────────────────────
-function statusBadge(status) {
-  const map = {
-    actif: ['green', 'Actif'],
-    suspendu: ['orange', 'Suspendu'],
-    'bloqué': ['red', 'Bloqué'],
-    en_attente: ['orange', 'En attente'],
-    livreur_accepte: ['blue', 'Assigné'],
-    en_transit: ['blue', 'En transit'],
-    livre: ['green', 'Livré'],
-    annule: ['red', 'Annulé'],
-    litige: ['red', 'Litige'],
-    escrow: ['orange', 'En escrow'],
-    libere: ['green', 'Libéré'],
-    approuve: ['green', 'Approuvé'],
-    refuse: ['red', 'Refusé'],
-    ouvert: ['orange', 'Ouvert'],
-    resolu: ['green', 'Résolu'],
-  };
-  const [cls, label] = map[status] || ['grey', escapeHtml(status)];
-  return `<span class="badge ${cls}">${label}</span>`;
-}
-
-function searchUsers() {
-  const q = document.getElementById('user-search').value.toLowerCase();
-  document.querySelectorAll('#users-table tr').forEach(row => {
-    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
-}
-
-function filterUsers(status) {
-  document.querySelectorAll('#users-table tr').forEach(row => {
-    row.style.display = status === 'all' || row.textContent.toLowerCase().includes(status) ? '' : 'none';
-  });
-}
-
-function searchColis() {
-  const q = document.getElementById('colis-search').value.toLowerCase();
-  document.querySelectorAll('#colis-table tr').forEach(row => {
-    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
-}
-
-function filterColis(status) {
-  document.querySelectorAll('#colis-table tr').forEach(row => {
-    row.style.display = status === 'all' || row.textContent.toLowerCase().includes(status) ? '' : 'none';
-  });
-}
-
-// ── GESTION DES RÔLES ────────────────────
-async function loadRoles() {
-  const { data } = await db.from('vue_roles').select('*');
-  const tbody = document.getElementById('roles-table');
-  document.getElementById('roles-count').textContent = (data?.length || 0) + ' rôles';
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Aucun rôle configuré</td></tr>';
-    return;
+  } catch(e){
+    document.getElementById('auth-error').textContent='Erreur : '+e.message;
+    document.getElementById('auth-error').style.display='block';
+    document.getElementById('back-link').style.display='block';
   }
-  tbody.innerHTML = data.map(r => {
-    const jEmail = JSON.stringify(r.email);
-    return `
-    <tr>
-      <td><strong>${escapeHtml(r.nom_complet) || '—'}</strong></td>
-      <td>${escapeHtml(r.email) || '—'}</td>
-      <td>${escapeHtml(r.telephone) || '—'}</td>
-      <td>${roleBadge(r.role)}</td>
-      <td style="font-size:.74rem;">${r.granted_at ? new Date(r.granted_at).toLocaleDateString('fr-FR') : '—'}</td>
-      <td style="font-size:.74rem;">${escapeHtml(r.attribue_par) || 'Système'}</td>
-      <td>
-        ${r.email !== adminUser?.email ?
-          `<button class="action-btn red" onclick="revokeRole(${jEmail})">Révoquer</button>`
-          : '<span style="font-size:.72rem;color:var(--muted);">Protégé</span>'}
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-async function assignRole() {
-  const email = document.getElementById('role-email')?.value.trim();
-  const role = document.getElementById('role-select')?.value;
-  if (!email) { toast('Entrez un email', 'e'); return; }
-
-  try {
-    const { data, error } = await db.rpc('assign_role', {
-      p_target_email: email,
-      p_role: role,
-      p_admin_id: adminUser.id
-    });
-    if (error) throw new Error(error.message);
-    if (!data.success) throw new Error(data.error);
-    toast(data.message + ' ✅', 's');
-    document.getElementById('role-email').value = '';
-    loadRoles();
-  } catch (e) {
-    toast('Erreur : ' + e.message, 'e');
-  }
-}
-
-async function revokeRole(email) {
-  if (!confirm(`Révoquer le rôle de ${email} ? Il redeviendra utilisateur standard.`)) return;
-  try {
-    const { data, error } = await db.rpc('revoke_role', {
-      p_target_email: email,
-      p_admin_id: adminUser.id
-    });
-    if (error) throw new Error(error.message);
-    if (!data.success) throw new Error(data.error);
-    toast(data.message + ' ✅', 's');
-    loadRoles();
-  } catch (e) {
-    toast('Erreur : ' + e.message, 'e');
-  }
-}
-
-function roleBadge(role) {
-  const map = {
-    admin: ['red', '👑 Admin'],
-    moderateur: ['orange', '🛡️ Modérateur'],
-    support: ['orange', '💬 Support'],
-    livreur_verifie: ['blue', '✅ Passeur vérifié'],
-    user: ['grey', '👤 User'],
-  };
-  const [cls, label] = map[role] || ['grey', escapeHtml(role)];
-  return `<span class="badge ${cls}">${label}</span>`;
-}
-
-setInterval(() => {
-  const activeSection = document.querySelector('.section.active')?.id?.replace('section-', '');
-  if (activeSection === 'overview') loadDashboard();
-}, 60000);
-
-document.addEventListener('DOMContentLoaded', initAdmin);
+})();
 </script>
 </body>
 </html>

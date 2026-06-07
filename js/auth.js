@@ -28,9 +28,14 @@ async function doLogin() {
     if (!profil) { t('Profil introuvable. Contactez le support.', 'e'); return; }
 
     await onLoginSuccess(profil);
+    localStorage.setItem('kolisgo_logged_in', '1');
     t(`Bienvenue ${profil.prenom} ! 👋`, 's');
     goNav('home');
-    refreshHome(); // force dashboard après navigation
+    // Force affichage dashboard — direct, sans passer par refreshHome
+    const _l = document.getElementById('home-landing');
+    const _d = document.getElementById('home-dash');
+    if (_l) _l.style.display = 'none';
+    if (_d) _d.style.display = 'block';
 
   } catch (e) {
     t(e.message || 'Erreur de connexion', 'e');
@@ -126,6 +131,8 @@ async function loginApple() {
 async function doLogout() {
   await db.auth.signOut();
   user = null;
+  window._notifRealtimeStarted = false;
+  localStorage.removeItem('kolisgo_logged_in');
   const adminLink = document.getElementById('admin-link');
   if (adminLink) adminLink.style.display = 'none';
   const navLogin2 = document.getElementById('nav-login');
@@ -199,6 +206,7 @@ async function chargerProfil(userId) {
 async function onLoginSuccess(profil) {
   if (window._loginInProgress) return;
   window._loginInProgress = true;
+  try {
   user = profil;
   const role = await getUserRole(profil.id || profil.auth_id);
   user.role = role;
@@ -273,15 +281,20 @@ async function onLoginSuccess(profil) {
 
   if (typeof afficherBadgeProfil === 'function') afficherBadgeProfil(profil.badge);
 
-  window._loginInProgress = false;
   refreshHome();
   chargerPortefeuille(profil.id);
   chargerLivraisonsEnCours(profil.id);
   chargerKPIs(profil.id, profil);
   chargerActiviteRecente(profil.id);
   if (typeof chargerNotifsCount === 'function') chargerNotifsCount();
-  if (typeof initNotifRealtime === 'function') initNotifRealtime();
+  if (!window._notifRealtimeStarted && typeof initNotifRealtime === 'function') {
+    initNotifRealtime();
+    window._notifRealtimeStarted = true;
+  }
   if (typeof chargerRecus === 'function') chargerRecus(profil.id);
+  } finally {
+    window._loginInProgress = false;
+  }
 }
 
 // ── Tabs auth ────────────────────────────
