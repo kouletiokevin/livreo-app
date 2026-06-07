@@ -129,7 +129,11 @@ async function doLogout() {
   if (adminLink) adminLink.style.display = 'none';
   document.getElementById('nav-login').style.display = 'block';
   document.getElementById('nav-av').style.display = 'none';
-  document.getElementById('nav-post').style.display = 'none';
+  document.getElementById('nav-notif').style.display = 'none';
+  const navImg2 = document.getElementById('nav-av-img');
+  const navTxt2 = document.getElementById('nav-av-txt');
+  if (navImg2) { navImg2.src = ''; navImg2.style.display = 'none'; }
+  if (navTxt2) navTxt2.style.display = '';
   refreshHome();
   goNav('home');
   t('Vous êtes déconnecté · À bientôt !', '');
@@ -207,8 +211,14 @@ async function onLoginSuccess(profil) {
   // Nav
   document.getElementById('nav-login').style.display = 'none';
   document.getElementById('nav-av').style.display = 'flex';
-  document.getElementById('nav-post').style.display = 'block';
-  document.getElementById('nav-av').textContent = profil.prenom[0].toUpperCase();
+  document.getElementById('nav-notif').style.display = 'block';
+  const navTxt = document.getElementById('nav-av-txt');
+  if (navTxt) navTxt.textContent = profil.prenom[0].toUpperCase();
+  if (profil.photo_profil_url) {
+    const navImg = document.getElementById('nav-av-img');
+    if (navImg) { navImg.src = profil.photo_profil_url; navImg.style.display = 'block'; }
+    if (navTxt) navTxt.style.display = 'none';
+  }
 
   // Profil UI
   const fields = {
@@ -247,6 +257,22 @@ async function onLoginSuccess(profil) {
     if (adminLink) adminLink.style.display = 'flex';
   }
 
+  // Badge certifié (texte)
+  const badgeCertifie = document.getElementById('badge-certifie');
+  if (badgeCertifie) badgeCertifie.style.display = profil.is_certified ? 'inline' : 'none';
+
+  // Badge certifié (SVG sur photo) — bleu si certifié, gris sinon
+  const badgeFill = document.getElementById('badge-certif-fill');
+  if (badgeFill) badgeFill.setAttribute('fill', profil.is_certified ? '#1D9BF0' : '#cccccc');
+
+  // Badge note + passages
+  const badgeLivr = document.getElementById('badge-livr');
+  if (badgeLivr) {
+    const note = profil.note_moyenne > 0 ? '⭐' + parseFloat(profil.note_moyenne).toFixed(1) : '⭐ —';
+    const nb = profil.nb_livraisons || 0;
+    badgeLivr.textContent = `${note} · ${nb} passage${nb !== 1 ? 's' : ''}`;
+  }
+
   if (typeof afficherBadgeProfil === 'function') afficherBadgeProfil(profil.badge);
 
   refreshHome();
@@ -254,6 +280,8 @@ async function onLoginSuccess(profil) {
   chargerLivraisonsEnCours(profil.id);
   chargerKPIs(profil.id, profil);
   chargerActiviteRecente(profil.id);
+  if (typeof chargerNotifsCount === 'function') chargerNotifsCount();
+  if (typeof initNotifRealtime === 'function') initNotifRealtime();
 }
 
 // ── Tabs auth ────────────────────────────

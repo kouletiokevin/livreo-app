@@ -318,7 +318,7 @@ td strong { color: var(--ink); }
           <span class="count" id="users-count">0 utilisateurs</span>
         </div>
         <table>
-          <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Passages</th><th>Note</th><th>Badge</th><th>Statut</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Passages</th><th>Note</th><th>Certification</th><th>Statut</th><th>Actions</th></tr></thead>
           <tbody id="users-table"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr></tbody>
         </table>
       </div>
@@ -793,26 +793,21 @@ async function loadUsers() {
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">Aucun utilisateur</td></tr>';
     return;
   }
+  const CERT_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin-left:4px;flex-shrink:0;"><path fill="#1D9BF0" d="M12 1L9.5 3.5 6 3l-1 3.5L2 8l1.5 3.5L2 15l3 1 1 3.5 3.5-1L12 21l2.5-2.5 3.5 1 1-3.5 3-1-1.5-3.5L23 8l-3-1.5L19 3l-3.5.5z"/><path fill="white" d="M9 12l2 2 4-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`;
   tbody.innerHTML = data.map(u => {
     const jId = JSON.stringify(u.id); const jEm = JSON.stringify(u.email || '');
-    const badgeSel = (val) => u.badge === val ? 'selected' : '';
+    const certified = u.is_certified === true;
+    const certCell = certified
+      ? `<div style="display:flex;align-items:center;gap:6px;">${CERT_SVG}<button class="action-btn red" onclick="toggleCertification(${jId},false)">Révoquer</button></div>`
+      : `<button class="action-btn" onclick="toggleCertification(${jId},true)" style="background:var(--cream);color:var(--muted);border:1px solid var(--border);">Certifier</button>`;
     return `
     <tr>
-      <td><strong>${escapeHtml(u.prenom)} ${escapeHtml(u.nom)}</strong><br><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(u.id?.substring(0,8))}...</span></td>
+      <td><div style="display:flex;align-items:center;gap:2px;"><strong>${escapeHtml(u.prenom)} ${escapeHtml(u.nom)}</strong>${certified ? CERT_SVG : ''}</div><span style="font-size:.7rem;color:var(--muted);">${escapeHtml(u.id?.substring(0,8))}...</span></td>
       <td>${escapeHtml(u.email) || '—'}</td>
       <td>${escapeHtml(u.telephone) || '—'}</td>
       <td>${u.nb_livraisons || 0}</td>
       <td>${u.note_moyenne > 0 ? '⭐' + u.note_moyenne : '—'}</td>
-      <td>
-        <select onchange="updateUserBadge(${jId},this.value)"
-          style="border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:.74rem;background:var(--white);cursor:pointer;font-family:var(--sans);">
-          <option value="aucun" ${badgeSel('aucun')}>— Aucun</option>
-          <option value="certifie" ${badgeSel('certifie')}>🔵 Certifié</option>
-          <option value="prudent" ${badgeSel('prudent')}>🟠 Prudent</option>
-          <option value="confiance" ${badgeSel('confiance')}>🥇 Confiance</option>
-          <option value="suspendu" ${badgeSel('suspendu')}>❌ Suspendu</option>
-        </select>
-      </td>
+      <td>${certCell}</td>
       <td>${statusBadge(u.statut || 'actif')}</td>
       <td>
         <button class="action-btn orange" onclick="suspendUser(${jId},${jEm})">Suspendre</button>
@@ -822,11 +817,14 @@ async function loadUsers() {
   }).join('');
 }
 
-async function updateUserBadge(id, badge) {
+async function toggleCertification(id, certify) {
+  const action = certify ? 'certifier' : 'révoquer la certification de';
+  if (!confirm(`Voulez-vous ${action} cet utilisateur ?`)) return;
   try {
-    const { error } = await db.from('users').update({ badge }).eq('id', id);
+    const { error } = await db.from('users').update({ is_certified: certify }).eq('id', id);
     if (error) throw new Error(error.message);
-    toast('Badge mis à jour ✅', 's');
+    toast(certify ? 'Utilisateur certifié ✅' : 'Certification révoquée', certify ? 's' : 'e');
+    loadUsers();
   } catch(e) { toast('Erreur : ' + e.message, 'e'); }
 }
 

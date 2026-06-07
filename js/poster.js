@@ -90,7 +90,7 @@ function fakeUp(type) {
       t('Photo emballée ajoutée ✅', 's');
     } else {
       let html = '';
-      for (const f of files.slice(0, 4)) {
+      for (const f of files.slice(0, 5)) {
         const url = URL.createObjectURL(f);
         setTimeout(() => URL.revokeObjectURL(url), 30000);
         html += `<div class="prev-locked" style="position:relative;overflow:hidden;">
@@ -121,20 +121,24 @@ function resetPoster() {
 async function publishColis() {
   if (!user) { t('Connectez-vous d\'abord', 'e'); goNav('auth'); return; }
 
-  const dep = document.getElementById('pf-dep').value;
   const arr = document.getElementById('pf-arr').value;
   const titre = sanitize(document.getElementById('pf-title').value.trim());
   const desc = sanitize(document.getElementById('pf-desc').value.trim());
-  const dated = document.getElementById('pf-date').value;
+  const dateRaw = document.getElementById('pf-date').value.trim();
+  // Convertit jj/mm/aaaa → yyyy-mm-dd pour Supabase
+  const dated = dateRaw.length === 10 ? dateRaw.split('/').reverse().join('-') : null;
   const rnom = document.getElementById('pf-rname').value.trim();
   const rtel = document.getElementById('pf-rphone').value.trim();
-  const prix = parseFloat(document.getElementById('pf-price-input')?.value || '0') || 0;
+  let prix = parseFloat(document.getElementById('pf-price-input')?.value || '0') || 0;
+  const paymentEl = document.querySelector('input[name="payment"]:checked');
+  const moyen_paiement = paymentEl ? paymentEl.value : null;
 
-  if (!dep || !arr) { t('Choisissez les gares', 'e'); return; }
+  if (!arr) { t('Choisissez la gare de destination', 'e'); return; }
   if (!titre) { t('Décrivez ce que c\'est', 'e'); return; }
   if (titre.length > 100) { t('Titre trop long (100 caractères max)', 'e'); return; }
   if (desc.length > 500) { t('Description trop longue (500 caractères max)', 'e'); return; }
-  if (prix <= 0) { t('Entrez un prix valide', 'e'); return; }
+  if (!moyen_paiement) { t('Choisissez un moyen de paiement', 'e'); return; }
+  if (prix <= 0) prix = 7;
   if (!rnom) { t('Renseignez le nom du destinataire', 'e'); return; }
   if (!rtel || !validatePhone(rtel)) {
     t('Numéro de téléphone du destinataire invalide. Format attendu : 06XXXXXXXX ou +336XXXXXXXX', 'e');
@@ -158,10 +162,11 @@ async function publishColis() {
   try {
     const { data, error } = await db.from('colis').insert({
       titre, description: desc,
-      gare_depart: dep, gare_arrivee: arr,
+      gare_depart: null, gare_arrivee: arr,
       prix,
       date_souhaitee: dated || null,
       destinataire_nom: rnom, destinataire_tel: rtel,
+      moyen_paiement,
       expediteur_id: user.id,
       statut: 'en_attente'
     }).select().single();
@@ -214,6 +219,6 @@ async function publishColis() {
   } catch (e) {
     t('Erreur : ' + e.message, 'e');
   } finally {
-    if (btn) { btn.textContent = '🚀 Publier l\'annonce'; btn.disabled = false; }
+    if (btn) { btn.textContent = '🚀 Publier'; btn.disabled = false; }
   }
 }

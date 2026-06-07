@@ -13,7 +13,7 @@
   --sans: 'Outfit', sans-serif; --serif: 'Instrument Serif', Georgia, serif;
   --r: 14px; --rl: 22px; --rxl: 28px;
   --sh: 0 2px 16px rgba(14,26,16,.07); --shl: 0 8px 40px rgba(14,26,16,.13);
-  --nav: 60px; --bot: 68px;
+  --nav: 60px; --bot: 54px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -113,13 +113,11 @@ nav {
 }
 .bn-row { display: flex; justify-content: space-around; align-items: center; height: 100%; }
 .bni {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  cursor: pointer; padding: 5px 12px; border-radius: 12px; transition: .15s; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; padding: 8px 14px; border-radius: 12px; transition: .15s; position: relative;
 }
 .bni:active { background: var(--g50); }
-.bni-icon { font-size: 1.2rem; line-height: 1; }
-.bni-lbl  { font-size: .56rem; font-weight: 700; color: var(--muted); letter-spacing: .2px; white-space: nowrap; }
-.bni.on .bni-lbl  { color: var(--g500); }
+.bni-icon { font-size: 1.4rem; line-height: 1; }
 .bni.on .bni-icon { filter: drop-shadow(0 0 5px rgba(34,168,87,.45)); }
 .bni-pip  { position: absolute; top: 3px; right: 8px; width: 6px; height: 6px; background: var(--danger); border-radius: 50%; border: 1.5px solid var(--white); display: none; }
 

@@ -27,7 +27,8 @@ async function saveProfil() {
 
   document.getElementById('moi-name').textContent = pn + ' ' + nm;
   document.getElementById('moi-av-txt').textContent = pn[0].toUpperCase();
-  document.getElementById('nav-av').textContent = pn[0].toUpperCase();
+  const navTxtSave = document.getElementById('nav-av-txt');
+  if (navTxtSave) navTxtSave.textContent = pn[0].toUpperCase();
   document.getElementById('dash-h').innerHTML = `Bonjour <em>${escapeHtml(pn)}</em> 👋`;
   if (user) user.prenom = pn;
   t('Profil mis à jour ✅', 's');
@@ -55,15 +56,22 @@ async function previewPhoto(input) {
 
   const reader = new FileReader();
   reader.onload = async function (e) {
+    // Aperçu immédiat — profil
     const img = document.getElementById('moi-av-img');
     const txt = document.getElementById('moi-av-txt');
-    img.src = e.target.result;
-    img.style.display = 'block';
-    txt.style.display = 'none';
+    if (img) { img.src = e.target.result; img.style.display = 'block'; }
+    if (txt) txt.style.display = 'none';
+
+    // Aperçu immédiat — header nav
+    const navImg = document.getElementById('nav-av-img');
+    const navTxt = document.getElementById('nav-av-txt');
+    if (navImg) { navImg.src = e.target.result; navImg.style.display = 'block'; }
+    if (navTxt) navTxt.style.display = 'none';
+
     t('Upload en cours...', '');
 
     try {
-      const ext = file.name.split('.').pop();
+      const ext = file.name.split('.').pop().toLowerCase().replace('jpg','jpeg');
       const path = `${user.id}/profil.${ext}`;
       const { data, error } = await db.storage
         .from('photos-profil')
@@ -72,10 +80,12 @@ async function previewPhoto(input) {
       if (error) { t('Erreur upload : ' + error.message, 'e'); return; }
 
       const { data: urlData } = db.storage.from('photos-profil').getPublicUrl(path);
-      const url = urlData.publicUrl;
+      const url = urlData.publicUrl + '?t=' + Date.now();
 
       await db.from('users').update({ photo_profil_url: url }).eq('id', user.id);
-      img.src = url + '?t=' + Date.now();
+      if (img) img.src = url;
+      if (navImg) navImg.src = url;
+      if (user) user.photo_profil_url = url;
       t('Photo de profil mise à jour ✅', 's');
     } catch (e) {
       t('Erreur : ' + e.message, 'e');

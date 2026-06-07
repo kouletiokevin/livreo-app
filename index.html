@@ -229,6 +229,15 @@
     <div class="ob-slide">
       <span class="ob-em">🎉</span>
       <div class="ob-title">Prêt à commencer ?</div>
+      <div style="background:rgba(247,244,239,.08);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:10px 24px;margin:18px 0 22px;">
+        <div style="display:flex;justify-content:space-around;align-items:center;height:46px;">
+          <div style="font-size:1.5rem;opacity:.4;line-height:1;">🏠</div>
+          <div style="font-size:1.5rem;opacity:.4;line-height:1;">🔍</div>
+          <div style="width:42px;height:42px;background:rgba(46,204,113,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.45rem;line-height:1;">➕</div>
+          <div style="font-size:1.5rem;opacity:.4;line-height:1;">📍</div>
+          <div style="font-size:1.5rem;opacity:.4;line-height:1;">👤</div>
+        </div>
+      </div>
       <div class="ob-cta">
         <button class="ob-btn-main" onclick="finishOnboarding('register')">Créer mon compte gratuit</button>
         <button class="ob-btn-link" onclick="finishOnboarding('login')">J'ai déjà un compte</button>
@@ -246,16 +255,23 @@
 
 <!-- ════ NAV ════ -->
 <nav>
-  <div class="logo" onclick="goNav('home')" style="cursor:pointer;">
-    <img src="assets/kolisgo-logo.svg" height="36" alt="KolisGo" style="display:block;">
+  <div class="logo" onclick="goNav('home')" style="cursor:pointer;display:flex;align-items:center;gap:7px;">
+    <svg width="28" height="28" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;border-radius:8px;">
+      <rect width="120" height="120" rx="22" fill="#0e1a10"/>
+      <text x="60" y="84" text-anchor="middle" font-size="70" font-weight="900" fill="#2ecc71" font-family="Arial Black,Impact,sans-serif">K</text>
+    </svg>
+    <span style="font-family:var(--sans);font-size:1.1rem;font-weight:900;color:var(--ink);letter-spacing:-.5px;">Kolis<span style="color:var(--g500);">Go</span></span>
   </div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
     <div id="nav-login" style="display:flex;gap:6px;">
       <button class="btn s" style="padding:7px 14px;font-size:.76rem;" onclick="goNav('auth')">Connexion</button>
     </div>
-    <div id="nav-av" style="display:none;width:36px;height:36px;border-radius:10px;background:var(--g500);color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;align-items:center;justify-content:center;" onclick="navDash()">K</div>
-    <div id="nav-post" style="display:none;">
-      <button class="btn p" style="padding:7px 14px;font-size:.76rem;" onclick="goPost()">+ Poster</button>
+    <div id="nav-notif" style="display:none;">
+      <button id="notif-btn" onclick="ouvrirNotifications()" style="width:36px;height:36px;border-radius:10px;background:var(--cream2);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.05rem;position:relative;">🔔<div id="notif-badge" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--cream);"></div></button>
+    </div>
+    <div id="nav-av" style="display:none;width:36px;height:36px;border-radius:10px;background:var(--g500);color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;align-items:center;justify-content:center;overflow:hidden;" onclick="navDash()">
+      <img id="nav-av-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
+      <span id="nav-av-txt">K</span>
     </div>
   </div>
 </nav>
@@ -381,10 +397,10 @@
 
     <!-- KPIs -->
     <div class="krow" style="margin-top:12px;">
-      <div class="kpi"><div class="kl">Kolis envoyés</div><div class="kv g" id="kpi-envoyes">0</div></div>
-      <div class="kpi"><div class="kl">Passages</div><div class="kv g" id="kpi-livraisons">0</div></div>
-      <div class="kpi"><div class="kl">Gains totaux</div><div class="kv g" id="kpi-gains">0€</div></div>
-      <div class="kpi"><div class="kl">Ma note</div><div class="kv" id="kpi-note">—</div></div>
+      <div class="kpi" style="cursor:pointer;" onclick="voirKolisEnvoyes()"><div class="kl">Kolis envoyés</div><div class="kv g" id="kpi-envoyes">0</div></div>
+      <div class="kpi" style="cursor:pointer;" onclick="voirPassages()"><div class="kl">Passages</div><div class="kv g" id="kpi-livraisons">0</div></div>
+      <div class="kpi" style="cursor:pointer;" onclick="voirGains()"><div class="kl">Gains totaux</div><div class="kv g" id="kpi-gains">0€</div></div>
+      <div class="kpi" style="cursor:pointer;" onclick="voirAvis()"><div class="kl">Ma note</div><div class="kv" id="kpi-note">—</div></div>
     </div>
 
     <!-- ACTIVITÉ RÉCENTE -->
@@ -402,19 +418,16 @@
 <!-- ── EXPLORER ── -->
 <div class="screen" id="s-explorer">
   <div class="s-lbl">Marketplace</div>
-  <div class="s-h">Kolis à <em>transporter</em></div>
-  <div class="s-sub" style="margin-bottom:10px;">Acceptez un kolis sur votre trajet et gagnez de l'argent.</div>
-  <div class="frow-filter">
-    <button class="ftag on" onclick="flt('all',this)">Tous</button>
-    <button class="ftag" onclick="flt('lyon',this)">→ Lyon</button>
-    <button class="ftag" onclick="flt('bordeaux',this)">→ Bordeaux</button>
-    <button class="ftag" onclick="flt('lille',this)">→ Lille</button>
-    <button class="ftag" onclick="flt('caen',this)">→ Caen</button>
-    <button class="ftag" onclick="flt('rennes',this)">→ Rennes</button>
-    <button class="ftag" onclick="flt('tours',this)">→ Tours</button>
-    <button class="ftag" onclick="flt('nantes',this)">→ Nantes</button>
-    <button class="ftag" onclick="flt('marseille',this)">→ Marseille</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+    <div class="s-h" style="margin-bottom:0;">Kolis à <em>transporter</em></div>
+    <button id="filter-btn" onclick="ouvrirFiltres()" style="position:relative;width:36px;height:36px;border-radius:50%;background:var(--g50);border:1.5px solid var(--g100);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--g600)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+      <span id="filter-badge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;border-radius:50%;background:var(--g500);color:#fff;font-size:.55rem;font-weight:900;align-items:center;justify-content:center;border:2px solid var(--white);padding:0 2px;"></span>
+    </button>
   </div>
+  <div class="s-sub" style="margin-bottom:10px;">Acceptez un kolis sur votre trajet et gagnez de l'argent.</div>
   <div class="cgrid" id="cgrid"></div>
 </div>
 
@@ -427,88 +440,113 @@
     <div class="fcard">
       <div class="fc-lbl">📷 Photos</div>
       <div class="field">
-        <label>Photo publique 📸 <span style="color:var(--g500)">*</span> <span style="font-size:.65rem;color:var(--muted);font-weight:400;">(visible sur la marketplace)</span></label>
-        <div class="upz" onclick="fakeUp('co')"><div class="upz-icon">📸</div><div class="upz-txt">Ajouter la photo publique</div><div class="upz-sub">Vue par tous sur la marketplace</div></div>
-        <div class="prev-row" id="prev-co"></div>
+        <label>Photo publique 📸 <span style="color:var(--g500)">*</span> <span style="font-size:.65rem;color:var(--muted);font-weight:400;">(1 photo · visible sur la marketplace)</span></label>
+        <div class="upz" onclick="fakeUp('em')"><div class="upz-icon">📸</div><div class="upz-txt">Ajouter la photo publique</div><div class="upz-sub">Vue par tous sur la marketplace</div></div>
+        <div class="prev-row" id="prev-em"></div>
         <div class="fhint">📸 Cette photo est visible par tous avant acceptation.</div>
       </div>
       <div class="field">
-        <label>Photo du kolis 🔒 <span style="font-size:.65rem;color:var(--muted);font-weight:400;">(visible après acceptation)</span></label>
-        <div class="upz" onclick="fakeUp('em')"><div class="upz-icon">🔒</div><div class="upz-txt">Photo emballée (privée)</div><div class="upz-sub">Visible seulement par le passeur après acceptation</div></div>
-        <div class="prev-row" id="prev-em"></div>
+        <label>Photos du contenu 🔒 <span style="font-size:.65rem;color:var(--muted);font-weight:400;">(1 à 5 photos · visible après acceptation)</span></label>
+        <div class="upz" onclick="fakeUp('co')"><div class="upz-icon">🔒</div><div class="upz-txt">Photos contenu (privées)</div><div class="upz-sub">Visibles seulement par le passeur après acceptation</div></div>
+        <div class="prev-row" id="prev-co"></div>
       </div>
     </div>
     <div class="fcard">
       <div class="fc-lbl">🚉 Trajet gare à gare</div>
-      <div class="f2">
-        <div class="field"><label>Gare de départ</label>
-          <select id="pf-dep">
-            <option value="">Choisir une gare...</option>
-            <optgroup label="Île-de-France"><option>Paris Gare de Lyon</option><option>Paris Montparnasse</option><option>Paris Nord</option><option>Paris Est</option><option>Paris Saint-Lazare</option><option>Versailles Chantiers</option><option>Massy TGV</option></optgroup>
-            <optgroup label="Nord"><option>Lille-Flandres</option><option>Lille-Europe</option><option>Arras</option><option>Amiens</option><option>Lens</option><option>Douai</option><option>Calais-Ville</option><option>Dunkerque</option><option>Valenciennes</option></optgroup>
-            <optgroup label="Normandie / Calvados"><option>Caen</option><option>Rouen-Rive-Droite</option><option>Le Havre</option><option>Lisieux</option><option>Bayeux</option><option>Cherbourg</option><option>Saint-Lô</option><option>Évreux</option><option>Alençon</option></optgroup>
-            <optgroup label="Bretagne / Pays de Loire"><option>Rennes</option><option>Nantes</option><option>Brest</option><option>Quimper</option><option>Saint-Malo</option><option>Vannes</option><option>Lorient</option><option>Le Mans</option><option>Angers</option><option>Saint-Nazaire</option><option>Laval</option></optgroup>
-            <optgroup label="Centre / Val de Loire"><option>Tours</option><option>Orléans</option><option>Blois</option><option>Bourges</option><option>Chartres</option><option>Vendôme TGV</option></optgroup>
-            <optgroup label="Est"><option>Strasbourg</option><option>Metz</option><option>Nancy</option><option>Reims</option><option>Mulhouse</option><option>Colmar</option><option>Troyes</option><option>Châlons-en-Champagne</option></optgroup>
-            <optgroup label="Bourgogne / Franche-Comté"><option>Dijon</option><option>Besançon Viotte</option><option>Belfort</option><option>Auxerre</option><option>Nevers</option><option>Mâcon</option></optgroup>
-            <optgroup label="Auvergne-Rhône-Alpes"><option>Lyon Part-Dieu</option><option>Lyon Perrache</option><option>Grenoble</option><option>Clermont-Ferrand</option><option>Saint-Étienne</option><option>Chambéry</option><option>Annecy</option><option>Bourg-en-Bresse</option><option>Valence TGV</option></optgroup>
-            <optgroup label="Occitanie"><option>Toulouse Matabiau</option><option>Montpellier Saint-Roch</option><option>Nîmes</option><option>Perpignan</option><option>Carcassonne</option><option>Béziers</option><option>Albi</option><option>Tarbes</option></optgroup>
-            <optgroup label="Nouvelle-Aquitaine"><option>Bordeaux Saint-Jean</option><option>Poitiers</option><option>La Rochelle</option><option>Limoges</option><option>Bayonne</option><option>Pau</option><option>Angoulême</option><option>Périgueux</option><option>Saintes</option></optgroup>
-            <optgroup label="PACA"><option>Marseille Saint-Charles</option><option>Nice</option><option>Toulon</option><option>Avignon TGV</option><option>Aix-en-Provence TGV</option><option>Cannes</option><option>Antibes</option><option>Arles</option></optgroup>
-          </select>
-        </div>
-        <div class="field"><label>Gare d'arrivée</label>
-          <select id="pf-arr">
-            <option value="">Choisir une gare...</option>
-            <optgroup label="Île-de-France"><option>Paris Gare de Lyon</option><option>Paris Montparnasse</option><option>Paris Nord</option><option>Paris Est</option><option>Paris Saint-Lazare</option><option>Versailles Chantiers</option><option>Massy TGV</option></optgroup>
-            <optgroup label="Nord"><option>Lille-Flandres</option><option>Lille-Europe</option><option>Arras</option><option>Amiens</option><option>Lens</option><option>Douai</option><option>Calais-Ville</option><option>Dunkerque</option><option>Valenciennes</option></optgroup>
-            <optgroup label="Normandie / Calvados"><option>Caen</option><option>Rouen-Rive-Droite</option><option>Le Havre</option><option>Lisieux</option><option>Bayeux</option><option>Cherbourg</option><option>Saint-Lô</option><option>Évreux</option><option>Alençon</option></optgroup>
-            <optgroup label="Bretagne / Pays de Loire"><option>Rennes</option><option>Nantes</option><option>Brest</option><option>Quimper</option><option>Saint-Malo</option><option>Vannes</option><option>Lorient</option><option>Le Mans</option><option>Angers</option><option>Saint-Nazaire</option><option>Laval</option></optgroup>
-            <optgroup label="Centre / Val de Loire"><option>Tours</option><option>Orléans</option><option>Blois</option><option>Bourges</option><option>Chartres</option><option>Vendôme TGV</option></optgroup>
-            <optgroup label="Est"><option>Strasbourg</option><option>Metz</option><option>Nancy</option><option>Reims</option><option>Mulhouse</option><option>Colmar</option><option>Troyes</option><option>Châlons-en-Champagne</option></optgroup>
-            <optgroup label="Bourgogne / Franche-Comté"><option>Dijon</option><option>Besançon Viotte</option><option>Belfort</option><option>Auxerre</option><option>Nevers</option><option>Mâcon</option></optgroup>
-            <optgroup label="Auvergne-Rhône-Alpes"><option>Lyon Part-Dieu</option><option>Lyon Perrache</option><option>Grenoble</option><option>Clermont-Ferrand</option><option>Saint-Étienne</option><option>Chambéry</option><option>Annecy</option><option>Bourg-en-Bresse</option><option>Valence TGV</option></optgroup>
-            <optgroup label="Occitanie"><option>Toulouse Matabiau</option><option>Montpellier Saint-Roch</option><option>Nîmes</option><option>Perpignan</option><option>Carcassonne</option><option>Béziers</option><option>Albi</option><option>Tarbes</option></optgroup>
-            <optgroup label="Nouvelle-Aquitaine"><option>Bordeaux Saint-Jean</option><option>Poitiers</option><option>La Rochelle</option><option>Limoges</option><option>Bayonne</option><option>Pau</option><option>Angoulême</option><option>Périgueux</option><option>Saintes</option></optgroup>
-            <optgroup label="PACA"><option>Marseille Saint-Charles</option><option>Nice</option><option>Toulon</option><option>Avignon TGV</option><option>Aix-en-Provence TGV</option><option>Cannes</option><option>Antibes</option><option>Arles</option></optgroup>
-          </select>
+
+      <!-- Carte destination uniquement -->
+      <div class="tj-card">
+        <div class="tj-row" id="arr-wrap">
+          <div class="tj-ico">📍</div>
+          <div class="tj-body">
+            <div class="tj-sub">GARE DE DESTINATION DU COLIS</div>
+            <input type="text" id="pf-arr" class="tj-inp" placeholder="Ville ou gare d'arrivée" autocomplete="off"
+              oninput="gareAC('pf-arr','pf-arr-dd')"
+              onkeydown="gareKey(event,'pf-arr','pf-arr-dd')">
+          </div>
+          <button type="button" class="tj-x" id="pf-arr-x" onclick="clearGare('pf-arr','pf-arr-dd','pf-arr-x')">✕</button>
+          <div id="pf-arr-dd" class="gare-popup"></div>
         </div>
       </div>
-      <div class="field"><label>Qu'est-ce que c'est ? <span style="color:var(--g500)">*</span></label><input type="text" id="pf-title" placeholder="Ex: Chaussures Nike, Livre de cuisine, Fromage sous vide, Vêtements, Téléphone..."></div>
+
+      <!-- Qu'est-ce que c'est -->
+      <div class="field" style="position:relative;margin-top:10px;">
+        <label>Qu'est-ce que c'est ? <span style="color:var(--g500)">*</span></label>
+        <input type="text" id="pf-title" placeholder="Ex : Vêtements, Téléphone, Médicaments…" autocomplete="off" oninput="titreAC(this)">
+        <div id="pf-title-list" class="gare-popup" style="display:none;"></div>
+      </div>
+
       <div class="field"><label>Description (privée, pour le passeur)</label><textarea id="pf-desc" placeholder="Visible uniquement par le passeur..."></textarea></div>
-      <div class="field"><label>Date souhaitée</label><input type="date" id="pf-date"></div>
+
+      <!-- Date souhaitée -->
+      <div class="field"><label>Date souhaitée</label>
+        <div style="position:relative;">
+          <input type="text" id="pf-date" placeholder="jj/mm/aaaa" maxlength="10"
+            autocomplete="off" inputmode="numeric"
+            oninput="dateFormatInput(this)"
+            onblur="dateValidate(this)"
+            style="padding-right:38px;letter-spacing:.5px;">
+          <button type="button" id="pf-date-x" onclick="clearDate()"
+            style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#aaa;border:none;cursor:pointer;color:#fff;font-size:.6rem;line-height:1;padding:0;align-items:center;justify-content:center;">✕</button>
+        </div>
+      </div>
     </div>
+
     <div class="fcard">
       <div class="fc-lbl">📞 Destinataire</div>
-      <div class="f2">
-        <div class="field"><label>Nom</label><input type="text" id="pf-rname" placeholder="Prénom Nom"></div>
-        <div class="field"><label>Téléphone</label><input type="tel" id="pf-rphone" placeholder="06 xx xx xx xx"></div>
+
+      <!-- Nom + suggestions contacts -->
+      <div class="field" style="position:relative;margin-bottom:10px;">
+        <label>Nom du destinataire</label>
+        <input type="text" id="pf-rname" placeholder="Prénom Nom" autocomplete="name"
+          oninput="contactAC(this.value)">
+        <div id="pf-contact-dd" class="gare-popup" style="display:none;max-height:310px;"></div>
       </div>
+
+      <div class="field">
+        <label>Téléphone</label>
+        <input type="tel" id="pf-rphone" placeholder="06 xx xx xx xx" autocomplete="tel">
+      </div>
+
       <div class="fhint">🔒 Ces informations sont strictement confidentielles. Le destinataire recevra automatiquement son code de suivi unique par SMS dès qu'un passeur accepte.</div>
     </div>
-    <div id="prix-slider-wrap" style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:18px;margin-bottom:10px;">
-      <div class="fc-lbl">💰 Prix proposé au passeur</div>
-      <div id="speed-indicator" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;border-radius:var(--r);background:var(--cream);">
-        <div id="speed-icon" style="font-size:1.6rem;">🚶</div>
-        <div>
-          <div id="speed-title" style="font-size:.84rem;font-weight:900;">Moyen</div>
-          <div id="speed-sub" style="font-size:.7rem;color:var(--muted);">Au prix conseillé — bonne visibilité</div>
-        </div>
+    <div style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:18px;margin-bottom:10px;">
+      <div class="fc-lbl">💳 Moyen de paiement</div>
+      <div class="payment-methods">
+        <label class="payment-option">
+          <input type="radio" name="payment" value="visa" hidden>
+          <div class="payment-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="mastercard" hidden>
+          <div class="payment-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="applepay" hidden>
+          <div class="payment-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay">
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="googlepay" hidden>
+          <div class="payment-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="Google Pay">
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="paypal" hidden>
+          <div class="payment-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+          </div>
+        </label>
       </div>
-      <div style="position:relative;margin-bottom:10px;">
-        <input type="number" id="pf-price-input" min="0" step="0.5" value="7"
-          style="width:100%;padding:14px 44px 14px 16px;font-size:2rem;font-weight:900;
-                 text-align:center;letter-spacing:-1px;color:var(--g500);
-                 border:2px solid var(--g200);border-radius:var(--r);
-                 font-family:var(--sans);box-sizing:border-box;outline:none;background:var(--g50);"
-          oninput="onPrixInput(this.value)">
-        <span style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1.4rem;font-weight:900;color:var(--g400);pointer-events:none;">€</span>
-      </div>
-      <div style="background:var(--cream);border-radius:var(--r);padding:10px 12px;font-size:.72rem;color:var(--ink);line-height:1.7;">
-        💡 Prix libre — nous conseillons <strong id="pf-conseille-txt">7€</strong> pour ce format. Plus le prix est attractif, plus vite votre kolis sera accepté.
-      </div>
+      <input type="hidden" id="pf-price-input" value="7">
     </div>
-    <button class="btn p full lg" onclick="publishColis()">🚀 Publier l'annonce</button>
+    <button class="btn p full lg" onclick="publishColis()">🚀 Publier</button>
   </div>
   <div id="poster-suc" style="display:none;">
     <div class="suc-wrap">
@@ -649,20 +687,28 @@
 
   <!-- PROFIL BANNER -->
   <div style="background:linear-gradient(135deg,var(--ink2),var(--ink));border-radius:var(--rl);padding:18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
-    <div style="position:relative;flex-shrink:0;" onclick="changerPhoto()">
-      <div id="moi-av" style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--g300),var(--g500));display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:#fff;border:2px solid rgba(255,255,255,.15);overflow:hidden;cursor:pointer;">
+    <div style="position:relative;flex-shrink:0;">
+      <div id="moi-av" style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--g300),var(--g500));display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:#fff;border:2px solid rgba(255,255,255,.15);overflow:hidden;">
         <img id="moi-av-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
         <span id="moi-av-txt">K</span>
       </div>
-      <div style="position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;background:var(--g400);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;border:2px solid var(--ink);cursor:pointer;">📷</div>
+      <!-- 📷 bas gauche -->
+      <button type="button" onclick="changerPhoto()" style="position:absolute;bottom:-4px;left:-4px;width:22px;height:22px;background:var(--g400);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;border:2px solid var(--ink);cursor:pointer;padding:0;line-height:1;">📷</button>
+      <!-- Badge certification bas droite -->
+      <div id="badge-photo-certif" style="position:absolute;bottom:-5px;right:-5px;pointer-events:none;line-height:0;">
+        <svg viewBox="0 0 24 24" width="22" height="22">
+          <path id="badge-certif-fill" fill="#cccccc" d="M12 1L9.5 3.5 6 3l-1 3.5L2 8l1.5 3.5L2 15l3 1 1 3.5 3.5-1L12 21l2.5-2.5 3.5 1 1-3.5 3-1-1.5-3.5L23 8l-3-1.5L19 3l-3.5.5z"/>
+          <path d="M9 12l2 2 4-4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
     </div>
-    <input type="file" id="photo-input" accept="image/*" style="display:none;" onchange="previewPhoto(this)">
+    <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="previewPhoto(this)">
     <div style="flex:1;">
       <div id="moi-name" style="font-size:1rem;font-weight:900;color:#fff;letter-spacing:-.3px;">Kevin Martin</div>
       <div id="moi-email" style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:1px;">kevin@email.com</div>
       <div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;">
-        <span id="badge-verif" style="background:rgba(34,168,87,.2);border:1px solid rgba(34,168,87,.3);color:var(--g200);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;">✅ Vérifié</span>
-        <span style="background:rgba(34,168,87,.2);border:1px solid rgba(34,168,87,.3);color:var(--g200);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;" id="badge-livr">⭐ 4,9 · 38 passages</span>
+        <span id="badge-certifie" style="display:none;background:rgba(37,99,235,.2);border:1px solid rgba(37,99,235,.4);color:#93c5fd;font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;">🏅 Certifié</span>
+        <span style="background:rgba(34,168,87,.2);border:1px solid rgba(34,168,87,.3);color:var(--g200);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;" id="badge-livr">⭐ — · — passage</span>
         <span id="moi-badge"></span>
       </div>
     </div>
@@ -682,9 +728,6 @@
     <div class="f2">
       <div class="field"><label>Code postal</label><input type="text" id="m-cp" placeholder="75014" maxlength="5"></div>
       <div class="field"><label>Ville</label><input type="text" id="m-vil" placeholder="Paris"></div>
-    </div>
-    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:10px 12px;font-size:.72rem;color:#92400e;margin-bottom:10px;line-height:1.6;">
-      ⚠️ <strong>Modification du nom :</strong> Envoyez un justificatif à <strong>verification@kolisgo.fr</strong>. Votre nom sera mis à jour sous 48h.
     </div>
     <button class="btn p" onclick="saveProfil()" style="margin-top:4px;">Sauvegarder</button>
   </div>
@@ -913,11 +956,11 @@
 <!-- ════ BOTTOM NAV ════ -->
 <div class="bot-nav">
   <div class="bn-row">
-    <div class="bni on" id="bn-home" onclick="goNav('home')"><div class="bni-icon">🏠</div><div class="bni-lbl">Accueil</div></div>
-    <div class="bni" id="bn-explorer" onclick="goNav('explorer')"><div class="bni-icon">🔍</div><div class="bni-lbl">Explorer</div></div>
-    <div class="bni" id="bn-poster" onclick="goPost()"><div class="bni-icon">➕</div><div class="bni-lbl">Poster</div></div>
-    <div class="bni" id="bn-suivi" onclick="goNav('suivi')"><div class="bni-icon">📍</div><div class="bni-lbl">Suivi</div></div>
-    <div class="bni" id="bn-dashboard" onclick="navDash()"><div class="bni-icon">👤</div><div class="bni-lbl">Moi</div></div>
+    <div class="bni on" id="bn-home" onclick="goNav('home')"><div class="bni-icon">🏠</div></div>
+    <div class="bni" id="bn-explorer" onclick="goNav('explorer')"><div class="bni-icon">🔍</div></div>
+    <div class="bni" id="bn-poster" onclick="goPost()"><div class="bni-icon">➕</div></div>
+    <div class="bni" id="bn-suivi" onclick="goNav('suivi')"><div class="bni-icon">📍</div></div>
+    <div class="bni" id="bn-dashboard" onclick="navDash()"><div class="bni-icon">👤</div></div>
   </div>
 </div>
 
@@ -931,6 +974,581 @@
 <script src="/js/profil.js"></script>
 <script src="/js/livreur.js"></script>
 <script src="/js/admin.js"></script>
+
+<!-- ════ UI EXTENSIONS ════ -->
+<style>
+/* ── Carte trajet SNCF style ── */
+.tj-card {
+  background:var(--white); border:2px solid var(--border);
+  border-radius:18px; margin-top:8px; overflow:visible;
+}
+.tj-card:focus-within { border-color:var(--g300); }
+.tj-row {
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px; position:relative;
+}
+.tj-ico { font-size:1.2rem; flex-shrink:0; }
+.tj-body { flex:1; min-width:0; }
+.tj-sub {
+  font-size:.55rem; font-weight:900; letter-spacing:.8px;
+  color:var(--muted); margin-bottom:3px;
+}
+.tj-inp {
+  width:100%; border:none; outline:none;
+  font-family:var(--sans); font-size:.95rem; font-weight:700;
+  background:transparent; color:var(--ink); padding:0;
+}
+.tj-inp::placeholder { font-weight:400; color:var(--muted2); font-size:.86rem; }
+.tj-x {
+  display:none; border:none; background:rgba(0,0,0,.07);
+  border-radius:50%; width:24px; height:24px;
+  cursor:pointer; flex-shrink:0; font-size:.65rem;
+  color:var(--muted); align-items:center; justify-content:center;
+}
+.tj-mid {
+  display:flex; align-items:center; padding:0 16px;
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+}
+.tj-line { flex:1; }
+.tj-swap {
+  width:36px; height:36px; border-radius:50%;
+  border:1.5px solid var(--border); background:var(--white);
+  cursor:pointer; font-size:1.1rem; display:flex;
+  align-items:center; justify-content:center; margin:8px;
+  transition:all .2s; font-family:sans-serif;
+}
+.tj-swap:active { background:var(--g50); border-color:var(--g300); transform:rotate(180deg); }
+
+/* ── Popup autocomplete (gares + titre + contacts) ── */
+.gare-popup {
+  position:absolute; left:0; right:0; top:calc(100% + 4px);
+  background:#fff; border-radius:8px;
+  border:1px solid #e0e0e0;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+  z-index:9999; overflow:hidden;
+  max-height:260px; overflow-y:auto;
+}
+.gp-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 14px; cursor:pointer;
+  border-bottom:1px solid #f0f0f0; transition:background .1s;
+}
+.gp-item:last-child { border-bottom:none; }
+.gp-item:hover, .gp-item.hov { background:#f0f9f4; }
+.gp-item:active { background:#e4f4ec; }
+.gp-ico { font-size:1rem; flex-shrink:0; }
+.gp-texts { display:flex; flex-direction:column; gap:1px; min-width:0; }
+.gp-name { font-size:.88rem; font-weight:700; color:#111; }
+.gp-name mark { background:none; color:#1a7a3c; font-weight:900; }
+.gp-city { font-size:.72rem; color:#888; }
+/* Contact items */
+.ct-item {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 14px; cursor:pointer;
+  border-bottom:1px solid var(--border); transition:background .1s;
+}
+.ct-item:last-child { border-bottom:none; }
+.ct-item:hover { background:#f0f9f4; }
+.ct-item:active { background:#e4f4ec; }
+.ct-av {
+  width:36px; height:36px; border-radius:50%;
+  background:var(--g500); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:900; font-size:.9rem; flex-shrink:0;
+}
+
+/* ── Payment options ── */
+.payment-methods {
+  display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;
+}
+.payment-option { cursor:pointer; }
+.payment-card {
+  display:flex; align-items:center; justify-content:center;
+  width:72px; height:46px;
+  border:2px solid var(--border); border-radius:10px;
+  background:var(--white); padding:6px 8px;
+  transition:border-color .15s, box-shadow .15s;
+}
+.payment-card img { max-width:100%; max-height:100%; object-fit:contain; }
+.payment-option input:checked + .payment-card {
+  border-color:var(--g400); box-shadow:0 0 0 3px rgba(34,139,34,.15);
+}
+
+/* ── Filtre marketplace ── */
+#filter-btn:hover { background:var(--g100); }
+</style>
+
+<script>
+/* ══ GARES FRANCE ══ */
+const GARES_FR = [
+  'Paris Gare de Lyon','Paris Montparnasse','Paris Nord','Paris Est','Paris Saint-Lazare',
+  'Paris Bercy','Versailles Chantiers','Massy TGV','Marne-la-Vallée Chessy','Aéroport CDG 2',
+  'Lyon Part-Dieu','Lyon Perrache',
+  'Marseille Saint-Charles',
+  'Bordeaux Saint-Jean',
+  'Lille Flandres','Lille Europe',
+  'Toulouse Matabiau',
+  'Nice Ville','Nice Saint-Augustin',
+  'Nantes',
+  'Strasbourg',
+  'Rennes',
+  'Montpellier Saint-Roch',
+  'Grenoble',
+  'Toulon',
+  'Angers Saint-Laud',
+  'Le Mans',
+  'Tours',
+  'Dijon Ville',
+  'Reims',
+  'Metz Ville','Metz',
+  'Nancy',
+  'Rouen Rive Droite',
+  'Caen',
+  'Brest',
+  'Clermont-Ferrand',
+  'Limoges Bénédictins',
+  'Poitiers',
+  'La Rochelle Ville',
+  'Perpignan',
+  'Avignon TGV','Avignon Centre',
+  'Aix-en-Provence TGV',
+  'Cannes','Antibes',
+  'Valence TGV',
+  'Chambéry','Annecy',
+  'Besançon Franche-Comté TGV',
+  'Mulhouse Ville','Colmar',
+  'Amiens',
+  'Calais Ville',
+  'Dunkerque','Arras','Lens','Douai','Valenciennes',
+  'Pau','Bayonne','Biarritz','Tarbes',
+  'Agen','Périgueux','Angoulême',
+  'Niort','La Roche-sur-Yon',
+  'Lorient','Vannes','Saint-Brieuc','Quimper',
+  'Cherbourg','Saint-Malo',
+  'Laval',
+  'Le Havre','Évreux','Chartres','Orléans','Blois',
+  'Auxerre','Troyes','Châlons-en-Champagne',
+  'Saint-Étienne Châteaucreux',
+  'Bourg-en-Bresse','Mâcon Loché TGV','Chalon-sur-Saône',
+  'Belfort-Montbéliard TGV',
+  'Épinal','Thionville','Forbach',
+];
+
+const SUGGESTIONS_TITRE = [
+  'Vêtements','Chaussures','Livres','Documents administratifs','Médicaments',
+  'Électronique','Téléphone','Ordinateur','Tablette','Casque audio',
+  'Jouets','Accessoires','Bijoux','Sac','Valise',
+  'Nourriture','Bouteilles','Plantes','Matériel de sport','Vélo (démontable)',
+  'Instrument de musique','Matériel scolaire','Fournitures de bureau',
+  'Outillage','Pièces auto','Cosmétiques','Parfum',
+  'Literie','Décoration','Cadeau surprise','Autre',
+];
+
+/* ── Normalise les accents pour la recherche ── */
+function _norm(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+
+/* ── Extrait ville / suffixe gare ── */
+function _gareParts(g) {
+  const w = g.split(' ');
+  if (w.length === 1) return { name: g, city: '' };
+  const cityWords = ['Le','La','Les'].includes(w[0]) ? 2 : 1;
+  if (w.length <= cityWords) return { name: g, city: '' };
+  return { name: g, city: w.slice(0, cityWords).join(' ') };
+}
+
+/* ── Autocomplete gares ── */
+let _gIdx = {};
+
+function gareAC(inpId, ddId) {
+  const inp = document.getElementById(inpId);
+  const dd  = document.getElementById(ddId);
+  const xBtn = document.getElementById(inpId + '-x');
+  const q = inp.value.trim();
+  if (xBtn) xBtn.style.display = q ? 'flex' : 'none';
+  if (!q || q.length < 2) { dd.style.display = 'none'; return; }
+
+  const nq = _norm(q);
+  const esc = nq.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const matches = GARES_FR.filter(g => _norm(g).includes(nq)).slice(0, 8);
+
+  if (!matches.length) { dd.style.display = 'none'; return; }
+
+  _gIdx[ddId] = -1;
+  dd.innerHTML = matches.map((g) => {
+    const { city } = _gareParts(g);
+    /* Highlight : cherche la correspondance normalisée dans le nom original */
+    const nq = _norm(q);
+    const no = _norm(g);
+    const pos = no.indexOf(nq);
+    let hl;
+    if (pos !== -1) {
+      hl = escapeHtml(g.slice(0, pos))
+         + '<mark>' + escapeHtml(g.slice(pos, pos + q.length)) + '</mark>'
+         + escapeHtml(g.slice(pos + q.length));
+    } else {
+      hl = `<strong>${escapeHtml(g)}</strong>`;
+    }
+    const cityHtml = city ? `<span class="gp-city">${escapeHtml(city)}</span>` : '';
+    return `<div class="gp-item" data-val="${g.replace(/"/g,'&quot;')}" data-ddi="${ddId}" data-inp="${inpId}" onmousedown="selGare(event,this)">
+      <span class="gp-ico">🚉</span>
+      <span class="gp-texts"><span class="gp-name">${hl}</span>${cityHtml}</span>
+    </div>`;
+  }).join('');
+  dd.style.display = 'block';
+}
+
+function selGare(e, el) {
+  e.preventDefault();
+  const inpId = el.dataset.inp;
+  const ddId  = el.dataset.ddi;
+  const val   = el.dataset.val;
+  document.getElementById(inpId).value = val;
+  document.getElementById(ddId).style.display = 'none';
+  const xBtn = document.getElementById(inpId + '-x');
+  if (xBtn) xBtn.style.display = 'flex';
+}
+
+function gareKey(e, inpId, ddId) {
+  const dd = document.getElementById(ddId);
+  if (dd.style.display === 'none') return;
+  const items = dd.querySelectorAll('.gp-item');
+  if (!items.length) return;
+  if (!_gIdx[ddId]) _gIdx[ddId] = -1;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _gIdx[ddId] = Math.min(_gIdx[ddId] + 1, items.length - 1);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _gIdx[ddId] = Math.max(_gIdx[ddId] - 1, -1);
+  } else if (e.key === 'Enter' && _gIdx[ddId] >= 0) {
+    e.preventDefault();
+    const it = items[_gIdx[ddId]];
+    document.getElementById(inpId).value = it.dataset.val;
+    dd.style.display = 'none';
+    const xBtn = document.getElementById(inpId + '-x');
+    if (xBtn) xBtn.style.display = 'flex';
+    return;
+  } else if (e.key === 'Escape') {
+    dd.style.display = 'none'; return;
+  }
+  items.forEach((it,i) => it.classList.toggle('hov', i === _gIdx[ddId]));
+  if (_gIdx[ddId] >= 0) items[_gIdx[ddId]].scrollIntoView({block:'nearest'});
+}
+
+function clearGare(inpId, ddId, xId) {
+  document.getElementById(inpId).value = '';
+  document.getElementById(ddId).style.display = 'none';
+  document.getElementById(xId).style.display = 'none';
+  document.getElementById(inpId).focus();
+}
+
+function swapGares() {
+  const dep = document.getElementById('pf-dep');
+  const arr = document.getElementById('pf-arr');
+  const tmp = dep.value; dep.value = arr.value; arr.value = tmp;
+  const depX = document.getElementById('pf-dep-x');
+  const arrX = document.getElementById('pf-arr-x');
+  if (depX) depX.style.display = dep.value ? 'flex' : 'none';
+  if (arrX) arrX.style.display = arr.value ? 'flex' : 'none';
+}
+
+/* ── Autocomplete titre ── */
+function titreAC(inp) {
+  const dd = document.getElementById('pf-title-list');
+  const q  = inp.value.trim();
+  if (!q) { dd.style.display = 'none'; return; }
+  const nq = _norm(q);
+  const matches = SUGGESTIONS_TITRE.filter(s => _norm(s).includes(nq)).slice(0, 8);
+  if (!matches.length) { dd.style.display = 'none'; return; }
+  dd.innerHTML = matches.map(s => {
+    const pos = _norm(s).indexOf(nq);
+    const hl = pos !== -1
+      ? escapeHtml(s.slice(0, pos)) + '<mark>' + escapeHtml(s.slice(pos, pos + q.length)) + '</mark>' + escapeHtml(s.slice(pos + q.length))
+      : `<strong>${escapeHtml(s)}</strong>`;
+    return `<div class="gp-item" onmousedown="selTitre(event,'${s.replace(/'/g,"&#39;")}')">
+      <span class="gp-texts"><span class="gp-name">${hl}</span></span></div>`;
+  }).join('');
+  dd.style.display = 'block';
+}
+function selTitre(e, val) {
+  e.preventDefault();
+  document.getElementById('pf-title').value = val;
+  document.getElementById('pf-title-list').style.display = 'none';
+}
+
+/* ── Champ date jj/mm/aaaa ── */
+function dateFormatInput(inp) {
+  const cur = inp.selectionStart;
+  let v = inp.value.replace(/\D/g, '').slice(0, 8);
+  if (v.length > 4) v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+  else if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+  inp.value = v;
+  const x = document.getElementById('pf-date-x');
+  if (x) x.style.display = v.length ? 'flex' : 'none';
+}
+
+function clearDate() {
+  const inp = document.getElementById('pf-date');
+  const x   = document.getElementById('pf-date-x');
+  if (inp) inp.value = '';
+  if (x)  x.style.display = 'none';
+  if (inp) inp.focus();
+}
+
+function dateValidate(inp) {
+  const v = inp.value.trim();
+  if (!v || v.length < 10) return;
+  const parts = v.split('/');
+  if (parts.length !== 3) { clearDate(); return; }
+  const [d, m, y] = parts.map(Number);
+  const date = new Date(y, m - 1, d);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  if (
+    isNaN(date.getTime()) ||
+    date.getDate() !== d || date.getMonth() !== m - 1 || date.getFullYear() !== y ||
+    date < today
+  ) {
+    inp.value = '';
+    const x = document.getElementById('pf-date-x');
+    if (x) x.style.display = 'none';
+    t('Date invalide ou passée — format jj/mm/aaaa', 'e');
+  }
+}
+
+/* ── Fermer tous les popups au clic ailleurs ── */
+document.addEventListener('mousedown', e => {
+  if (!e.target.closest('.tj-row') &&
+      !e.target.closest('.field[style*="position:relative"]') &&
+      !e.target.closest('.gare-popup')) {
+    document.querySelectorAll('.gare-popup').forEach(d => d.style.display = 'none');
+  }
+});
+
+/* ══ CONTACTS ══ */
+let _contacts     = null;  // null = pas encore tenté, [] = tenté mais vide/refusé
+let _ctLoading    = false;
+let _contactMatches = [];
+
+async function contactAC(q) {
+  const dd = document.getElementById('pf-contact-dd');
+  if (!dd) return;
+
+  const term = q.trim();
+  if (!term) { dd.style.display = 'none'; return; }
+
+  /* Premier caractère tapé : tenter de charger les contacts si API dispo */
+  if ('contacts' in navigator && navigator.contacts && _contacts === null && !_ctLoading) {
+    _ctLoading = true;
+    try {
+      const res = await navigator.contacts.select(['name', 'tel'], { multiple: true });
+      _contacts = (res || []).filter(c => c.name?.[0] && c.tel?.[0]);
+    } catch(e) {
+      _contacts = []; /* refus utilisateur ou erreur → pas de suggestions */
+    }
+    _ctLoading = false;
+    /* Après chargement, relancer le filtrage avec la valeur courante */
+    const cur = document.getElementById('pf-rname')?.value || '';
+    if (cur) contactAC(cur);
+    return;
+  }
+
+  /* API indisponible ou contacts vides → champs normaux, pas de dropdown */
+  if (!_contacts || !_contacts.length) { dd.style.display = 'none'; return; }
+
+  /* Filtrage : nom contient la saisie (insensible accents) */
+  _contactMatches = _contacts
+    .filter(c => _norm(c.name[0]).includes(_norm(term)))
+    .slice(0, 5);
+
+  if (!_contactMatches.length) { dd.style.display = 'none'; return; }
+
+  dd.innerHTML = _contactMatches.map((c, i) => {
+    const av  = (c.name[0][0] || '?').toUpperCase();
+    const nom = escapeHtml(c.name[0]);
+    const tel = escapeHtml(c.tel[0].replace(/\s+/g, ''));
+    return `<div class="ct-item" onmousedown="selContact(event,${i})">
+      <div class="ct-av">${av}</div>
+      <div style="min-width:0;">
+        <div style="font-weight:700;font-size:.88rem;color:#111;">${nom}</div>
+        <div style="font-size:.72rem;color:#888;margin-top:1px;">${tel}</div>
+      </div>
+    </div>`;
+  }).join('');
+  dd.style.display = 'block';
+}
+
+function selContact(e, idx) {
+  e.preventDefault();
+  const c = _contactMatches[idx];
+  if (!c) return;
+  document.getElementById('pf-rname').value  = c.name[0];
+  document.getElementById('pf-rphone').value = c.tel[0].replace(/\s+/g, '');
+  document.getElementById('pf-contact-dd').style.display = 'none';
+}
+
+/* ── Filtre marketplace ── */
+const FILTER_VILLES = [
+  'Paris','Lyon','Marseille','Bordeaux','Lille','Nantes',
+  'Toulouse','Nice','Rennes','Strasbourg','Montpellier','Grenoble',
+  'Tours','Caen','Dijon','Reims','Rouen','Brest','Clermont-Ferrand','Le Mans',
+];
+
+function _fltId(v) { return 'flt-cb-' + v.toLowerCase().replace(/[\s-]/g,'_'); }
+
+function ouvrirFiltres() {
+  const rows = FILTER_VILLES.map(v => {
+    const id  = _fltId(v);
+    const chk = (typeof currentFilters !== 'undefined' && currentFilters.includes(v)) ? 'checked' : '';
+    const bg  = chk ? 'background:var(--g50);border-color:var(--g300);' : '';
+    return `<label for="${id}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;
+        border-radius:10px;cursor:pointer;border:1.5px solid var(--border);
+        transition:border-color .15s,background .15s;${bg}">
+      <input type="checkbox" id="${id}" value="${v}" ${chk}
+        style="width:18px;height:18px;accent-color:var(--g500);cursor:pointer;flex-shrink:0;"
+        onchange="_fltCbChange(this)">
+      <span style="font-size:.86rem;font-weight:700;">${v}</span>
+    </label>`;
+  }).join('');
+
+  openSheet(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div style="font-size:1rem;font-weight:900;">Filtrer les annonces</div>
+      <button onclick="closeSheet()" style="width:28px;height:28px;border-radius:50%;border:none;
+        background:#f0f0f0;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div style="font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.8px;
+      color:var(--muted);margin-bottom:10px;">Ville de destination</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px;">${rows}</div>
+    <button onclick="appliquerFiltres()" class="btn p full" style="margin-bottom:10px;">APPLIQUER</button>
+    <button onclick="reinitFiltres()" style="width:100%;padding:10px;background:none;border:none;
+      font-family:var(--sans);font-size:.82rem;color:var(--muted);cursor:pointer;font-weight:600;">
+      Réinitialiser</button>
+  `);
+}
+
+function _fltCbChange(cb) {
+  const lbl = cb.closest('label');
+  if (!lbl) return;
+  lbl.style.background    = cb.checked ? 'var(--g50)'  : '';
+  lbl.style.borderColor   = cb.checked ? 'var(--g300)' : '';
+}
+
+function appliquerFiltres() {
+  currentFilters = FILTER_VILLES.filter(v => {
+    const cb = document.getElementById(_fltId(v));
+    return cb && cb.checked;
+  });
+  _updateFilterBtn();
+  closeSheet();
+  loadCards();
+}
+
+function reinitFiltres() {
+  currentFilters = [];
+  FILTER_VILLES.forEach(v => {
+    const cb = document.getElementById(_fltId(v));
+    if (cb) { cb.checked = false; _fltCbChange(cb); }
+  });
+  _updateFilterBtn();
+  closeSheet();
+  loadCards();
+}
+
+function _updateFilterBtn() {
+  const badge = document.getElementById('filter-badge');
+  if (!badge) return;
+  badge.textContent    = currentFilters.length;
+  badge.style.display  = currentFilters.length > 0 ? 'flex' : 'none';
+}
+
+/* ── Notifications ── */
+const _NOTIF_ICO = { sms:'📱', push:'🔔', email:'✉️', colis:'📦', paiement:'💰', system:'⚙️' };
+
+function _notifHdr() {
+  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+    <div style="font-size:1rem;font-weight:900;">🔔 Notifications</div>
+    <button onclick="closeSheet()" style="width:28px;height:28px;border-radius:50%;border:none;background:#f0f0f0;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;">✕</button>
+  </div>`;
+}
+
+async function ouvrirNotifications() {
+  if (!user) return;
+
+  openSheet(_notifHdr() + `<div style="text-align:center;padding:28px;color:var(--muted);font-size:.82rem;">Chargement…</div>`);
+
+  try {
+    const { data, error } = await db.from('notifications')
+      .select('id, type, titre, message, lu, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(30);
+
+    /* Marquer toutes comme lues */
+    if (data?.some(n => !n.lu)) {
+      db.from('notifications').update({ lu: true })
+        .eq('user_id', user.id).eq('lu', false).then(() => {
+          const b = document.getElementById('notif-badge');
+          if (b) b.style.display = 'none';
+        });
+    }
+
+    let body;
+    if (error || !data?.length) {
+      body = `<div style="text-align:center;padding:32px 16px;">
+        <div style="font-size:2.4rem;margin-bottom:12px;">🔔</div>
+        <div style="font-size:.84rem;color:var(--muted);line-height:1.6;">Aucune notification pour le moment.<br>Vous serez alerté dès qu'un passeur accepte votre kolis.</div>
+      </div>`;
+    } else {
+      body = data.map(n => {
+        const ico = _NOTIF_ICO[n.type] || '📬';
+        const dt  = new Date(n.created_at).toLocaleDateString('fr-FR',
+          { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        const unread = !n.lu
+          ? 'background:var(--g50);margin:0 -22px;padding:12px 22px;'
+          : 'padding:12px 0;';
+        return `<div style="display:flex;gap:12px;border-bottom:1px solid var(--border);${unread}">
+          <div style="font-size:1.35rem;flex-shrink:0;margin-top:3px;">${ico}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:2px;">${escapeHtml(n.titre || 'Notification')}</div>
+            ${n.message ? `<div style="font-size:.76rem;color:var(--muted);line-height:1.5;margin-bottom:3px;">${escapeHtml(n.message)}</div>` : ''}
+            <div style="font-size:.68rem;color:var(--muted2);">${dt}</div>
+          </div>
+          ${!n.lu ? '<div style="width:7px;height:7px;border-radius:50%;background:var(--g500);flex-shrink:0;margin-top:6px;"></div>' : ''}
+        </div>`;
+      }).join('');
+    }
+
+    openSheet(_notifHdr() + body);
+  } catch(e) {
+    openSheet(_notifHdr() + `<div style="text-align:center;padding:28px;color:var(--muted);font-size:.82rem;">Impossible de charger les notifications</div>`);
+  }
+}
+
+async function chargerNotifsCount() {
+  if (!user) return;
+  try {
+    const { count } = await db.from('notifications')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('lu', false);
+    const badge = document.getElementById('notif-badge');
+    if (badge) badge.style.display = (count > 0) ? 'block' : 'none';
+  } catch(e) { /* silencieux */ }
+}
+
+/* Realtime : badge mis à jour dès qu'une nouvelle notif arrive */
+function initNotifRealtime() {
+  if (!user) return;
+  db.channel('notif_' + user.id)
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'notifications',
+      filter: `user_id=eq.${user.id}`
+    }, () => chargerNotifsCount())
+    .subscribe();
+}
+</script>
 
 <!-- ════ BANNIÈRE COOKIES ════ -->
 <div id="cookie-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px;z-index:4000;box-shadow:0 4px 20px rgba(0,0,0,.3);">

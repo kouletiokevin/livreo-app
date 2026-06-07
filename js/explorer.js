@@ -3,13 +3,14 @@
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
-// ── Pagination & filtre actif ─────────────
-let currentPage = 0;
-const PAGE_SIZE = 20;
-let currentFilter = 'all';
+// ── Pagination & filtres actifs ──────────
+let currentPage    = 0;
+const PAGE_SIZE    = 20;
+let currentFilter  = 'all';   // conservé pour compatibilité
+let currentFilters = [];       // tableau de villes sélectionnées ([] = toutes)
 
 // ── Chargement des colis ─────────────────
-async function loadCards(dest = 'all', reset = true) {
+async function loadCards(reset = true) {
   if (reset) currentPage = 0;
 
   const g = document.getElementById('cgrid');
@@ -25,11 +26,15 @@ async function loadCards(dest = 'all', reset = true) {
 
   try {
     let query = db.from('colis_public')
-      .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge)')
+      .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge,photo_profil_url)')
       .order('created_at', { ascending: false })
       .range(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE - 1);
 
-    if (dest !== 'all') query = query.ilike('gare_arrivee', '%' + dest + '%');
+    if (currentFilters.length === 1) {
+      query = query.ilike('gare_arrivee', '%' + currentFilters[0] + '%');
+    } else if (currentFilters.length > 1) {
+      query = query.or(currentFilters.map(v => `gare_arrivee.ilike.%${v}%`).join(','));
+    }
 
     const { data, error } = await query;
 
@@ -66,7 +71,8 @@ async function loadCards(dest = 'all', reset = true) {
       const prenom   = escapeHtml(col.users?.prenom || 'Utilisateur');
       const note     = col.users?.note_moyenne;
       const badge    = col.users?.badge;
-      const dep      = escapeHtml((col.gare_depart  || '').split(' ')[0]);
+      const userPhoto = col.users?.photo_profil_url ? escapeHtml(col.users.photo_profil_url) : null;
+      const dep      = col.gare_depart ? escapeHtml(col.gare_depart.split(' ')[0]) : '?';
       const arr      = escapeHtml((col.gare_arrivee || '').split(' ')[0]);
       const dt       = col.date_souhaitee
         ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
@@ -95,7 +101,9 @@ async function loadCards(dest = 'all', reset = true) {
         + '<div class="cc-price">' + prix.toFixed(2).replace('.', ',') + '€ <span>pour le passeur</span></div>'
         + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">'
         + '<div style="display:flex;align-items:center;gap:4px;">'
-        + '<div class="cav">' + prenom[0].toUpperCase() + '</div>'
+        + (userPhoto
+          ? '<div class="cav" style="overflow:hidden;padding:0;"><img src="' + userPhoto + '" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></div>'
+          : '<div class="cav">' + prenom[0].toUpperCase() + '</div>')
         + '<div class="pname">' + prenom + (note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : '') + '</div>'
         + '</div>'
         + (badge && badge !== 'aucun' && typeof badgeHTML === 'function' ? badgeHTML(badge) : '')
@@ -105,10 +113,9 @@ async function loadCards(dest = 'all', reset = true) {
 
     // Bouton "Voir plus" si la page est pleine
     if (data.length === PAGE_SIZE) {
-      const destSafe = dest.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
       g.insertAdjacentHTML('afterend',
         '<div id="load-more-wrap" style="text-align:center;padding:16px 0 24px;">'
-        + '<button id="load-more-btn" onclick="loadMore(\'' + destSafe + '\')" class="btn s" style="padding:10px 28px;">Voir plus de kolis</button>'
+        + '<button id="load-more-btn" onclick="loadMore()" class="btn s" style="padding:10px 28px;">Voir plus de kolis</button>'
         + '</div>'
       );
     }
@@ -126,17 +133,17 @@ async function loadCards(dest = 'all', reset = true) {
 }
 
 // ── Page suivante ─────────────────────────
-async function loadMore(dest) {
+async function loadMore() {
   currentPage++;
-  await loadCards(dest, false);
+  await loadCards(false);
 }
 
-// ── Filtre destination ───────────────────
+// ── Filtre legacy (conservé pour compatibilité) ─
 async function flt(dest, el) {
-  document.querySelectorAll('.ftag').forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
-  currentFilter = dest;
-  await loadCards(dest);
+  currentFilters = dest === 'all' ? [] : [dest];
+  currentFilter  = dest;
+  if (typeof _updateFilterBtn === 'function') _updateFilterBtn();
+  await loadCards();
 }
 
 // ── Détail colis ─────────────────────────
@@ -144,7 +151,7 @@ async function openDetail(id) {
   let col = null;
   try {
     const { data, error } = await db.from('colis_public')
-      .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge)')
+      .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge,photo_profil_url)')
       .eq('code_lvr', id)
       .single();
     if (!error && data) col = data;
@@ -162,7 +169,7 @@ async function openDetail(id) {
   const fmt        = escapeHtml(col.format || 'Colis');
   const poids      = escapeHtml(col.poids || '—');
   const titre      = escapeHtml(col.titre || 'Kolis');
-  const dep        = escapeHtml(col.gare_depart || '');
+  const dep        = col.gare_depart ? escapeHtml(col.gare_depart) : 'À définir';
   const arr        = escapeHtml(col.gare_arrivee || '');
   const prix       = parseFloat(col.prix) || 0;
   const dt         = col.date_souhaitee
@@ -218,7 +225,7 @@ function initRealtimeExplorer() {
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'colis' },
-      () => { loadCards(currentFilter, true); }
+      () => { loadCards(true); }
     )
     .subscribe();
 }
@@ -229,26 +236,129 @@ if (document.readyState === 'loading') {
   initRealtimeExplorer();
 }
 
-// ── Accepter un kolis ────────────────────
-async function accepterC(id) {
+// ── Accepter un kolis — formulaire billet ─
+let _accBilletFile = null;
+
+function accepterC(id) {
   if (!user) { t('Connectez-vous pour accepter', 'e'); return; }
-  closeSheet();
+  const today = new Date().toISOString().split('T')[0];
+  openSheet(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div style="font-size:1rem;font-weight:900;letter-spacing:-.3px;">🚆 Confirmer le passage</div>
+      <button onclick="closeSheet()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);padding:4px 8px;">✕</button>
+    </div>
+
+    <div style="font-size:.76rem;color:var(--muted);margin-bottom:18px;line-height:1.5;background:var(--cream);padding:10px 12px;border-radius:var(--r);">
+      Renseignez votre gare de départ et uploadez votre billet SNCF/Eurostar pour confirmer ce passage.
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div style="font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Votre gare de départ <span style="color:var(--danger)">*</span></div>
+      <div class="tj-card" style="box-shadow:none;margin:0;">
+        <div class="tj-row">
+          <div class="tj-ico">🚉</div>
+          <div class="tj-body">
+            <div class="tj-sub">GARE DE DÉPART</div>
+            <input type="text" id="acc-dep" class="tj-inp" placeholder="Ville ou gare" autocomplete="off"
+              oninput="gareAC('acc-dep','acc-dep-dd');document.getElementById('err-acc-dep').style.display='none';"
+              onkeydown="gareKey(event,'acc-dep','acc-dep-dd')">
+          </div>
+          <button type="button" class="tj-x" id="acc-dep-x" onclick="clearGare('acc-dep','acc-dep-dd','acc-dep-x')" style="display:none;">✕</button>
+          <div id="acc-dep-dd" class="gare-popup"></div>
+        </div>
+      </div>
+      <div id="err-acc-dep" style="display:none;font-size:.72rem;color:var(--danger);margin-top:4px;font-weight:700;">Ce champ est obligatoire</div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div style="font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Date de départ <span style="color:var(--danger)">*</span></div>
+      <input type="date" id="acc-date" min="${today}"
+        onchange="document.getElementById('err-acc-date').style.display='none';"
+        style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:.88rem;font-weight:600;color:var(--ink);background:#fff;box-sizing:border-box;">
+      <div id="err-acc-date" style="display:none;font-size:.72rem;color:var(--danger);margin-top:4px;font-weight:700;">Ce champ est obligatoire</div>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <div style="font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Billet de train <span style="color:var(--danger)">*</span></div>
+      <div id="acc-billet-zone" onclick="document.getElementById('acc-billet-input').click()"
+        style="border:2px dashed var(--border);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;background:var(--cream);transition:border-color .15s;">
+        <div style="font-size:1.6rem;margin-bottom:4px;">📄</div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--ink);">Appuyez pour uploader votre billet</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:3px;">PDF uniquement · Max 10 MB</div>
+      </div>
+      <input type="file" id="acc-billet-input" accept="application/pdf" style="display:none;" onchange="previewBillet(this)">
+      <div id="acc-billet-ok" style="display:none;background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:10px 14px;margin-top:6px;font-size:.8rem;font-weight:700;color:var(--g600);">
+        📄 <span id="acc-billet-name">Billet prêt à l'envoi</span> ✓
+      </div>
+      <div id="err-acc-billet" style="display:none;font-size:.72rem;color:var(--danger);margin-top:4px;font-weight:700;">Ce champ est obligatoire</div>
+    </div>
+
+    <button id="acc-confirm-btn" onclick="confirmerPassage(${JSON.stringify(id)})"
+      class="btn p full" style="font-size:.88rem;font-weight:900;letter-spacing:.4px;">
+      CONFIRMER LE PASSAGE →
+    </button>
+  `);
+}
+
+function previewBillet(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.type !== 'application/pdf') { t('PDF uniquement accepté', 'e'); input.value = ''; return; }
+  if (file.size > 10 * 1024 * 1024) { t('Fichier trop lourd (max 10 MB)', 'e'); input.value = ''; return; }
+  _accBilletFile = file;
+  document.getElementById('acc-billet-zone').style.display = 'none';
+  document.getElementById('acc-billet-ok').style.display = 'block';
+  const nameEl = document.getElementById('acc-billet-name');
+  if (nameEl) nameEl.textContent = file.name.length > 40 ? file.name.substring(0, 37) + '...' : file.name;
+  document.getElementById('err-acc-billet').style.display = 'none';
+}
+
+async function confirmerPassage(colisId) {
+  const dep  = document.getElementById('acc-dep')?.value.trim();
+  const date = document.getElementById('acc-date')?.value;
+  let valid  = true;
+
+  if (!dep)            { document.getElementById('err-acc-dep').style.display    = 'block'; valid = false; }
+  if (!date)           { document.getElementById('err-acc-date').style.display   = 'block'; valid = false; }
+  if (!_accBilletFile) { document.getElementById('err-acc-billet').style.display = 'block'; valid = false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('acc-confirm-btn');
+  if (btn) { btn.textContent = 'Confirmation en cours...'; btn.disabled = true; }
+
   try {
+    // 1. Upload PDF dans le bucket privé "billets"
+    const path = `${user.id}/${colisId}/${Date.now()}.pdf`;
+    const { error: uploadErr } = await db.storage
+      .from('billets')
+      .upload(path, _accBilletFile, { contentType: 'application/pdf', upsert: false });
+    if (uploadErr) throw new Error('Upload billet : ' + uploadErr.message);
+
+    // 2. Appel edge function pour accepter le colis
     const { data: { session } } = await db.auth.getSession();
-    if (!session) { t('Session expirée, reconnectez-vous', 'e'); return; }
+    if (!session) throw new Error('Session expirée, reconnectez-vous');
     const res = await fetchWithTimeout(`${SUPA_URL}/functions/v1/accepter-colis`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
-      body: JSON.stringify({ code_lvr: id, livreur_id: user.id })
+      body: JSON.stringify({ code_lvr: colisId, livreur_id: user.id })
     }, 15000);
-    const data = await res.json();
-    if (data.success) {
-      t(`Colis ${id} accepté ! SMS envoyé au destinataire ✅`, 's');
-      setTimeout(() => goNav('dashboard'), 800);
-    } else {
-      t('Erreur : ' + (data.error || 'Réessayez'), 'e');
-    }
+    const result = await res.json();
+    if (!result.success) throw new Error(result.error || 'Réessayez dans quelques instants');
+
+    // 3. Enregistrer gare_depart + date + chemin billet sur le colis
+    await db.from('colis').update({
+      gare_depart:         dep,
+      date_depart_passeur: date,
+      billet_url:          path,
+    }).eq('code_lvr', colisId);
+
+    _accBilletFile = null;
+    closeSheet();
+    t('Passage confirmé ✅ Billet envoyé !', 's');
+    setTimeout(() => goNav('dashboard'), 800);
+
   } catch (e) {
-    t('Erreur réseau. Réessayez dans quelques secondes.', 'e');
+    t('Erreur : ' + e.message, 'e');
+    if (btn) { btn.textContent = 'CONFIRMER LE PASSAGE →'; btn.disabled = false; }
   }
 }
