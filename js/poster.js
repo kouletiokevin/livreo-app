@@ -184,11 +184,15 @@ async function publishColis() {
     }
 
     const ref = data.code_lvr;
+    const colisId = data.id;
     document.getElementById('suc-ref').textContent = ref;
     document.getElementById('poster-form').style.display = 'none';
     document.getElementById('poster-suc').style.display = 'block';
     document.getElementById('content').scrollTop = 0;
     t(`Kolis publié ! Code : ${ref} 🚀`, 's');
+
+    // Proposer le boost de visibilité après publication
+    setTimeout(() => afficherModalBoost(colisId, ref), 1200);
 
     // Photo emballage (champ em) → photo_emballee_url — visible sur la marketplace
     if (window._photoEmballee) {

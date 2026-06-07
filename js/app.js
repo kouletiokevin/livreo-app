@@ -238,9 +238,16 @@ window.addEventListener('load', () => {
   }
 });
 
-// ── Cookies RGPD ─────────────────────────
+// ── Cookies RGPD (CNIL conforme) ─────────────────────────
 function acceptCookies() {
   localStorage.setItem('cookie_consent', '1');
+  const b = document.getElementById('cookie-banner');
+  if (b) b.style.display = 'none';
+}
+function refuserCookies() {
+  // Les cookies essentiels (session auth) restent nécessaires au fonctionnement.
+  // "Refuser" = pas de cookies non-essentiels. KolisGo n'en utilise pas.
+  localStorage.setItem('cookie_consent', '0');
   const b = document.getElementById('cookie-banner');
   if (b) b.style.display = 'none';
 }

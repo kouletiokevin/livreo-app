@@ -27,6 +27,8 @@ async function loadCards(reset = true) {
   try {
     let query = db.from('colis_public')
       .select('*, users!colis_expediteur_id_fkey(prenom,note_moyenne,badge,photo_profil_url)')
+      // Boost d'abord : is_boosted DESC, puis date DESC
+      .order('is_boosted', { ascending: false })
       .order('created_at', { ascending: false })
       .range(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE - 1);
 
@@ -69,9 +71,11 @@ async function loadCards(reset = true) {
       const fmt      = escapeHtml(col.format || 'Colis');
       const em       = emojis[(col.format || '').split(' ')[0]] || '📦';
       const prenom   = escapeHtml(col.users?.prenom || 'Utilisateur');
+      const prenomInit = (prenom && prenom.length > 0) ? prenom[0].toUpperCase() : '?';
       const note     = col.users?.note_moyenne;
       const badge    = col.users?.badge;
       const userPhoto = col.users?.photo_profil_url ? escapeHtml(col.users.photo_profil_url) : null;
+      const isBoosted = col.is_boosted === true;
       const dep      = col.gare_depart ? escapeHtml(col.gare_depart.split(' ')[0]) : '?';
       const arr      = escapeHtml((col.gare_arrivee || '').split(' ')[0]);
       const dt       = col.date_souhaitee
@@ -88,7 +92,9 @@ async function loadCards(reset = true) {
         + (photoUrl
           ? '<img src="' + photoUrl + '" style="width:100%;height:100%;object-fit:cover;" loading="lazy">'
           : '<span style="font-size:3rem;">' + em + '</span>')
-        + '<div class="cc-bdg new">NOUVEAU</div>'
+        + (isBoosted
+          ? '<div class="cc-bdg" style="background:linear-gradient(90deg,#f97316,#ef4444);color:#fff;">⚡ URGENT</div>'
+          : '<div class="cc-bdg new">NOUVEAU</div>')
         + '</div>'
         + '<div class="cc-body">'
         + '<div class="cc-route"><div class="cc-city">' + dep + '</div><div class="cc-arr">→</div><div class="cc-city">' + arr + '</div></div>'
@@ -103,7 +109,7 @@ async function loadCards(reset = true) {
         + '<div style="display:flex;align-items:center;gap:4px;">'
         + (userPhoto
           ? '<div class="cav" style="overflow:hidden;padding:0;"><img src="' + userPhoto + '" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></div>'
-          : '<div class="cav">' + prenom[0].toUpperCase() + '</div>')
+          : '<div class="cav">' + prenomInit + '</div>')
         + '<div class="pname">' + prenom + (note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : '') + '</div>'
         + '</div>'
         + (badge && badge !== 'aucun' && typeof badgeHTML === 'function' ? badgeHTML(badge) : '')
