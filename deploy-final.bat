@@ -12,7 +12,7 @@ echo === Ajout de tous les fichiers ===
 
 echo.
 echo === Commit ===
-%GIT% commit -m "feat: admin panel complet, dashboard fix localStorage, badge certif photo, sw cache v8"
+%GIT% commit -m "feat: admin panel pro complet — dashboard KPI, graphiques Chart.js, gestion roles, equipe moderateurs, paramètres plateforme"
 
 echo.
 echo === Push vers GitHub (master) ===

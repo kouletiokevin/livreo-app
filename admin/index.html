@@ -3,178 +3,382 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KolisGo — Admin</title>
+<title>KolisGo Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#f5f5f5;min-height:100vh;font-size:14px;}
-#auth-wall{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:12px;padding:24px;text-align:center;background:#0a0a0a;}
-#auth-wall .logo{font-size:1.4rem;font-weight:900;letter-spacing:-.5px;color:#fff;margin-bottom:4px;}
-#auth-wall .logo span{color:#2ecc71;}
-#auth-msg{color:#666;font-size:.82rem;}
-#auth-error{color:#f87171;font-size:.82rem;max-width:300px;line-height:1.6;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:10px;padding:12px 16px;}
-#back-link{color:#2ecc71;font-size:.78rem;text-decoration:none;margin-top:4px;}
-#app{display:none;min-height:100vh;}
+:root{
+  --bg:#09090b;--surface:#111113;--surface2:#18181b;--border:#27272a;--border2:#3f3f46;
+  --text:#fafafa;--muted:#71717a;--muted2:#52525b;
+  --green:#22c55e;--green-dim:rgba(34,197,94,.12);--green-border:rgba(34,197,94,.25);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,.1);
+  --red:#ef4444;--red-dim:rgba(239,68,68,.1);--red-border:rgba(239,68,68,.2);
+  --violet:#8b5cf6;--violet-dim:rgba(139,92,246,.1);
+  --blue:#3b82f6;--blue-dim:rgba(59,130,246,.1);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;line-height:1.5;}
 
-/* NAV */
-.topnav{background:#111;border-bottom:1px solid #222;padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.topnav .brand{font-size:.95rem;font-weight:900;letter-spacing:-.4px;color:#fff;}
-.topnav .brand span{color:#2ecc71;}
-.topnav .brand sub{font-size:.5rem;font-weight:600;color:#444;letter-spacing:1px;text-transform:uppercase;vertical-align:middle;margin-left:4px;}
-.topnav-right{display:flex;align-items:center;gap:16px;}
-.topnav-email{font-size:.72rem;color:#555;}
-.btn-nav{background:transparent;border:1px solid #333;color:#aaa;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:.72rem;font-family:inherit;transition:all .15s;}
-.btn-nav:hover{border-color:#555;color:#fff;}
-.btn-app{background:transparent;border:none;color:#555;font-size:.72rem;cursor:pointer;font-family:inherit;padding:5px 8px;}
-.btn-app:hover{color:#aaa;}
-
-/* TABS */
-.tabs-bar{background:#111;border-bottom:1px solid #1c1c1c;padding:0 28px;display:flex;gap:2px;}
-.tab-btn{background:transparent;border:none;color:#555;padding:12px 16px;cursor:pointer;font-size:.78rem;font-weight:600;font-family:inherit;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
-.tab-btn:hover{color:#aaa;}
-.tab-btn.on{color:#2ecc71;border-bottom-color:#2ecc71;}
+/* AUTH WALL */
+#auth-wall{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:10px;padding:24px;text-align:center;}
+.auth-logo{font-size:1.5rem;font-weight:900;letter-spacing:-.5px;margin-bottom:4px;}
+.auth-logo span{color:var(--green);}
+#auth-msg{color:var(--muted);font-size:.8rem;}
+#auth-error{color:#fca5a5;font-size:.8rem;background:var(--red-dim);border:1px solid var(--red-border);border-radius:10px;padding:12px 18px;max-width:320px;line-height:1.7;margin-top:4px;}
+#back-link{color:var(--green);font-size:.75rem;text-decoration:none;margin-top:6px;}
 
 /* LAYOUT */
-.page{display:none;padding:28px;max-width:1200px;margin:0 auto;}
-.page.on{display:block;}
+#app{display:none;min-height:100vh;display:grid;grid-template-rows:auto auto 1fr;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-brand{font-size:.95rem;font-weight:900;letter-spacing:-.4px;}
+.topbar-brand span{color:var(--green);}
+.topbar-brand sub{font-size:.45rem;font-weight:700;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;vertical-align:middle;margin-left:5px;}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.topbar-email{font-size:.72rem;color:var(--muted2);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:.72rem;font-family:inherit;transition:.15s;}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);}
 
-/* STAT CARDS */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px;}
-.stat{background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:border-color .15s;}
-.stat:hover{border-color:#2a2a2a;}
-.stat-val{font-size:2rem;font-weight:900;line-height:1;color:#fff;letter-spacing:-1px;margin-bottom:6px;}
-.stat-val.green{color:#2ecc71;}
-.stat-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#444;}
-.stat-icon{position:absolute;top:16px;right:16px;font-size:1.2rem;opacity:.3;}
-.stat-trend{font-size:.68rem;color:#2ecc71;margin-top:4px;}
+/* SIDEBAR + CONTENT */
+.layout{display:flex;min-height:calc(100vh - 54px);}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);padding:16px 0;flex-shrink:0;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;}
+.nav-section{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted2);padding:16px 16px 6px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 14px;margin:1px 8px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:600;color:var(--muted);transition:.12s;border:1px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.on{background:var(--green-dim);color:var(--green);border-color:var(--green-border);}
+.nav-item .icon{width:16px;text-align:center;font-size:.85rem;opacity:.7;}
+.nav-item.on .icon{opacity:1;}
+.nav-badge{margin-left:auto;background:var(--red-dim);color:var(--red);border:1px solid var(--red-border);font-size:.58rem;font-weight:900;padding:1px 6px;border-radius:20px;}
 
-/* SECTION CARDS */
-.card{background:#111;border:1px solid #1e1e1e;border-radius:12px;overflow:hidden;margin-bottom:16px;}
-.card-head{padding:16px 20px;border-bottom:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-between;}
-.card-title{font-size:.8rem;font-weight:800;color:#ccc;letter-spacing:.2px;}
-.card-badge{font-size:.62rem;background:#1e1e1e;color:#555;padding:2px 8px;border-radius:20px;font-weight:700;}
+.main{flex:1;padding:24px;overflow-x:hidden;}
+.page{display:none;}.page.on{display:block;}
+.page-title{font-size:1.15rem;font-weight:900;letter-spacing:-.3px;margin-bottom:20px;}
+.page-desc{font-size:.78rem;color:var(--muted);margin-top:4px;font-weight:400;}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:20px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;cursor:default;transition:.15s;}
+.kpi:hover{border-color:var(--border2);}
+.kpi-ico{position:absolute;top:14px;right:14px;font-size:1rem;opacity:.2;}
+.kpi-val{font-size:1.8rem;font-weight:900;letter-spacing:-1px;line-height:1;margin-bottom:4px;}
+.kpi-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted2);}
+.kpi-sub{font-size:.68rem;color:var(--green);margin-top:5px;font-weight:600;}
+.kpi.green .kpi-val{color:var(--green);}
+.kpi.amber .kpi-val{color:var(--amber);}
+.kpi.red .kpi-val{color:var(--red);}
+
+/* CHARTS ROW */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:16px;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.chart-card.full{grid-column:1/-1;}
+.chart-title{font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;}
+.chart-wrap{position:relative;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px;}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.card-header-title{font-size:.8rem;font-weight:800;color:#ccc;}
+.card-header-right{display:flex;align-items:center;gap:8px;}
+.chip{font-size:.62rem;background:var(--surface2);color:var(--muted);padding:2px 9px;border-radius:20px;font-weight:700;border:1px solid var(--border);}
 
 /* TABLE */
 table{width:100%;border-collapse:collapse;}
-th{text-align:left;padding:10px 16px;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#444;background:#0d0d0d;}
-td{padding:12px 16px;font-size:.78rem;border-top:1px solid #161616;color:#bbb;vertical-align:middle;}
-tr:hover td{background:#131313;}
-.td-main{color:#eee;font-weight:700;}
-.td-mono{font-family:monospace;font-size:.7rem;color:#666;}
-
-/* BADGES */
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:800;letter-spacing:.2px;}
-.badge.actif,.badge.accepte,.badge.livre{background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.2);}
-.badge.suspendu,.badge.refuse{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.15);}
-.badge.en_attente{background:rgba(251,191,36,.08);color:#fbbf24;border:1px solid rgba(251,191,36,.15);}
-.badge.escrow,.badge.admin{background:rgba(139,92,246,.1);color:#a78bfa;border:1px solid rgba(139,92,246,.15);}
-.badge.user{background:#1a1a1a;color:#555;border:1px solid #222;}
-
-/* SEARCH */
-.search-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
-.search-input{background:#111;border:1px solid #222;color:#eee;padding:8px 14px;border-radius:8px;font-size:.78rem;font-family:inherit;width:260px;outline:none;transition:border-color .15s;}
-.search-input:focus{border-color:#333;}
-.search-input::placeholder{color:#444;}
-
-/* BUTTONS */
-.btn-sm{padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-size:.68rem;font-weight:700;font-family:inherit;transition:all .15s;}
-.btn-danger{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.15);}
-.btn-danger:hover{background:rgba(239,68,68,.18);}
-.btn-success{background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid rgba(46,204,113,.2);}
-.btn-success:hover{background:rgba(46,204,113,.18);}
-
-/* EMPTY */
-.empty{text-align:center;padding:40px 20px;color:#333;font-size:.78rem;}
-.empty-icon{font-size:2rem;margin-bottom:8px;opacity:.3;}
+th{text-align:left;padding:9px 14px;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--muted2);background:rgba(0,0,0,.2);white-space:nowrap;}
+td{padding:11px 14px;font-size:.77rem;border-top:1px solid rgba(255,255,255,.03);color:#a1a1aa;vertical-align:middle;}
+tbody tr:hover td{background:rgba(255,255,255,.02);}
+.td-primary{color:var(--text);font-weight:700;}
+.td-mono{font-family:'SF Mono',Consolas,monospace;font-size:.68rem;color:var(--muted2);}
 
 /* AVATAR */
-.av{width:28px;height:28px;border-radius:50%;background:#1e1e1e;display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:#555;flex-shrink:0;vertical-align:middle;margin-right:8px;}
+.av{width:28px;height:28px;border-radius:8px;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:900;color:var(--muted2);flex-shrink:0;vertical-align:middle;margin-right:7px;border:1px solid var(--border);}
 
-/* GRID 2 */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-@media(max-width:700px){.grid2{grid-template-columns:1fr;}.stats-grid{grid-template-columns:1fr 1fr;}}
+/* BADGES */
+.bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:800;letter-spacing:.1px;white-space:nowrap;}
+.bdg-green{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);}
+.bdg-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border);}
+.bdg-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,.2);}
+.bdg-violet{background:var(--violet-dim);color:var(--violet);border:1px solid rgba(139,92,246,.2);}
+.bdg-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,.2);}
+.bdg-muted{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:7px;cursor:pointer;font-size:.72rem;font-weight:700;font-family:inherit;border:1px solid;transition:.12s;}
+.btn-primary{background:var(--green);color:#000;border-color:var(--green);}
+.btn-primary:hover{background:#16a34a;border-color:#16a34a;}
+.btn-danger{background:var(--red-dim);color:var(--red);border-color:var(--red-border);}
+.btn-danger:hover{background:rgba(239,68,68,.18);}
+.btn-success{background:var(--green-dim);color:var(--green);border-color:var(--green-border);}
+.btn-success:hover{background:rgba(34,197,94,.2);}
+.btn-neutral{background:var(--surface2);color:var(--muted);border-color:var(--border);}
+.btn-neutral:hover{color:var(--text);border-color:var(--border2);}
+
+/* SELECT */
+select.role-sel{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:3px 8px;border-radius:6px;font-size:.7rem;font-family:inherit;cursor:pointer;outline:none;}
+select.role-sel:focus{border-color:var(--border2);}
+
+/* SEARCH */
+.search-row{display:flex;gap:8px;margin-bottom:14px;align-items:center;}
+.search-inp{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:8px;font-size:.78rem;font-family:inherit;width:260px;outline:none;}
+.search-inp:focus{border-color:var(--border2);}
+.search-inp::placeholder{color:var(--muted2);}
+.count-label{font-size:.7rem;color:var(--muted2);}
+
+/* SETTINGS */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-top:1px solid var(--border);}
+.setting-row:first-child{border-top:none;}
+.setting-info{flex:1;}
+.setting-label{font-size:.8rem;font-weight:700;color:var(--text);}
+.setting-desc{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.setting-action{flex-shrink:0;margin-left:24px;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted2);}
+.empty-state .e-ico{font-size:2.2rem;margin-bottom:10px;opacity:.2;}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-bg.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:420px;max-width:calc(100vw - 32px);}
+.modal-title{font-size:.95rem;font-weight:900;margin-bottom:6px;}
+.modal-sub{font-size:.78rem;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.form-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:8px;font-size:.8rem;font-family:inherit;outline:none;}
+.form-input:focus{border-color:var(--border2);}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
 
 /* TOAST */
-#toast{position:fixed;top:16px;right:16px;background:#1a1a1a;color:#eee;border:1px solid #2a2a2a;padding:10px 18px;border-radius:10px;font-size:.76rem;font-weight:700;z-index:9999;display:none;box-shadow:0 8px 30px rgba(0,0,0,.6);}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;font-size:.76rem;font-weight:700;z-index:9999;display:none;box-shadow:0 8px 40px rgba(0,0,0,.6);max-width:320px;}
 
-/* LOADING SKELETON */
-.skel{background:linear-gradient(90deg,#161616 25%,#1e1e1e 50%,#161616 75%);background-size:200% 100%;animation:skel 1.5s infinite;border-radius:4px;height:14px;display:inline-block;}
-@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* SKELETON */
+.skel{background:linear-gradient(90deg,#18181b 25%,#27272a 50%,#18181b 75%);background-size:400% 100%;animation:sk 1.4s infinite;border-radius:4px;height:12px;display:inline-block;}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#333;border-radius:4px;}
+
+@media(max-width:800px){.sidebar{display:none;}.charts-row{grid-template-columns:1fr;}.kpi-grid{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
 
+<!-- AUTH WALL -->
 <div id="auth-wall">
-  <div class="logo">Kolis<span>Go</span></div>
-  <div id="auth-msg" style="color:#444;font-size:.8rem;">Vérification…</div>
+  <div class="auth-logo">Kolis<span>Go</span></div>
+  <div id="auth-msg">Vérification de l'accès…</div>
   <div id="auth-error" style="display:none;"></div>
-  <a href="/" id="back-link" style="display:none;color:#2ecc71;font-size:.75rem;text-decoration:none;margin-top:8px;">← Retour à KolisGo</a>
+  <a href="/" id="back-link" style="display:none;">← Retour à KolisGo</a>
 </div>
 
-<div id="app">
-  <nav class="topnav">
-    <div class="brand">Kolis<span>Go</span><sub>ADMIN</sub></div>
-    <div class="topnav-right">
-      <span class="topnav-email" id="admin-email"></span>
-      <button class="btn-app" onclick="window.location='/'">← App</button>
-      <button class="btn-nav" onclick="logout()">Déconnexion</button>
-    </div>
-  </nav>
+<!-- APP -->
+<div id="app" style="display:none;">
 
-  <div class="tabs-bar">
-    <button class="tab-btn on" onclick="showTab('dashboard',this)">Vue d'ensemble</button>
-    <button class="tab-btn" onclick="showTab('users',this)">Utilisateurs</button>
-    <button class="tab-btn" onclick="showTab('kolis',this)">Kolis</button>
-    <button class="tab-btn" onclick="showTab('transactions',this)">Transactions</button>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div class="page on" id="tab-dashboard">
-    <div class="stats-grid">
-      <div class="stat"><div class="stat-icon">👥</div><div class="stat-val" id="s-users"><span class="skel" style="width:40px"></span></div><div class="stat-lbl">Utilisateurs</div></div>
-      <div class="stat"><div class="stat-icon">📦</div><div class="stat-val" id="s-colis"><span class="skel" style="width:32px"></span></div><div class="stat-lbl">Kolis en attente</div></div>
-      <div class="stat"><div class="stat-icon">✅</div><div class="stat-val" id="s-livres"><span class="skel" style="width:32px"></span></div><div class="stat-lbl">Kolis livrés</div></div>
-      <div class="stat"><div class="stat-icon">💳</div><div class="stat-val" id="s-tx"><span class="skel" style="width:32px"></span></div><div class="stat-lbl">Transactions</div></div>
-      <div class="stat"><div class="stat-icon">💰</div><div class="stat-val green" id="s-rev"><span class="skel" style="width:56px"></span></div><div class="stat-lbl">Revenus (15%)</div></div>
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-brand">Kolis<span>Go</span><sub>ADMIN</sub></div>
+    <div class="topbar-right">
+      <span class="topbar-email" id="admin-email"></span>
+      <button class="btn-ghost" onclick="location.href='/'">← App</button>
+      <button class="btn-ghost" onclick="doLogout()">Déconnexion</button>
     </div>
-    <div class="grid2">
-      <div class="card">
-        <div class="card-head"><span class="card-title">Derniers inscrits</span><span class="card-badge" id="badge-users">—</span></div>
-        <table><thead><tr><th>Utilisateur</th><th>Statut</th><th>Date</th></tr></thead>
-        <tbody id="recent-users"><tr><td colspan="3" class="empty"><div class="empty-icon">👥</div>Chargement…</td></tr></tbody></table>
+  </header>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="nav-section">Tableau de bord</div>
+      <div class="nav-item on" onclick="nav('dashboard',this)"><span class="icon">📊</span>Vue d'ensemble</div>
+      <div class="nav-item" onclick="nav('analytics',this)"><span class="icon">📈</span>Analytiques</div>
+
+      <div class="nav-section">Gestion</div>
+      <div class="nav-item" onclick="nav('users',this)"><span class="icon">👥</span>Utilisateurs<span class="nav-badge" id="nb-users" style="display:none;">!</span></div>
+      <div class="nav-item" onclick="nav('kolis',this)"><span class="icon">📦</span>Kolis</div>
+      <div class="nav-item" onclick="nav('transactions',this)"><span class="icon">💳</span>Transactions</div>
+      <div class="nav-item" onclick="nav('moderators',this)"><span class="icon">🛡️</span>Équipe & Rôles</div>
+
+      <div class="nav-section">Plateforme</div>
+      <div class="nav-item" onclick="nav('settings',this)"><span class="icon">⚙️</span>Paramètres</div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <div class="page on" id="page-dashboard">
+        <div class="page-title">Vue d'ensemble <span style="font-size:.75rem;font-weight:400;color:var(--muted);margin-left:6px;">Aujourd'hui · <span id="today-date"></span></span></div>
+        <div class="kpi-grid">
+          <div class="kpi"><span class="kpi-ico">👥</span><div class="kpi-val" id="k-users"><span class="skel" style="width:36px"></span></div><div class="kpi-label">Utilisateurs</div><div class="kpi-sub" id="k-users-sub"></div></div>
+          <div class="kpi"><span class="kpi-ico">📦</span><div class="kpi-val amber" id="k-pending"><span class="skel" style="width:28px"></span></div><div class="kpi-label">En attente</div></div>
+          <div class="kpi"><span class="kpi-ico">✅</span><div class="kpi-val" id="k-done"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Livrés</div></div>
+          <div class="kpi"><span class="kpi-ico">💳</span><div class="kpi-val" id="k-tx"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Transactions</div></div>
+          <div class="kpi green"><span class="kpi-ico">💰</span><div class="kpi-val green" id="k-rev"><span class="skel" style="width:52px"></span></div><div class="kpi-label">Revenus (15%)</div></div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-title">Kolis publiés — 14 derniers jours</div>
+            <div class="chart-wrap"><canvas id="chart-kolis" height="140"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Répartition paiements</div>
+            <div class="chart-wrap"><canvas id="chart-pay" height="140"></canvas></div>
+          </div>
+        </div>
+
+        <div class="charts-row" style="grid-template-columns:1fr 1fr;">
+          <div class="card">
+            <div class="card-header"><span class="card-header-title">Derniers inscrits</span></div>
+            <table><thead><tr><th>Utilisateur</th><th>Statut</th><th>Date</th></tr></thead>
+            <tbody id="t-recent-users"></tbody></table>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-header-title">Derniers kolis</span></div>
+            <table><thead><tr><th>Destination</th><th>Prix</th><th>Statut</th></tr></thead>
+            <tbody id="t-recent-kolis"></tbody></table>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-head"><span class="card-title">Derniers kolis</span><span class="card-badge" id="badge-kolis">—</span></div>
-        <table><thead><tr><th>Destination</th><th>Prix</th><th>Statut</th></tr></thead>
-        <tbody id="recent-kolis"><tr><td colspan="3" class="empty"><div class="empty-icon">📦</div>Chargement…</td></tr></tbody></table>
+
+      <!-- ANALYTICS -->
+      <div class="page" id="page-analytics">
+        <div class="page-title">Analytiques<div class="page-desc">Courbes et tendances de la plateforme</div></div>
+        <div class="charts-row" style="grid-template-columns:1fr;">
+          <div class="chart-card full"><div class="chart-title">Inscriptions — 30 derniers jours</div><canvas id="chart-users" height="120"></canvas></div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card"><div class="chart-title">Revenus quotidiens (€)</div><canvas id="chart-revenue" height="160"></canvas></div>
+          <div class="chart-card"><div class="chart-title">Kolis par statut</div><canvas id="chart-statuts" height="160"></canvas></div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- USERS -->
-  <div class="page" id="tab-users">
-    <div class="search-bar">
-      <input class="search-input" type="text" placeholder="Rechercher un utilisateur…" oninput="filterUsers(this.value)">
-      <span id="users-count" style="font-size:.72rem;color:#444;"></span>
-    </div>
-    <div class="card">
-      <table><thead><tr><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Statut</th><th>Inscrit</th><th></th></tr></thead>
-      <tbody id="users-list"><tr><td colspan="6" class="empty"><div class="empty-icon">👥</div>Chargement…</td></tr></tbody></table>
-    </div>
-  </div>
+      <!-- USERS -->
+      <div class="page" id="page-users">
+        <div class="page-title">Utilisateurs</div>
+        <div class="search-row">
+          <input class="search-inp" type="text" placeholder="🔍  Rechercher…" oninput="filterUsers(this.value)">
+          <span class="count-label" id="users-count"></span>
+        </div>
+        <div class="card">
+          <table><thead><tr><th>Utilisateur</th><th>Email</th><th>Tél</th><th>Rôle</th><th>Statut</th><th>Inscrit</th><th></th></tr></thead>
+          <tbody id="t-users"></tbody></table>
+        </div>
+      </div>
 
-  <!-- KOLIS -->
-  <div class="page" id="tab-kolis">
-    <div class="card">
-      <table><thead><tr><th>Référence</th><th>Destination</th><th>Prix</th><th>Paiement</th><th>Statut</th><th>Date</th></tr></thead>
-      <tbody id="kolis-list"><tr><td colspan="6" class="empty"><div class="empty-icon">📦</div>Chargement…</td></tr></tbody></table>
-    </div>
-  </div>
+      <!-- KOLIS -->
+      <div class="page" id="page-kolis">
+        <div class="page-title">Kolis</div>
+        <div class="card">
+          <table><thead><tr><th>Réf</th><th>Destination</th><th>Expéditeur</th><th>Prix</th><th>Paiement</th><th>Statut</th><th>Date</th></tr></thead>
+          <tbody id="t-kolis"></tbody></table>
+        </div>
+      </div>
 
-  <!-- TRANSACTIONS -->
-  <div class="page" id="tab-transactions">
-    <div class="card">
-      <table><thead><tr><th>ID</th><th>Montant</th><th>Commission 15%</th><th>Statut</th><th>Date</th></tr></thead>
-      <tbody id="tx-list"><tr><td colspan="5" class="empty"><div class="empty-icon">💳</div>Chargement…</td></tr></tbody></table>
+      <!-- TRANSACTIONS -->
+      <div class="page" id="page-transactions">
+        <div class="page-title">Transactions</div>
+        <div class="card">
+          <table><thead><tr><th>ID</th><th>Montant</th><th>Commission 15%</th><th>Statut</th><th>Date</th></tr></thead>
+          <tbody id="t-tx"></tbody></table>
+        </div>
+      </div>
+
+      <!-- MODERATORS / RÔLES -->
+      <div class="page" id="page-moderators">
+        <div class="page-title">Équipe & Rôles<div class="page-desc">Gérez les administrateurs et modérateurs de la plateforme</div></div>
+        <div class="card-header-right" style="margin-bottom:14px;">
+          <button class="btn btn-primary" onclick="openAddMod()">+ Ajouter un membre</button>
+        </div>
+        <div class="card">
+          <table><thead><tr><th>Utilisateur</th><th>Email</th><th>Rôle actuel</th><th>Depuis</th><th>Actions</th></tr></thead>
+          <tbody id="t-mods"></tbody></table>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div class="page-title" style="font-size:.9rem;">Description des rôles</div>
+          <div class="card" style="margin-top:10px;">
+            <div class="setting-row">
+              <div class="setting-info"><div class="setting-label">👑 Administrateur</div><div class="setting-desc">Accès complet — tableau de bord, gestion des rôles, paramètres, toutes les données</div></div>
+              <span class="bdg bdg-violet">admin</span>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info"><div class="setting-label">🛡️ Modérateur</div><div class="setting-desc">Peut gérer les kolis et utilisateurs, suspendre des comptes, valider des annonces</div></div>
+              <span class="bdg bdg-blue">moderateur</span>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info"><div class="setting-label">👤 Utilisateur</div><div class="setting-desc">Accès standard — poster et suivre des kolis, être passeur</div></div>
+              <span class="bdg bdg-muted">user</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-title">Paramètres<div class="page-desc">Configuration de la plateforme KolisGo</div></div>
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-header"><span class="card-header-title">💰 Financier</span></div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Commission plateforme</div><div class="setting-desc">Pourcentage prélevé sur chaque transaction passeur-expéditeur</div></div>
+            <div class="setting-action" style="display:flex;align-items:center;gap:8px;"><strong style="font-size:1.1rem;color:var(--green);">15%</strong><span class="bdg bdg-green">actif</span></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Prix minimum d'un kolis</div><div class="setting-desc">Prix plancher conseillé affiché lors de la publication</div></div>
+            <div class="setting-action"><strong style="font-size:1rem;color:var(--text);">7 €</strong></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Délai escrow</div><div class="setting-desc">Durée avant libération automatique des fonds après livraison</div></div>
+            <div class="setting-action"><strong style="font-size:1rem;color:var(--text);">72h</strong></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-header"><span class="card-header-title">🔐 Sécurité</span></div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Double authentification (MFA)</div><div class="setting-desc">Obligatoire pour les comptes administrateur</div></div>
+            <div class="setting-action"><span class="bdg bdg-amber">recommandé</span></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Rate limiting connexion</div><div class="setting-desc">5 tentatives max par 5 minutes par IP</div></div>
+            <div class="setting-action"><span class="bdg bdg-green">actif</span></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Validation documents identité</div><div class="setting-desc">Email de vérification : verification@kolisgo.fr</div></div>
+            <div class="setting-action"><span class="bdg bdg-green">actif</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-header-title">📬 Contacts légaux</span></div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Support client</div><div class="setting-desc">support@kolisgo.fr</div></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">RGPD / DPO</div><div class="setting-desc">privacy@kolisgo.fr</div></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="setting-label">Vérification identité</div><div class="setting-desc">verification@kolisgo.fr</div></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL AJOUTER MEMBRE -->
+<div class="modal-bg" id="modal-add-mod">
+  <div class="modal">
+    <div class="modal-title">Ajouter un membre d'équipe</div>
+    <div class="modal-sub">Entrez l'email de l'utilisateur existant et choisissez son rôle.</div>
+    <div class="form-group"><div class="form-label">Email</div><input class="form-input" id="mod-email" type="email" placeholder="utilisateur@example.com"></div>
+    <div class="form-group"><div class="form-label">Rôle</div>
+      <select class="form-input" id="mod-role">
+        <option value="moderateur">🛡️ Modérateur</option>
+        <option value="admin">👑 Administrateur</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-neutral" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="saveMod()">Assigner le rôle</button>
     </div>
   </div>
 </div>
@@ -188,118 +392,265 @@ const db = supabase.createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaHVheWxmeXRkbWh6amF1dm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4NTY1MDcsImV4cCI6MjA2MjQzMjUwN30.vUwHBgBFx_-fXLyFMGfcNwvZEwJO0pRqgOuTPZbfRfM'
 );
 
-let _allUsers = [];
+let _users = [], _mods = [];
 
-function toast(m){const e=document.getElementById('toast');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
+// ── Helpers ────────────────────────────────────────────
+function toast(m,t=3000){const e=document.getElementById('toast');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',t);}
 function fmt(d){return d?new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'—';}
-function badge(s,label){const cls=s||'user';return`<span class="badge ${cls}">${label||s||'—'}</span>`;}
-function initials(p,n){return((p||'?')[0]+(n||'')[0]||'').toUpperCase();}
-function money(v){return parseFloat(v||0).toFixed(2)+'€';}
+function money(v){return(parseFloat(v||0)).toFixed(2)+'€';}
+function ini(p,n){return(((p||'?')[0])+(n||' ')[0]).toUpperCase();}
+function bdg(s){
+  const map={actif:'bdg-green',livre:'bdg-green',accepte:'bdg-green',en_attente:'bdg-amber',suspendu:'bdg-red',refuse:'bdg-red',admin:'bdg-violet',moderateur:'bdg-blue',user:'bdg-muted',escrow:'bdg-blue',crypto:'bdg-amber',carte:'bdg-blue'};
+  return`<span class="bdg ${map[s]||'bdg-muted'}">${s||'—'}</span>`;
+}
+function empty(cols,txt){return`<tr><td colspan="${cols}" class="empty-state"><div class="e-ico">🔍</div>${txt||'Aucune donnée'}</td></tr>`;}
 
-function showTab(name,el){
+// ── Navigation ─────────────────────────────────────────
+function nav(id, el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
-  document.getElementById('tab-'+name).classList.add('on');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));
+  document.getElementById('page-'+id)?.classList.add('on');
   if(el)el.classList.add('on');
-  if(name==='users'&&_allUsers.length===0)loadUsers();
-  if(name==='kolis')loadKolis();
-  if(name==='transactions')loadTx();
+  if(id==='analytics')loadAnalytics();
+  if(id==='users'&&_users.length===0)loadUsers();
+  if(id==='kolis')loadKolis();
+  if(id==='transactions')loadTx();
+  if(id==='moderators')loadMods();
 }
 
+// ── DASHBOARD ──────────────────────────────────────────
 async function loadDashboard(){
-  const [u,cp,cl,tx] = await Promise.all([
-    db.from('users').select('id',{count:'exact',head:true}),
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+
+  const [u,cp,cl,allK] = await Promise.all([
+    db.from('users').select('id,created_at',{count:'exact'}),
     db.from('colis').select('id',{count:'exact',head:true}).eq('statut','en_attente'),
     db.from('colis').select('id',{count:'exact',head:true}).eq('statut','livre'),
-    db.from('transactions').select('montant').limit(500).catch(()=>({data:[]})),
+    db.from('colis').select('created_at,prix,moyen_paiement,statut').order('created_at',{ascending:false}).limit(200),
   ]);
-  document.getElementById('s-users').textContent = u.count??'0';
-  document.getElementById('s-colis').textContent = cp.count??'0';
-  document.getElementById('s-livres').textContent = cl.count??'0';
-  document.getElementById('s-tx').textContent = tx.count??'0';
-  const rev = (tx.data||[]).reduce((s,t)=>s+(parseFloat(t.montant||0)*.15),0);
-  document.getElementById('s-rev').textContent = rev.toFixed(2)+'€';
 
-  const {data:ru} = await db.from('users').select('prenom,nom,email,statut,created_at').order('created_at',{ascending:false}).limit(6);
-  document.getElementById('badge-users').textContent = u.count??'0';
-  document.getElementById('recent-users').innerHTML = (ru||[]).length ? (ru||[]).map(u=>`<tr>
-    <td class="td-main"><span class="av">${initials(u.prenom,u.nom)}</span>${u.prenom||''} ${u.nom||''}</td>
-    <td>${badge(u.statut||'actif',u.statut||'actif')}</td>
-    <td style="color:#555">${fmt(u.created_at)}</td>
-  </tr>`).join('') : `<tr><td colspan="3" class="empty"><div class="empty-icon">👥</div>Aucun utilisateur</td></tr>`;
+  document.getElementById('k-users').textContent = u.count??0;
+  document.getElementById('k-pending').textContent = cp.count??0;
+  document.getElementById('k-done').textContent = cl.count??0;
+  document.getElementById('k-tx').textContent = (allK.data||[]).length;
 
-  const {data:rc} = await db.from('colis').select('id,code_lvr,gare_arrivee,prix,statut,created_at').order('created_at',{ascending:false}).limit(6);
-  document.getElementById('badge-kolis').textContent = rc?.length??'0';
-  document.getElementById('recent-kolis').innerHTML = (rc||[]).length ? (rc||[]).map(c=>`<tr>
-    <td class="td-main">${c.gare_arrivee||'—'}</td>
-    <td style="color:#2ecc71;font-weight:800">${money(c.prix)}</td>
-    <td>${badge(c.statut,c.statut)}</td>
-  </tr>`).join('') : `<tr><td colspan="3" class="empty"><div class="empty-icon">📦</div>Aucun kolis</td></tr>`;
+  const rev = (allK.data||[]).reduce((s,k)=>s+(parseFloat(k.prix||0)*.15),0);
+  document.getElementById('k-rev').textContent = rev.toFixed(2)+'€';
+
+  // Chart kolis 14 jours
+  const days14 = buildDays(14);
+  const colisMap = {};
+  (allK.data||[]).forEach(k=>{
+    const d=k.created_at?.substring(0,10); if(d)colisMap[d]=(colisMap[d]||0)+1;
+  });
+  renderLine('chart-kolis', days14.labels, days14.keys.map(k=>colisMap[k]||0), '#22c55e', 'Kolis');
+
+  // Chart paiements
+  const payMap={carte:0,crypto:0,especes:0,autre:0};
+  (allK.data||[]).forEach(k=>{const p=k.moyen_paiement||'autre';payMap[p]=(payMap[p]||0)+1;});
+  renderDoughnut('chart-pay',
+    ['Carte','Crypto','Espèces','Autre'],
+    [payMap.carte,payMap.crypto,payMap.especes||0,payMap.autre],
+    ['#3b82f6','#f59e0b','#22c55e','#71717a']
+  );
+
+  // Derniers inscrits
+  const {data:ru}=await db.from('users').select('prenom,nom,statut,created_at').order('created_at',{ascending:false}).limit(6);
+  document.getElementById('t-recent-users').innerHTML=(ru||[]).length?(ru||[]).map(u=>`<tr>
+    <td class="td-primary"><span class="av">${ini(u.prenom,u.nom)}</span>${u.prenom||''} ${u.nom||''}</td>
+    <td>${bdg(u.statut||'actif')}</td><td style="color:var(--muted2)">${fmt(u.created_at)}</td>
+  </tr>`).join(''):empty(3,'Aucun inscrit');
+
+  // Derniers kolis
+  const {data:rk}=await db.from('colis').select('gare_arrivee,prix,statut,created_at').order('created_at',{ascending:false}).limit(6);
+  document.getElementById('t-recent-kolis').innerHTML=(rk||[]).length?(rk||[]).map(c=>`<tr>
+    <td class="td-primary">${c.gare_arrivee||'—'}</td>
+    <td style="color:var(--green);font-weight:800">${money(c.prix)}</td>
+    <td>${bdg(c.statut)}</td>
+  </tr>`).join(''):empty(3,'Aucun kolis');
 }
 
+// ── ANALYTICS ──────────────────────────────────────────
+let _analyticsLoaded = false;
+async function loadAnalytics(){
+  if(_analyticsLoaded)return;
+  _analyticsLoaded=true;
+
+  const days30=buildDays(30);
+
+  // Inscriptions 30j
+  const {data:usersRaw}=await db.from('users').select('created_at').order('created_at',{ascending:false}).limit(500);
+  const uMap={};
+  (usersRaw||[]).forEach(u=>{const d=u.created_at?.substring(0,10);if(d)uMap[d]=(uMap[d]||0)+1;});
+  renderLine('chart-users',days30.labels,days30.keys.map(k=>uMap[k]||0),'#3b82f6','Inscriptions');
+
+  // Revenus 30j
+  const {data:kolisRaw}=await db.from('colis').select('created_at,prix').order('created_at',{ascending:false}).limit(500);
+  const rMap={};
+  (kolisRaw||[]).forEach(k=>{const d=k.created_at?.substring(0,10);if(d)rMap[d]=(rMap[d]||0)+(parseFloat(k.prix||0)*.15);});
+  renderBar('chart-revenue',days30.labels,days30.keys.map(k=>parseFloat((rMap[k]||0).toFixed(2))),'#22c55e');
+
+  // Kolis par statut
+  const statusMap={en_attente:0,accepte:0,livre:0,annule:0};
+  (kolisRaw||[]).forEach(k=>{const s=k.statut||'autre';if(statusMap[s]!==undefined)statusMap[s]++;});
+  renderDoughnut('chart-statuts',
+    ['En attente','Accepté','Livré','Annulé'],
+    [statusMap.en_attente,statusMap.accepte,statusMap.livre,statusMap.annule],
+    ['#f59e0b','#3b82f6','#22c55e','#ef4444']
+  );
+}
+
+// ── USERS ──────────────────────────────────────────────
 async function loadUsers(){
-  const {data} = await db.from('users').select('*').order('created_at',{ascending:false}).limit(300);
-  _allUsers = data||[];
-  document.getElementById('users-count').textContent = _allUsers.length+' utilisateurs';
-  renderUsers(_allUsers);
+  const {data}=await db.from('users').select('*').order('created_at',{ascending:false}).limit(300);
+  _users=data||[];
+  document.getElementById('users-count').textContent=_users.length+' utilisateurs';
+  renderUsers(_users);
 }
-
 function renderUsers(list){
-  document.getElementById('users-list').innerHTML = list.length ? list.map(u=>`<tr>
-    <td class="td-main"><span class="av">${initials(u.prenom,u.nom)}</span>${u.prenom||''} ${u.nom||''}</td>
-    <td style="color:#555">${u.email}</td>
-    <td style="color:#555">${u.telephone||'—'}</td>
-    <td>${badge(u.statut||'actif',u.statut||'actif')}</td>
-    <td style="color:#444">${fmt(u.created_at)}</td>
+  document.getElementById('t-users').innerHTML=list.length?list.map(u=>`<tr>
+    <td class="td-primary"><span class="av">${ini(u.prenom,u.nom)}</span>${u.prenom||''} ${u.nom||''}</td>
+    <td style="color:var(--muted)">${u.email}</td>
+    <td style="color:var(--muted2)">${u.telephone||'—'}</td>
+    <td><select class="role-sel" onchange="setRole('${u.id}',this.value)">
+      <option value="user" ${(u.role_display||'user')==='user'?'selected':''}>👤 user</option>
+      <option value="moderateur" ${u.role_display==='moderateur'?'selected':''}>🛡️ moderateur</option>
+      <option value="admin" ${u.role_display==='admin'?'selected':''}>👑 admin</option>
+    </select></td>
+    <td>${bdg(u.statut||'actif')}</td>
+    <td style="color:var(--muted2)">${fmt(u.created_at)}</td>
     <td>${u.statut==='suspendu'
-      ?`<button class="btn-sm btn-success" onclick="setStatut('${u.id}','actif')">Réactiver</button>`
-      :`<button class="btn-sm btn-danger" onclick="setStatut('${u.id}','suspendu')">Suspendre</button>`}
+      ?`<button class="btn btn-success" onclick="setStatut('${u.id}','actif')">Réactiver</button>`
+      :`<button class="btn btn-danger" onclick="setStatut('${u.id}','suspendu')">Suspendre</button>`}
     </td>
-  </tr>`).join('')
-  : `<tr><td colspan="6" class="empty"><div class="empty-icon">👥</div>Aucun résultat</td></tr>`;
+  </tr>`).join(''):empty(7,'Aucun utilisateur');
 }
-
 function filterUsers(q){
   q=q.toLowerCase();
-  const f=_allUsers.filter(u=>(u.email||'').toLowerCase().includes(q)||(u.prenom||'').toLowerCase().includes(q)||(u.nom||'').toLowerCase().includes(q));
-  document.getElementById('users-count').textContent = f.length+' résultat'+(f.length>1?'s':'');
+  const f=_users.filter(u=>(u.email||'').toLowerCase().includes(q)||(u.prenom||'').toLowerCase().includes(q)||(u.nom||'').toLowerCase().includes(q));
+  document.getElementById('users-count').textContent=f.length+' résultat'+(f.length>1?'s':'');
   renderUsers(f);
 }
-
 async function setStatut(id,statut){
-  const {error}=await db.from('users').update({statut}).eq('id',id);
-  if(error){toast('Erreur : '+error.message);return;}
+  await db.from('users').update({statut}).eq('id',id);
+  _users=_users.map(u=>u.id===id?{...u,statut}:u);
+  renderUsers(_users);
   toast('Statut mis à jour ✅');
-  _allUsers=_allUsers.map(u=>u.id===id?{...u,statut}:u);
-  renderUsers(_allUsers);
+}
+async function setRole(userId, role){
+  const {error}=await db.from('user_roles').upsert({user_id:userId,role},{onConflict:'user_id'});
+  if(error){toast('Erreur : '+error.message);return;}
+  toast('Rôle mis à jour ✅');
 }
 
+// ── KOLIS ──────────────────────────────────────────────
 async function loadKolis(){
-  const {data}=await db.from('colis').select('*').order('created_at',{ascending:false}).limit(100);
-  document.getElementById('kolis-list').innerHTML=(data||[]).length?(data||[]).map(c=>`<tr>
+  const {data}=await db.from('colis').select('*').order('created_at',{ascending:false}).limit(150);
+  document.getElementById('t-kolis').innerHTML=(data||[]).length?(data||[]).map(c=>`<tr>
     <td class="td-mono">${c.code_lvr||c.id?.substring(0,8)||'—'}</td>
-    <td class="td-main">${c.gare_arrivee||'—'}</td>
-    <td style="color:#2ecc71;font-weight:800">${money(c.prix)}</td>
-    <td style="color:#555">${c.moyen_paiement||'—'}</td>
-    <td>${badge(c.statut,c.statut)}</td>
-    <td style="color:#444">${fmt(c.created_at)}</td>
-  </tr>`).join(''):`<tr><td colspan="6" class="empty"><div class="empty-icon">📦</div>Aucun kolis</td></tr>`;
+    <td class="td-primary">${c.gare_arrivee||'—'}</td>
+    <td style="color:var(--muted2)">${c.user_id?.substring(0,8)||'—'}…</td>
+    <td style="color:var(--green);font-weight:800">${money(c.prix)}</td>
+    <td>${bdg(c.moyen_paiement||'autre')}</td>
+    <td>${bdg(c.statut)}</td>
+    <td style="color:var(--muted2)">${fmt(c.created_at)}</td>
+  </tr>`).join(''):empty(7,'Aucun kolis');
 }
 
+// ── TRANSACTIONS ───────────────────────────────────────
 async function loadTx(){
   const {data}=await db.from('transactions').select('*').order('created_at',{ascending:false}).limit(100).catch(()=>({data:[]}));
-  document.getElementById('tx-list').innerHTML=(data||[]).length?(data||[]).map(tx=>`<tr>
-    <td class="td-mono">${tx.id?.substring(0,16)||'—'}…</td>
-    <td style="font-weight:800;color:#fff">${money(tx.montant)}</td>
-    <td style="color:#2ecc71;font-weight:700">${(parseFloat(tx.montant||0)*.15).toFixed(2)}€</td>
-    <td>${badge(tx.statut,tx.statut)}</td>
-    <td style="color:#444">${fmt(tx.created_at)}</td>
-  </tr>`).join(''):`<tr><td colspan="5" class="empty"><div class="empty-icon">💳</div>Aucune transaction</td></tr>`;
+  document.getElementById('t-tx').innerHTML=(data||[]).length?(data||[]).map(tx=>`<tr>
+    <td class="td-mono">${tx.id?.substring(0,18)||'—'}…</td>
+    <td style="color:var(--text);font-weight:800">${money(tx.montant)}</td>
+    <td style="color:var(--green);font-weight:700">${(parseFloat(tx.montant||0)*.15).toFixed(2)}€</td>
+    <td>${bdg(tx.statut)}</td>
+    <td style="color:var(--muted2)">${fmt(tx.created_at)}</td>
+  </tr>`).join(''):empty(5,'Aucune transaction');
 }
 
-async function logout(){await db.auth.signOut();window.location.href='/';}
+// ── ÉQUIPE & RÔLES ─────────────────────────────────────
+async function loadMods(){
+  const {data:roles}=await db.from('user_roles').select('user_id,role,created_at').in('role',['admin','moderateur']);
+  const {data:users}=await db.from('users').select('id,prenom,nom,email');
+  _mods=roles||[];
+  const uMap={};(users||[]).forEach(u=>uMap[u.id]=u);
+  document.getElementById('t-mods').innerHTML=_mods.length?_mods.map(r=>{
+    const u=uMap[r.user_id]||{};
+    return`<tr>
+      <td class="td-primary"><span class="av">${ini(u.prenom,u.nom)}</span>${u.prenom||''} ${u.nom||''}</td>
+      <td style="color:var(--muted)">${u.email||r.user_id}</td>
+      <td>${bdg(r.role)}</td>
+      <td style="color:var(--muted2)">${fmt(r.created_at)}</td>
+      <td style="display:flex;gap:6px;align-items:center;">
+        <select class="role-sel" onchange="updateModRole('${r.user_id}',this.value)">
+          <option value="moderateur" ${r.role==='moderateur'?'selected':''}>🛡️ modérateur</option>
+          <option value="admin" ${r.role==='admin'?'selected':''}>👑 admin</option>
+        </select>
+        <button class="btn btn-danger" onclick="removeMod('${r.user_id}')">Retirer</button>
+      </td>
+    </tr>`;
+  }).join(''):empty(5,'Aucun membre d\'équipe ajouté');
+}
 
-// ── AUTH ─────────────────────────────────
+function openAddMod(){document.getElementById('modal-add-mod').classList.add('open');}
+function closeModal(){document.querySelectorAll('.modal-bg').forEach(m=>m.classList.remove('open'));}
+async function saveMod(){
+  const email=document.getElementById('mod-email').value.trim().toLowerCase();
+  const role=document.getElementById('mod-role').value;
+  if(!email){toast('Email requis','2000');return;}
+  const {data:u}=await db.from('users').select('id').eq('email',email).single();
+  if(!u){toast('Utilisateur introuvable');return;}
+  const {error}=await db.from('user_roles').upsert({user_id:u.id,role},{onConflict:'user_id'});
+  if(error){toast('Erreur : '+error.message);return;}
+  toast('Rôle assigné ✅');
+  closeModal();
+  loadMods();
+}
+async function updateModRole(userId,role){
+  await db.from('user_roles').upsert({user_id:userId,role},{onConflict:'user_id'});
+  toast('Rôle mis à jour ✅');
+}
+async function removeMod(userId){
+  if(!confirm('Retirer les droits de cet utilisateur ?'))return;
+  await db.from('user_roles').update({role:'user'}).eq('user_id',userId);
+  toast('Droits retirés');
+  loadMods();
+}
+
+// ── CHARTS ─────────────────────────────────────────────
+const CHART_DEFAULTS={color:'#fafafa',borderColor:'#27272a'};
+Chart.defaults.color='#71717a';Chart.defaults.borderColor='#27272a';
+const _charts={};
+function destroyChart(id){if(_charts[id]){_charts[id].destroy();delete _charts[id];}}
+
+function renderLine(id,labels,data,color,label){
+  destroyChart(id);
+  _charts[id]=new Chart(document.getElementById(id),{type:'line',data:{labels,datasets:[{label,data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:3,pointBackgroundColor:color,tension:.4,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#18181b',borderColor:'#27272a',borderWidth:1}},scales:{x:{grid:{color:'#1c1c1e'},ticks:{font:{size:9},maxTicksLimit:7}},y:{grid:{color:'#1c1c1e'},ticks:{font:{size:9}},beginAtZero:true}}}});
+}
+function renderBar(id,labels,data,color){
+  destroyChart(id);
+  _charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets:[{data,backgroundColor:color+'55',borderColor:color,borderWidth:1.5,borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#18181b',borderColor:'#27272a',borderWidth:1}},scales:{x:{grid:{color:'#1c1c1e'},ticks:{font:{size:9},maxTicksLimit:8}},y:{grid:{color:'#1c1c1e'},ticks:{font:{size:9}},beginAtZero:true}}}});
+}
+function renderDoughnut(id,labels,data,colors){
+  destroyChart(id);
+  _charts[id]=new Chart(document.getElementById(id),{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors.map(c=>c+'55'),borderColor:colors,borderWidth:2,hoverOffset:4}]},options:{responsive:true,cutout:'68%',plugins:{legend:{position:'bottom',labels:{font:{size:10},color:'#71717a',padding:12}},tooltip:{backgroundColor:'#18181b',borderColor:'#27272a',borderWidth:1}}}});
+}
+
+function buildDays(n){
+  const labels=[],keys=[];
+  for(let i=n-1;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const k=d.toISOString().substring(0,10);
+    keys.push(k);
+    labels.push(d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}));
+  }
+  return{labels,keys};
+}
+
+// ── AUTH & LOGOUT ─────────────────────────────────────
+async function doLogout(){await db.auth.signOut();location.href='/';}
+
 (async()=>{
   try{
     const {data:{session}}=await db.auth.getSession();
@@ -314,7 +665,7 @@ async function logout(){await db.auth.signOut();window.location.href='/';}
     let ok=SUPER.includes(session.user.email);
     if(!ok){
       const {data:r}=await db.from('user_roles').select('role').eq('user_id',session.user.id).single();
-      ok=r?.role==='admin';
+      ok=r?.role==='admin'||r?.role==='moderateur';
     }
     if(!ok){
       document.getElementById('auth-msg').style.display='none';
@@ -324,7 +675,8 @@ async function logout(){await db.auth.signOut();window.location.href='/';}
       return;
     }
     document.getElementById('auth-wall').style.display='none';
-    document.getElementById('app').style.display='block';
+    const app=document.getElementById('app');
+    app.style.display='grid';
     document.getElementById('admin-email').textContent=session.user.email;
     loadDashboard();
   }catch(e){
