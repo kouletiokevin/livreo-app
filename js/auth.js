@@ -191,19 +191,8 @@ async function chargerProfil(userId) {
 
 // ── Après connexion réussie ──────────────
 async function onLoginSuccess(profil) {
-  // Nettoyer les pending_payment de plus de 24h
-  Object.keys(localStorage)
-    .filter(k => k.startsWith('pending_payment_'))
-    .forEach(k => {
-      try {
-        const val = JSON.parse(localStorage.getItem(k));
-        const age = Date.now() - (val?.ts || 0);
-        if (age > 24 * 60 * 60 * 1000) localStorage.removeItem(k);
-      } catch {
-        localStorage.removeItem(k);
-      }
-    });
-
+  if (window._loginInProgress) return;
+  window._loginInProgress = true;
   user = profil;
   const role = await getUserRole(profil.id || profil.auth_id);
   user.role = role;
@@ -213,7 +202,7 @@ async function onLoginSuccess(profil) {
   document.getElementById('nav-av').style.display = 'flex';
   document.getElementById('nav-notif').style.display = 'block';
   const navTxt = document.getElementById('nav-av-txt');
-  if (navTxt) navTxt.textContent = profil.prenom[0].toUpperCase();
+  if (navTxt) navTxt.textContent = (profil.prenom?.[0] || '?').toUpperCase();
   if (profil.photo_profil_url) {
     const navImg = document.getElementById('nav-av-img');
     if (navImg) { navImg.src = profil.photo_profil_url; navImg.style.display = 'block'; }
@@ -222,7 +211,7 @@ async function onLoginSuccess(profil) {
 
   // Profil UI
   const fields = {
-    'moi-av-txt': profil.prenom[0].toUpperCase(),
+    'moi-av-txt': (profil.prenom?.[0] || '?').toUpperCase(),
     'moi-name': (profil.prenom || '') + ' ' + (profil.nom || ''),
     'moi-email': profil.email || '',
     'dash-h': `Bonjour <em>${escapeHtml(profil.prenom)}</em> 👋`,
@@ -275,6 +264,7 @@ async function onLoginSuccess(profil) {
 
   if (typeof afficherBadgeProfil === 'function') afficherBadgeProfil(profil.badge);
 
+  window._loginInProgress = false;
   refreshHome();
   chargerPortefeuille(profil.id);
   chargerLivraisonsEnCours(profil.id);

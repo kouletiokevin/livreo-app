@@ -80,12 +80,13 @@ async function previewPhoto(input) {
       if (error) { t('Erreur upload : ' + error.message, 'e'); return; }
 
       const { data: urlData } = db.storage.from('photos-profil').getPublicUrl(path);
-      const url = urlData.publicUrl + '?t=' + Date.now();
+      const cleanUrl  = urlData.publicUrl;          // URL propre → stockée en base
+      const freshUrl  = cleanUrl + '?t=' + Date.now(); // cache-buster → local uniquement
 
-      await db.from('users').update({ photo_profil_url: url }).eq('id', user.id);
-      if (img) img.src = url;
-      if (navImg) navImg.src = url;
-      if (user) user.photo_profil_url = url;
+      await db.from('users').update({ photo_profil_url: cleanUrl }).eq('id', user.id);
+      if (img) img.src = freshUrl;
+      if (navImg) navImg.src = freshUrl;
+      if (user) user.photo_profil_url = cleanUrl;
       t('Photo de profil mise à jour ✅', 's');
     } catch (e) {
       t('Erreur : ' + e.message, 'e');

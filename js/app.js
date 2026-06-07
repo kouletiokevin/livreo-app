@@ -195,16 +195,13 @@ db.auth.onAuthStateChange(async (event, session) => {
   }
   if (event === 'SIGNED_OUT') {
     user = null;
+    window._loginInProgress = false;
     refreshHome();
   }
 });
 
 // ── Init DOM ─────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-  // Limiter la date du poster à demain minimum
-  const dateInput = document.getElementById('pf-date');
-  if (dateInput) dateInput.min = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-
   // Masquer sections suivi/poster par défaut
   ['sv-exp', 'sv-dest', 'poster-suc', 'dest-suc'].forEach(id => {
     const el = document.getElementById(id);

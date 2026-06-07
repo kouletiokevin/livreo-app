@@ -172,7 +172,7 @@ td strong { color: var(--ink); }
     <br>
     <div class="field">
       <label>Email administrateur</label>
-      <input type="email" id="admin-email" placeholder="kouletiokevinfr@gmail.com" value="kouletiokevinfr@gmail.com">
+      <input type="email" id="admin-email" placeholder="Email administrateur" autocomplete="email">
     </div>
     <div class="field">
       <label>Mot de passe</label>
@@ -1178,7 +1178,7 @@ async function loadRoles() {
       <td style="font-size:.74rem;">${r.granted_at ? new Date(r.granted_at).toLocaleDateString('fr-FR') : '—'}</td>
       <td style="font-size:.74rem;">${escapeHtml(r.attribue_par) || 'Système'}</td>
       <td>
-        ${r.email !== 'kouletiokevinfr@gmail.com' ?
+        ${r.email !== adminUser?.email ?
           `<button class="action-btn red" onclick="revokeRole(${jEmail})">Révoquer</button>`
           : '<span style="font-size:.72rem;color:var(--muted);">Protégé</span>'}
       </td>

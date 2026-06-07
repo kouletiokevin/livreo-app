@@ -220,12 +220,21 @@ async function openDetail(id) {
 }
 
 // ── Realtime — mise à jour automatique ───
+let _realtimeThrottle = null;
+
 function initRealtimeExplorer() {
   db.channel('colis_realtime')
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'colis' },
-      () => { loadCards(true); }
+      { event: 'INSERT', schema: 'public', table: 'colis' },
+      () => {
+        // Throttle : au plus 1 rechargement toutes les 2 secondes
+        if (_realtimeThrottle) return;
+        _realtimeThrottle = setTimeout(() => {
+          _realtimeThrottle = null;
+          loadCards(true);
+        }, 2000);
+      }
     )
     .subscribe();
 }

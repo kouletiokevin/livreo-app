@@ -174,14 +174,11 @@ async function publishColis() {
     if (error) { t('Erreur : ' + error.message, 'e'); return; }
 
     try {
-      const payment = await callEdgeFunction('create-payment', {
+      await callEdgeFunction('create-payment', {
         amount: Math.round(parseFloat(prix) * 100),
         colis_id: data.id,
         expediteur_id: user.id
       });
-      if (payment?.client_secret) {
-        localStorage.setItem('pending_payment_' + data.id, JSON.stringify({ secret: payment.client_secret, ts: Date.now() }));
-      }
     } catch (e) {
       console.log('Paiement en attente:', e.message);
     }
@@ -203,8 +200,12 @@ async function publishColis() {
     // Photos contenu (champ co) → photos_contenu_urls — privées, visibles après acceptation
     if (window._photosContenu && window._photosContenu.length) {
       try {
-        const url = await uploadPhotoColis(window._photosContenu[0], user.id, data.id, true);
-        if (url) await db.from('colis').update({ photos_contenu_urls: [url] }).eq('id', data.id);
+        const urls = [];
+        for (const photo of Array.from(window._photosContenu).slice(0, 5)) {
+          const url = await uploadPhotoColis(photo, user.id, data.id, true);
+          if (url) urls.push(url);
+        }
+        if (urls.length) await db.from('colis').update({ photos_contenu_urls: urls }).eq('id', data.id);
       } catch (e) { t('Photo contenu : ' + e.message, 'e'); }
     }
     window._photoEmballee = null;
@@ -215,7 +216,6 @@ async function publishColis() {
       `Votre code : ${ref}. Ouvrez KolisGo → Suivi → entrez ce code pour votre QR Code. 🚆`
     );
 
-    localStorage.removeItem('pending_payment_' + data.id);
   } catch (e) {
     t('Erreur : ' + e.message, 'e');
   } finally {

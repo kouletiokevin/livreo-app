@@ -1,7 +1,8 @@
-﻿/* KolisGo — Service Worker v1 */
-const CACHE = 'kolisgo-v2';
+/* KolisGo � Service Worker v1 */
+const CACHE = 'kolisgo-v3';
 const ASSETS = [
   '/',
+  '/css/style.css',
   '/js/supabase.js',
   '/js/app.js',
   '/js/auth.js',
