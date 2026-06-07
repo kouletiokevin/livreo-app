@@ -202,6 +202,96 @@ async function publishColis() {
     }
     return;
   }
+
+  const btn = document.getElementById('publish-btn');
+  if (btn) { btn.textContent = 'Publication en cours…'; btn.disabled = true; }
+
+  try {
+    // 1. Insérer le kolis en base
+    const colisData = {
+      user_id:        user.id,
+      gare_arrivee:   arr,
+      titre:          titre,
+      description:    desc || null,
+      date_voyage:    dated || null,
+      prix:           prix,
+      moyen_paiement: moyen_paiement,
+      nom_destinataire:  rnom,
+      tel_destinataire:  rtel,
+      statut:         'en_attente',
+    };
+
+    const { data: colis, error: colisErr } = await db
+      .from('colis')
+      .insert(colisData)
+      .select()
+      .single();
+
+    if (colisErr) throw new Error(colisErr.message);
+
+    // 2. Upload photo emballée (publique)
+    if (window._photoEmballee) {
+      try {
+        const url = await uploadPhotoColis(window._photoEmballee, user.id, colis.id, false);
+        await db.from('colis').update({ photo_emballee_url: url }).eq('id', colis.id);
+      } catch(e) { console.warn('Photo emballée:', e.message); }
+    }
+
+    // 3. Upload photos contenu (privées — URL signée)
+    if (window._photosContenu?.length) {
+      const urls = [];
+      for (const f of window._photosContenu) {
+        try {
+          const url = await uploadPhotoColis(f, user.id, colis.id, true);
+          urls.push(url);
+        } catch(e) { console.warn('Photo contenu:', e.message); }
+      }
+      if (urls.length) {
+        await db.from('colis').update({ photos_contenu_urls: urls }).eq('id', colis.id);
+      }
+    }
+
+    // 4. Lancer le paiement selon le moyen choisi
+    if (moyen_paiement === 'carte') {
+      try {
+        const result = await callEdgeFunction('create-payment', {
+          colis_id: colis.id,
+          montant:  Math.round(prix * 100),
+          user_id:  user.id,
+        });
+        if (result?.url) { window.location.href = result.url; return; }
+      } catch(e) { console.warn('Stripe:', e.message); }
+    }
+
+    if (moyen_paiement === 'crypto') {
+      t('Kolis publié ✅ — Envoyez le paiement en crypto à l\'adresse indiquée. Votre kolis sera activé dès réception.', 's');
+    }
+
+    // 5. Succès
+    window._photoEmballee = null;
+    window._photosContenu = [];
+    emUp = false; coUp = false;
+
+    const codeLvr = colis.code_lvr || colis.id.substring(0, 8).toUpperCase();
+    const sucEl = document.getElementById('poster-suc');
+    const codeEl = document.getElementById('suc-code');
+    if (sucEl) sucEl.style.display = 'block';
+    if (codeEl) codeEl.textContent = codeLvr;
+    document.getElementById('poster-form').style.display = 'none';
+
+    t(`Kolis publié ! Code : ${codeLvr} 🎉`, 's');
+
+  } catch(e) {
+    t('Erreur : ' + e.message, 'e');
+  } finally {
+    if (btn) { btn.textContent = 'Publier le kolis'; btn.disabled = false; }
+  }
+}
+        telEl.style.boxShadow = '';
+      }, { once: true });
+    }
+    return;
+  }
   if (!emUp) { t('Ajoutez la photo de l\'emballage (visible sur la marketplace) 📸', 'e'); return; }
 
   const btn = document.querySelector('#poster-form .btn.p.full');

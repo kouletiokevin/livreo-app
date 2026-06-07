@@ -236,8 +236,14 @@ async function logout(){ await db.auth.signOut(); window.location.href='/'; }
       document.getElementById('back-link').style.display='block';
       return;
     }
-    const {data:roleData} = await db.from('user_roles').select('role').eq('user_id',session.user.id).single();
-    if(!roleData || roleData.role!=='admin'){
+    // Super-admins hardcodés (bypass RLS)
+    const SUPER_ADMINS = ['kouletiokevinfr@gmail.com'];
+    let isAdmin = SUPER_ADMINS.includes(session.user.email);
+    if(!isAdmin){
+      const {data:roleData} = await db.from('user_roles').select('role').eq('user_id',session.user.id).single();
+      isAdmin = roleData?.role === 'admin';
+    }
+    if(!isAdmin){
       document.getElementById('auth-msg').style.display='none';
       document.getElementById('auth-error').textContent='Accès refusé. Votre compte n\'a pas les droits administrateur.';
       document.getElementById('auth-error').style.display='block';
