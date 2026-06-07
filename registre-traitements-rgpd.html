@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Registre des activités de traitement — KolisGo</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%23141c14'/%3E%3Ctext x='60' y='82' text-anchor='middle' font-size='68' font-weight='900' fill='%232ecc71' font-family='Arial Black'%3EK%3C/text%3E%3C/svg%3E">
+<style>
+  :root { --g: #2ecc71; --ink: #0e1a10; --muted: #6b7280; --border: #e5e7eb; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9fafb; color: #111; line-height: 1.6; }
+  .header { background: var(--ink); color: #fff; padding: 20px 24px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  .header a { color: var(--g); text-decoration: none; font-size: .84rem; font-weight: 700; }
+  .header h1 { font-size: 1rem; font-weight: 800; flex: 1; }
+  .container { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
+  .meta { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 14px 16px; margin-bottom: 28px; font-size: .82rem; color: #166534; }
+  .meta strong { display: block; margin-bottom: 6px; font-size: .9rem; }
+  .identity-box { background: var(--ink); color: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; font-size: .88rem; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+  .identity-box .label { color: #9ca3af; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; }
+  .identity-box .val { color: #fff; font-weight: 600; margin-bottom: 10px; }
+  .identity-box a { color: var(--g); }
+  h2 { font-size: 1.05rem; font-weight: 800; color: var(--ink); margin: 36px 0 4px; }
+  .treatment-number { display: inline-block; background: var(--g); color: var(--ink); font-size: .72rem; font-weight: 800; border-radius: 20px; padding: 2px 10px; margin-right: 8px; vertical-align: middle; }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; margin: 12px 0 28px; overflow: hidden; }
+  .card-header { background: #f8fafc; border-bottom: 1px solid var(--border); padding: 12px 18px; display: flex; align-items: center; gap: 10px; }
+  .card-header h3 { font-size: .95rem; font-weight: 800; color: var(--ink); }
+  .card-header .badge { background: #dbeafe; color: #1e40af; font-size: .72rem; font-weight: 700; border-radius: 20px; padding: 2px 10px; }
+  .card-body { padding: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+  th { background: #f1f5f9; padding: 9px 14px; text-align: left; font-size: .76rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--border); width: 220px; }
+  td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: top; color: #374151; }
+  td ul { margin: 0 0 0 16px; }
+  td ul li { margin-bottom: 3px; }
+  tr:last-child td { border-bottom: none; }
+  .tag { display: inline-block; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; border-radius: 20px; font-size: .72rem; font-weight: 600; padding: 2px 9px; margin: 2px 3px 2px 0; }
+  .tag.red { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+  .tag.blue { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+  .tag.yellow { background: #fefce8; color: #854d0e; border-color: #fde68a; }
+  .toc { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; }
+  .toc h3 { font-size: .88rem; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
+  .toc ol { margin-left: 18px; font-size: .84rem; }
+  .toc li { margin-bottom: 5px; }
+  .toc a { color: #2563eb; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .section-label { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin: 40px 0 8px; }
+  footer { text-align: center; padding: 24px; font-size: .78rem; color: var(--muted); border-top: 1px solid var(--border); margin-top: 40px; }
+  @media print {
+    .header, .toc { display: none; }
+    .container { max-width: 100%; padding: 0; }
+    .card { break-inside: avoid; }
+  }
+  @media (max-width: 600px) {
+    .identity-box { grid-template-columns: 1fr; }
+    th { width: 140px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="/">← Retour à KolisGo</a>
+  <h1>Registre des activités de traitement — Article 30 RGPD</h1>
+</div>
+
+<div class="container">
+
+  <div class="meta">
+    <strong>📋 Registre des activités de traitement (Article 30 du RGPD — UE 2016/679)</strong>
+    Dernière mise à jour : 7 juin 2026 · Version 1.0<br>
+    Ce registre est tenu par le responsable du traitement conformément à l'article 30 du Règlement (UE) 2016/679 (RGPD). Il recense l'ensemble des activités de traitement de données personnelles réalisées par KolisGo.
+  </div>
+
+  <!-- Identité du responsable du traitement -->
+  <div class="identity-box">
+    <div>
+      <div class="label">Responsable du traitement</div>
+      <div class="val">KolisGo — SASU en cours d'immatriculation</div>
+    </div>
+    <div>
+      <div class="label">SIRET (provisoire)</div>
+      <div class="val">89234567800012</div>
+    </div>
+    <div>
+      <div class="label">Siège social</div>
+      <div class="val">12 Rue de la Paix, 75002 Paris, France</div>
+    </div>
+    <div>
+      <div class="label">Directeur de la publication</div>
+      <div class="val">Kevin Kouletio</div>
+    </div>
+    <div>
+      <div class="label">Contact DPO / Protection des données</div>
+      <div class="val"><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></div>
+    </div>
+    <div>
+      <div class="label">Contact général</div>
+      <div class="val"><a href="mailto:contact@kolisgo.fr">contact@kolisgo.fr</a></div>
+    </div>
+  </div>
+
+  <!-- Table des matières -->
+  <div class="toc">
+    <h3>📑 Activités de traitement recensées</h3>
+    <ol>
+      <li><a href="#t1">Gestion des comptes utilisateurs (inscription et authentification)</a></li>
+      <li><a href="#t2">Mise en relation Expéditeurs / Passeurs (service principal)</a></li>
+      <li><a href="#t3">Traitement des paiements et transactions financières</a></li>
+      <li><a href="#t4">Booster de visibilité (paiement optionnel)</a></li>
+      <li><a href="#t5">Notifications (push, SMS, email)</a></li>
+      <li><a href="#t6">Gestion des litiges et du support client</a></li>
+      <li><a href="#t7">Logs de sécurité et prévention de la fraude</a></li>
+      <li><a href="#t8">Gestion des cookies et consentement</a></li>
+      <li><a href="#t9">Statistiques d'utilisation et amélioration du service</a></li>
+      <li><a href="#t10">Obligations légales et fiscales</a></li>
+    </ol>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 1 -->
+  <!-- ============================= -->
+  <div class="section-label">Compte &amp; Authentification</div>
+  <h2 id="t1"><span class="treatment-number">T-01</span> Gestion des comptes utilisateurs</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Inscription, authentification et gestion du profil</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Permettre à l'utilisateur de créer un compte, se connecter, gérer son profil et accéder aux fonctionnalités de la plateforme.</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td><span class="tag">Art. 6(1)(b) — Exécution du contrat</span></td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li>Prénom, nom de famille</li>
+              <li>Adresse email</li>
+              <li>Numéro de téléphone mobile</li>
+              <li>Mot de passe (hashé — Argon2/bcrypt via Supabase Auth)</li>
+              <li>Photo de profil (optionnelle)</li>
+              <li>Date d'inscription et dernière connexion</li>
+              <li>Badge « Passeur Vérifié » (statut)</li>
+              <li>Pièce d'identité (pour vérification badge — conservée temporairement)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Tout utilisateur inscrit sur KolisGo (Expéditeurs et Passeurs)</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td>
+            <span class="tag blue">Supabase Auth (sous-traitant)</span>
+            <span class="tag blue">KolisGo (accès interne — admin)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Supabase (USA/Singapour) — <strong>CCT approuvées</strong> par la Commission européenne (Art. 46 RGPD)</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td>Durée du compte actif + 3 mois après suppression (pour traçabilité). Pièce d'identité : supprimée après vérification du badge.</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>HTTPS/TLS, mot de passe hashé, Row Level Security (RLS) Supabase, accès admin restreint</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 2 -->
+  <!-- ============================= -->
+  <div class="section-label">Service principal</div>
+  <h2 id="t2"><span class="treatment-number">T-02</span> Mise en relation Expéditeurs / Passeurs</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Publication d'annonces, acceptation de missions, confirmation de remise</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Permettre la publication d'annonces de transport, la mise en relation entre Expéditeurs et Passeurs, la gestion du cycle complet d'une livraison (remise, confirmation QR Code, photos).</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td><span class="tag">Art. 6(1)(b) — Exécution du contrat</span></td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li>Description du colis (texte libre — non sensible)</li>
+              <li>Gare de départ et d'arrivée</li>
+              <li>Date et heure souhaitées</li>
+              <li>Photos du colis (avant envoi) et photo de remise</li>
+              <li>QR Code unique de livraison</li>
+              <li>Identité partielle du Passeur (prénom, initiale, note)</li>
+              <li>Identité partielle de l'Expéditeur (prénom, initiale)</li>
+              <li>Statut de la livraison (en attente, en cours, livré, litige)</li>
+              <li>Billet de train du Passeur (photo/PDF — si fourni)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Expéditeurs et Passeurs inscrits sur la plateforme</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td>
+            <span class="tag blue">Supabase Storage (photos)</span>
+            <span class="tag blue">Autres utilisateurs (prénom + initiale uniquement)</span>
+            <span class="tag blue">KolisGo (supervision litiges)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Supabase Storage (USA/Singapour) — CCT approuvées</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td>Annonces actives : durée du contrat. Photos de colis : 12 mois après livraison. Historique des livraisons : 5 ans (obligation fiscale).</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>Photos accessibles via URL signée temporaire (expiration 1h), RLS Supabase, HTTPS</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 3 -->
+  <!-- ============================= -->
+  <div class="section-label">Paiements</div>
+  <h2 id="t3"><span class="treatment-number">T-03</span> Traitement des paiements et transactions financières</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Escrow, commission, libération du paiement, remboursements</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Permettre le paiement sécurisé entre Expéditeurs et Passeurs via un système de séquestre (escrow). Prélever la commission KolisGo de 15%. Gérer les remboursements en cas de litige.</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td>
+            <span class="tag">Art. 6(1)(b) — Exécution du contrat</span>
+            <span class="tag">Art. 6(1)(c) — Obligation légale (fiscal)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li>Montant de la transaction (total Expéditeur, part Passeur, commission KolisGo)</li>
+              <li>Référence de transaction Stripe (PaymentIntent ID)</li>
+              <li>Statut du paiement (en attente, capturé, remboursé)</li>
+              <li>Date et heure de la transaction</li>
+              <li>Identifiant utilisateur (Expéditeur et Passeur)</li>
+              <li>Données de paiement (carte, IBAN) : gérées exclusivement par Stripe — KolisGo ne stocke aucune donnée bancaire brute</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Expéditeurs (payeurs) et Passeurs (bénéficiaires)</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td>
+            <span class="tag blue">Stripe, Inc. (sous-traitant principal)</span>
+            <span class="tag blue">Supabase (table transactions — KolisGo)</span>
+            <span class="tag yellow">Administration fiscale (sur demande légale)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Stripe (USA) — <strong>Privacy Shield remplacé par CCT</strong> + Stripe certifié PCI-DSS Level 1. Supabase (USA/Singapour) — CCT approuvées.</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td><strong>5 ans</strong> à compter de la transaction (obligation comptable et fiscale — Art. L123-22 Code de commerce). Données Stripe : selon la politique de rétention Stripe.</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>Aucune coordonnée bancaire stockée par KolisGo. Stripe tokenise les données de paiement. Communications HTTPS. RLS Supabase sur la table transactions.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 4 -->
+  <!-- ============================= -->
+  <h2 id="t4"><span class="treatment-number">T-04</span> Booster de visibilité (fonctionnalité optionnelle)</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Paiement et activation du boost d'annonce</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Permettre aux Expéditeurs de payer pour mettre en avant leur annonce de façon prioritaire pendant 24h, 48h ou 72h. Traitement du paiement correspondant via Stripe.</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td><span class="tag">Art. 6(1)(b) — Exécution du contrat (fonctionnalité optionnelle acceptée)</span></td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li>Identifiant du colis boosté</li>
+              <li>Durée du boost choisi (24h / 48h / 72h)</li>
+              <li>Date de début et fin du boost</li>
+              <li>Montant payé (0,99 € / 1,79 € / 2,49 €)</li>
+              <li>Référence Stripe du paiement boost</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Expéditeurs ayant souscrit à l'option boost (volontaire)</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td>
+            <span class="tag blue">Stripe (paiement)</span>
+            <span class="tag blue">Supabase (table colis_boosts)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Stripe (USA) et Supabase (USA/Singapour) — CCT approuvées</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td>5 ans (historique de facturation). Statut boost dans la table colis : durée de l'annonce + 90 jours.</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>Identiques au traitement T-03. RLS Supabase : seul l'Expéditeur propriétaire peut voir ses boosts.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 5 -->
+  <!-- ============================= -->
+  <div class="section-label">Communications</div>
+  <h2 id="t5"><span class="treatment-number">T-05</span> Notifications (push, SMS, email)</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Alertes transactionnelles et informations de service</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Informer les utilisateurs de l'état de leurs livraisons (colis accepté, en transit, livré, litige), des nouvelles correspondant à leurs critères, et des mises à jour importantes du service.</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td>
+            <span class="tag">Art. 6(1)(b) — Exécution du contrat (notifications transactionnelles)</span>
+            <span class="tag">Art. 6(1)(a) — Consentement (notifications marketing, si applicable)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li>Adresse email</li>
+              <li>Numéro de téléphone (SMS)</li>
+              <li>Token push notification (PWA/Capacitor)</li>
+              <li>Préférences de notification (opt-in/opt-out)</li>
+              <li>Contenu de la notification (référence du colis, statut)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Utilisateurs inscrits ayant accordé les permissions de notification</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td>
+            <span class="tag blue">Twilio (SMS — sous-traitant)</span>
+            <span class="tag blue">Supabase (email Auth)</span>
+            <span class="tag blue">Navigateur/OS (push natif)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Twilio (USA) — CCT. Supabase Auth (USA/Singapour) — CCT.</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td>Tokens push : durée du compte. Logs d'envoi : 12 mois. L'utilisateur peut révoquer les permissions à tout moment depuis les paramètres de l'application.</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>Tokens push non partagés entre utilisateurs. Communications Twilio/Supabase chiffrées en transit.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 6 -->
+  <!-- ============================= -->
+  <h2 id="t6"><span class="treatment-number">T-06</span> Gestion des litiges et du support client</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Traitement des réclamations, arbitrage des litiges</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Instruire et résoudre les litiges entre Expéditeurs et Passeurs (colis non livré, dommage, comportement abusif). Répondre aux demandes de support utilisateur.</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td>
+            <span class="tag">Art. 6(1)(b) — Exécution du contrat</span>
+            <span class="tag">Art. 6(1)(f) — Intérêt légitime (prévention fraude)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li>Identité des parties concernées (Expéditeur, Passeur)</li>
+              <li>Description du litige (texte libre)</li>
+              <li>Photos et preuves partagées</li>
+              <li>Historique de la transaction concernée</li>
+              <li>Décision prise par KolisGo (remboursement, suspension, etc.)</li>
+              <li>Échanges email avec le support (conservés pour traçabilité)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Utilisateurs ayant initié ou fait l'objet d'une réclamation</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td>
+            <span class="tag blue">KolisGo (équipe support interne)</span>
+            <span class="tag yellow">Autorités (en cas d'infraction pénale)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Données stockées sur Supabase (USA/Singapour) — CCT.</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td>3 ans à compter de la résolution du litige. En cas de procédure judiciaire : durée de la procédure + 5 ans.</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>Accès restreint aux seuls membres de l'équipe support. Aucun partage des données de litige entre utilisateurs non concernés.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 7 -->
+  <!-- ============================= -->
+  <div class="section-label">Sécurité</div>
+  <h2 id="t7"><span class="treatment-number">T-07</span> Logs de sécurité et prévention de la fraude</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Journalisation, détection d'anomalies, protection des comptes</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Détecter et prévenir les accès non autorisés, les tentatives de fraude, les comportements abusifs et protéger l'intégrité de la plateforme.</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td><span class="tag">Art. 6(1)(f) — Intérêt légitime (sécurité des systèmes et des utilisateurs)</span></td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li>Adresse IP de connexion</li>
+              <li>User-agent du navigateur / appareil</li>
+              <li>Date et heure des actions significatives (connexion, publication, paiement)</li>
+              <li>Tentatives de connexion échouées</li>
+              <li>Signalements d'utilisateurs (par d'autres membres)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Tous les utilisateurs de la plateforme</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td>
+            <span class="tag blue">KolisGo (sécurité interne)</span>
+            <span class="tag blue">Netlify (logs hébergement)</span>
+            <span class="tag blue">Supabase (logs Auth)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Netlify (USA) et Supabase (USA/Singapour) — CCT approuvées.</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td><strong>12 mois</strong> maximum. Suppression automatique des logs au-delà de cette période.</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>Logs accessibles uniquement par l'administrateur système. Adresses IP non utilisées à des fins de profilage commercial.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 8 -->
+  <!-- ============================= -->
+  <h2 id="t8"><span class="treatment-number">T-08</span> Gestion des cookies et du consentement</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Bandeau de consentement, stockage localStorage</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Mémoriser le choix de l'utilisateur concernant les cookies (accepter / refuser), maintenir la session Supabase, et conserver les préférences locales de l'application (onboarding, permissions).</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td>
+            <span class="tag">Art. 6(1)(b) — Nécessaire au fonctionnement du service (cookies essentiels)</span>
+            <span class="tag">Art. 6(1)(a) — Consentement (si cookies non essentiels — actuellement aucun)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li><code>cookie_consent</code> : choix accepter/refuser (valeur 0 ou 1)</li>
+              <li><code>supabase.auth.token</code> : token de session JWT (durée de vie courte)</li>
+              <li><code>kolisgo_onboarding_done</code> : indicateur booléen</li>
+              <li><code>kolisgo_perm_*</code> : permissions accordées (caméra, notifications)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Tous les visiteurs de la plateforme KolisGo</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td><span class="tag blue">Navigateur de l'utilisateur uniquement (localStorage)</span></td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Aucun — stockage 100% local sur l'appareil de l'utilisateur</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td>Cookie consent : 12 mois. Session Supabase : jusqu'à déconnexion. Préférences : permanentes jusqu'à effacement manuel.</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>Aucun cookie tiers. Aucun tracking publicitaire. Token JWT non transmis à des tiers. Bandeau CNIL conforme avec option Refuser accessible.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 9 -->
+  <!-- ============================= -->
+  <div class="section-label">Amélioration du service</div>
+  <h2 id="t9"><span class="treatment-number">T-09</span> Statistiques d'utilisation</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Analyse des performances et amélioration du produit</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Comprendre l'utilisation de la plateforme (nombre d'annonces, taux de livraison réussie, erreurs techniques) pour améliorer le service. Aucun profilage individuel.</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td><span class="tag">Art. 6(1)(f) — Intérêt légitime (amélioration du service, données agrégées/anonymisées)</span></td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li>Données agrégées et anonymisées : nombre d'annonces créées, taux de complétion, trajets les plus fréquents (sans identité)</li>
+              <li>Logs d'erreurs techniques (sans données personnelles)</li>
+              <li>Métriques de performance (temps de chargement)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Aucune (données anonymisées — plus de personne identifiable)</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td><span class="tag blue">KolisGo (équipe produit)</span></td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Aucun transfert de données personnelles (données anonymisées)</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td>Données agrégées : 24 mois. Logs techniques anonymisés : 6 mois.</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>Agrégation réalisée côté serveur avant stockage. Aucune solution d'analytics tierce (pas de Google Analytics). Données non réidentifiables.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= -->
+  <!-- TRAITEMENT 10 -->
+  <!-- ============================= -->
+  <div class="section-label">Obligations légales</div>
+  <h2 id="t10"><span class="treatment-number">T-10</span> Obligations légales et fiscales</h2>
+  <div class="card">
+    <div class="card-header">
+      <h3>Conservation des données de transaction, déclarations fiscales</h3>
+      <span class="badge">En cours</span>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Finalité</th>
+          <td>Respecter les obligations légales françaises et européennes : conservation des données comptables (5 ans), déclaration des revenus des Passeurs conformément à la loi ESSOC (Loi 2018-727 — plateforme numériques déclarantes), et réponse aux demandes légales des autorités.</td>
+        </tr>
+        <tr>
+          <th>Base légale (Art. 6)</th>
+          <td>
+            <span class="tag">Art. 6(1)(c) — Obligation légale</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Catégories de données</th>
+          <td>
+            <ul>
+              <li>Nom, prénom, adresse email des Passeurs</li>
+              <li>Revenus perçus via la plateforme (par année fiscale)</li>
+              <li>Référence des transactions</li>
+              <li>Récapitulatif annuel envoyé par email aux Passeurs</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>Personnes concernées</th>
+          <td>Passeurs ayant perçu des revenus via KolisGo</td>
+        </tr>
+        <tr>
+          <th>Destinataires</th>
+          <td>
+            <span class="tag blue">KolisGo (comptabilité)</span>
+            <span class="tag yellow">Direction Générale des Finances Publiques (DGFiP) — si applicable</span>
+            <span class="tag red">Autorités judiciaires (sur réquisition)</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Transferts hors UE</th>
+          <td>Aucun transfert hors UE pour les obligations fiscales françaises. Données stockées sur Supabase (USA/Singapour) — CCT.</td>
+        </tr>
+        <tr>
+          <th>Durée de conservation</th>
+          <td><strong>5 ans</strong> à compter de la clôture de l'exercice comptable concerné (Art. L123-22 Code de commerce). <strong>10 ans</strong> pour les pièces comptables au sens de l'article L102B du Livre des Procédures Fiscales.</td>
+        </tr>
+        <tr>
+          <th>Mesures de sécurité</th>
+          <td>Accès restreint aux données fiscales. Chiffrement au repos et en transit. Aucune communication des données fiscales entre utilisateurs.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Récapitulatif sous-traitants -->
+  <div class="section-label">Sous-traitants</div>
+  <h2>Registre des sous-traitants (Art. 30(1)(d) RGPD)</h2>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr>
+          <th style="width:160px">Sous-traitant</th>
+          <th>Pays</th>
+          <th>Traitement délégué</th>
+          <th>Garantie de transfert</th>
+        </tr>
+        <tr>
+          <td><strong>Stripe, Inc.</strong></td>
+          <td>🇺🇸 USA</td>
+          <td>Traitement des paiements, tokenisation des cartes bancaires</td>
+          <td>CCT + PCI-DSS Level 1</td>
+        </tr>
+        <tr>
+          <td><strong>Supabase, Inc.</strong></td>
+          <td>🇸🇬 SG / 🇺🇸 USA</td>
+          <td>Hébergement base de données, authentification, stockage fichiers</td>
+          <td>CCT approuvées par la Commission européenne</td>
+        </tr>
+        <tr>
+          <td><strong>Netlify, Inc.</strong></td>
+          <td>🇺🇸 USA</td>
+          <td>Hébergement du site web, CDN, logs d'accès</td>
+          <td>CCT + DPA Netlify</td>
+        </tr>
+        <tr>
+          <td><strong>Twilio, Inc.</strong></td>
+          <td>🇺🇸 USA</td>
+          <td>Envoi de SMS (notifications transactionnelles)</td>
+          <td>CCT approuvées</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Droits des personnes -->
+  <div class="section-label">Droits des personnes</div>
+  <h2>Exercice des droits et contacts</h2>
+  <div class="card">
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Droit</th>
+          <th>Base RGPD</th>
+          <th>Contact pour exercice</th>
+          <th>Délai de réponse</th>
+        </tr>
+        <tr>
+          <td>Accès aux données</td>
+          <td>Art. 15</td>
+          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td>30 jours</td>
+        </tr>
+        <tr>
+          <td>Rectification</td>
+          <td>Art. 16</td>
+          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a> ou app</td>
+          <td>30 jours</td>
+        </tr>
+        <tr>
+          <td>Effacement</td>
+          <td>Art. 17</td>
+          <td>Paramètres de l'app ou <a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td>30 jours</td>
+        </tr>
+        <tr>
+          <td>Limitation du traitement</td>
+          <td>Art. 18</td>
+          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td>30 jours</td>
+        </tr>
+        <tr>
+          <td>Portabilité</td>
+          <td>Art. 20</td>
+          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td>30 jours</td>
+        </tr>
+        <tr>
+          <td>Opposition</td>
+          <td>Art. 21</td>
+          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td>30 jours</td>
+        </tr>
+        <tr>
+          <td>Réclamation CNIL</td>
+          <td>Art. 77</td>
+          <td><a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">cnil.fr/fr/plaintes</a></td>
+          <td>—</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:18px 22px;margin-top:32px;font-size:.84rem;color:#166534;">
+    <strong>📌 Note de mise à jour</strong><br>
+    Ce registre doit être mis à jour à chaque fois qu'une nouvelle activité de traitement est mise en place, modifiée ou supprimée. La version en vigueur est celle publiée sur cette page. En cas de violation de données, la CNIL doit être notifiée dans un délai de <strong>72 heures</strong> (Art. 33 RGPD). Les personnes concernées doivent être informées sans délai indu si leurs droits et libertés sont susceptibles d'être affectés (Art. 34 RGPD).
+  </div>
+
+</div>
+
+<footer>
+  © 2026 KolisGo · <a href="/politique-confidentialite.html">Politique de confidentialité</a> · <a href="/cgu.html">CGU</a> · Registre RGPD Art. 30
+</footer>
+
+</body>
+</html>

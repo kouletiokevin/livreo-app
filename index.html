@@ -92,10 +92,10 @@
 <!-- ══ FONTS ══ -->
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<!-- ══ LIBS CDN ══ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- ══ LIBS CDN (defer = chargement parallèle, n'bloque pas le rendu) ══ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="https://js.stripe.com/v3/" defer></script>
 
 <!-- ══ CONFIG SUPABASE (doit être chargé avant app.js) ══ -->
@@ -516,31 +516,31 @@
         <label class="payment-option">
           <input type="radio" name="payment" value="visa" hidden>
           <div class="payment-card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
+            <img src="/assets/logos/visa.svg" alt="Visa" loading="lazy">
           </div>
         </label>
         <label class="payment-option">
           <input type="radio" name="payment" value="mastercard" hidden>
           <div class="payment-card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+            <img src="/assets/logos/mastercard.svg" alt="Mastercard" loading="lazy">
           </div>
         </label>
         <label class="payment-option">
           <input type="radio" name="payment" value="applepay" hidden>
           <div class="payment-card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay">
+            <img src="/assets/logos/apple-pay.svg" alt="Apple Pay" loading="lazy">
           </div>
         </label>
         <label class="payment-option">
           <input type="radio" name="payment" value="googlepay" hidden>
           <div class="payment-card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="Google Pay">
+            <img src="/assets/logos/google-pay.svg" alt="Google Pay" loading="lazy">
           </div>
         </label>
         <label class="payment-option">
           <input type="radio" name="payment" value="paypal" hidden>
           <div class="payment-card">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+            <img src="/assets/logos/paypal.svg" alt="PayPal" loading="lazy">
           </div>
         </label>
       </div>
