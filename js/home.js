@@ -315,3 +315,131 @@ async function chargerKPIs(userId, profil) {
   set('kpi-gains',      gains.toFixed(0) + '€');
   set('kpi-note',       note > 0 ? note.toFixed(1) + '⭐' : '—');
 }
+
+// ── Reçus de paiement ─────────────────────
+async function chargerRecus(userId) {
+  const container = document.getElementById('recus-list');
+  if (!container) return;
+  try {
+    const { data } = await db.from('transactions')
+      .select('id, montant, statut, created_at, type, colis(code_lvr, gare_depart, gare_arrivee)')
+      .or(`expediteur_id.eq.${userId},livreur_id.eq.${userId}`)
+      .in('statut', ['libere', 'escrow', 'rembourse'])
+      .order('created_at', { ascending: false })
+      .limit(3);
+
+    if (!data || !data.length) {
+      container.innerHTML = `<div style="text-align:center;padding:16px 0;font-size:.78rem;color:var(--muted);">Aucun reçu disponible pour le moment.</div>`;
+      return;
+    }
+
+    container.innerHTML = data.map(tx => {
+      const dt = new Date(tx.created_at).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric' });
+      const ref = tx.colis?.code_lvr || '—';
+      const trajet = tx.colis ? `${(tx.colis.gare_depart||'').split(' ')[0]} → ${(tx.colis.gare_arrivee||'').split(' ')[0]}` : '—';
+      const montant = parseFloat(tx.montant || 0).toFixed(2).replace('.', ',');
+      const statutCol = tx.statut === 'libere' ? '#16a34a' : tx.statut === 'rembourse' ? '#dc2626' : '#92400e';
+      const statutLbl = tx.statut === 'libere' ? 'Versé' : tx.statut === 'rembourse' ? 'Remboursé' : 'En attente';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--cream);border-radius:10px;border:1px solid var(--border);">
+        <div style="font-size:1.3rem;">🧾</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.78rem;font-weight:800;color:var(--ink);">${escapeHtml(ref)} · ${escapeHtml(trajet)}</div>
+          <div style="font-size:.68rem;color:var(--muted);margin-top:1px;">${dt} · <span style="color:${statutCol};font-weight:700;">${statutLbl}</span></div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:.9rem;font-weight:900;color:var(--g600);">${montant}€</div>
+          <button onclick="telechargerRecu('${tx.id}')" style="font-size:.62rem;font-weight:700;color:var(--g500);background:none;border:none;cursor:pointer;padding:2px 0;white-space:nowrap;">⬇ Reçu</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    if (container) container.innerHTML = `<div style="text-align:center;padding:16px 0;font-size:.78rem;color:var(--muted);">Impossible de charger les reçus.</div>`;
+  }
+}
+
+async function voirTousRecus() {
+  if (!user) return;
+  openSheet(_shHdr('🧾 Mes reçus KolisGo') + `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">Chargement…</div>`);
+  try {
+    const { data } = await db.from('transactions')
+      .select('id, montant, statut, created_at, type, colis(code_lvr, gare_depart, gare_arrivee)')
+      .or(`expediteur_id.eq.${user.id},livreur_id.eq.${user.id}`)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    let html = _shHdr('🧾 Mes reçus KolisGo');
+    if (!data || !data.length) {
+      html += _emptyMsg('Aucune transaction pour le moment');
+    } else {
+      html += data.map(tx => {
+        const dt = new Date(tx.created_at).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        const ref = tx.colis?.code_lvr || '—';
+        const trajet = tx.colis ? `${tx.colis.gare_depart || '?'} → ${tx.colis.gare_arrivee || '?'}` : '—';
+        const montant = parseFloat(tx.montant || 0).toFixed(2).replace('.', ',');
+        return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+          <div style="font-size:1.4rem;">🧾</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:.82rem;font-weight:800;">${escapeHtml(ref)}</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:1px;">${escapeHtml(trajet)}</div>
+            <div style="font-size:.68rem;color:var(--muted2);margin-top:1px;">${dt}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:1rem;font-weight:900;color:var(--g600);">${montant}€</div>
+            ${_statutLabel(tx.statut)}
+            <div style="margin-top:4px;"><button onclick="telechargerRecu('${tx.id}')" style="font-size:.68rem;font-weight:700;color:var(--g500);background:var(--g50);border:1px solid var(--g100);border-radius:6px;cursor:pointer;padding:3px 8px;">⬇ Reçu PDF</button></div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    openSheet(html);
+  } catch(e) {
+    openSheet(_shHdr('🧾 Mes reçus KolisGo') + _emptyMsg('Impossible de charger'));
+  }
+}
+
+function telechargerRecu(txId) {
+  if (!user || !txId) return;
+  // Génère un reçu HTML simplifié et l'ouvre dans un nouvel onglet
+  const win = window.open('', '_blank');
+  if (!win) { t('Autorisez les popups pour télécharger le reçu', 'e'); return; }
+
+  db.from('transactions')
+    .select('id, montant, statut, created_at, type, colis(code_lvr, gare_depart, gare_arrivee, prix)')
+    .eq('id', txId)
+    .single()
+    .then(({ data: tx }) => {
+      const dt = new Date(tx?.created_at || Date.now()).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      const ref = tx?.colis?.code_lvr || '—';
+      const montant = parseFloat(tx?.montant || 0).toFixed(2);
+      const trajet = tx?.colis ? `${tx.colis.gare_depart || '?'} → ${tx.colis.gare_arrivee || '?'}` : '—';
+      win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reçu KolisGo — ${ref}</title>
+      <style>body{font-family:Georgia,serif;max-width:600px;margin:40px auto;padding:0 20px;color:#111;}
+      h1{font-size:1.4rem;color:#1a3320;}.lbl{font-size:.8rem;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-top:16px;}
+      .val{font-size:1rem;font-weight:700;margin-top:2px;}.total{font-size:1.6rem;font-weight:900;color:#1a8044;margin-top:8px;}
+      .footer{margin-top:40px;font-size:.72rem;color:#999;border-top:1px solid #eee;padding-top:12px;}
+      @media print{button{display:none!important;}}</style></head>
+      <body>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+        <div style="width:40px;height:40px;background:#0e1a10;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:#2ecc71;">K</div>
+        <div><div style="font-size:1.1rem;font-weight:900;">KolisGo</div><div style="font-size:.72rem;color:#666;">Reçu de transaction</div></div>
+        <button onclick="window.print()" style="margin-left:auto;padding:8px 16px;background:#1a8044;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.82rem;">🖨 Imprimer</button>
+      </div>
+      <div style="background:#f7faf7;border:1.5px solid #d1fae5;border-radius:12px;padding:20px;margin-bottom:20px;">
+        <div class="lbl">Référence</div><div class="val">${ref}</div>
+        <div class="lbl">Trajet</div><div class="val">${trajet}</div>
+        <div class="lbl">Date</div><div class="val">${dt}</div>
+        <div class="lbl">Montant total</div><div class="total">${montant}€</div>
+      </div>
+      <div style="font-size:.78rem;color:#555;line-height:1.6;">
+        Ce reçu atteste d'une transaction réalisée sur la plateforme KolisGo.<br>
+        KolisGo — SASU en cours d'immatriculation · 12 Rue de la Paix, 75002 Paris<br>
+        contact@kolisgo.fr
+      </div>
+      <div class="footer">Document généré le ${new Date().toLocaleDateString('fr-FR')} · KolisGo v1.0</div>
+      </body></html>`);
+      win.document.close();
+    }).catch(() => {
+      win.close();
+      t('Impossible de générer le reçu', 'e');
+    });
+}

@@ -121,7 +121,8 @@ function goNav(id) {
   document.querySelectorAll('.bni').forEach(b => b.classList.remove('on'));
   document.getElementById('s-' + id)?.classList.add('on');
   document.getElementById('bn-' + id)?.classList.add('on');
-  document.getElementById('content').scrollTop = 0;
+  const content = document.getElementById('content');
+  if (content) content.scrollTop = 0;
 }
 
 function navDash() { user ? goNav('dashboard') : goNav('auth'); }
@@ -132,9 +133,42 @@ function goPost() {
 function refreshHome() {
   const landing = document.getElementById('home-landing');
   const dash = document.getElementById('home-dash');
+  if (!landing || !dash) return;
   if (user) { landing.style.display = 'none'; dash.style.display = 'block'; }
   else { landing.style.display = 'block'; dash.style.display = 'none'; }
 }
+
+// ── Auto-hide bottom nav on scroll ───────
+(function initScrollNav() {
+  let lastScrollY = 0;
+  let ticking = false;
+
+  function onScroll() {
+    const currentY = this.scrollTop || 0;
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const botNav = document.querySelector('.bot-nav');
+        if (botNav) {
+          if (currentY > lastScrollY && currentY > 60) {
+            botNav.style.transform = 'translateY(100%)';
+            botNav.style.transition = 'transform .28s cubic-bezier(.4,0,.2,1)';
+          } else {
+            botNav.style.transform = 'translateY(0)';
+            botNav.style.transition = 'transform .22s cubic-bezier(.4,0,.2,1)';
+          }
+        }
+        lastScrollY = currentY;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const content = document.getElementById('content');
+    if (content) content.addEventListener('scroll', onScroll, { passive: true });
+  });
+})();
 
 // ── Toast ────────────────────────────────
 function t(msg, type = '') {

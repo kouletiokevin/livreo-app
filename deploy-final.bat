@@ -12,7 +12,7 @@ echo === Ajout de tous les fichiers ===
 
 echo.
 echo === Commit ===
-%GIT% commit -m "feat: booster visibilite, CNIL fix, securite headers, logos locaux, CGU/privacy mentions legales, registre RGPD Art.30"
+%GIT% commit -m "feat: dashboard apres login, notif dropdown, suppression photos, crypto pay, recus, centre aide, signaler probleme, sw cache v6"
 
 echo.
 echo === Push vers GitHub (master) ===

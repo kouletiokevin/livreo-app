@@ -127,9 +127,14 @@ async function doLogout() {
   user = null;
   const adminLink = document.getElementById('admin-link');
   if (adminLink) adminLink.style.display = 'none';
-  document.getElementById('nav-login').style.display = 'block';
-  document.getElementById('nav-av').style.display = 'none';
-  document.getElementById('nav-notif').style.display = 'none';
+  const navLogin2 = document.getElementById('nav-login');
+  if (navLogin2) navLogin2.style.display = 'block';
+  const navAv2 = document.getElementById('nav-av');
+  if (navAv2) navAv2.style.display = 'none';
+  const navNotif2 = document.getElementById('nav-notif');
+  if (navNotif2) navNotif2.style.display = 'none';
+  const notifBadge2 = document.getElementById('notif-badge');
+  if (notifBadge2) { notifBadge2.textContent = ''; notifBadge2.style.display = 'none'; }
   const navImg2 = document.getElementById('nav-av-img');
   const navTxt2 = document.getElementById('nav-av-txt');
   if (navImg2) { navImg2.src = ''; navImg2.style.display = 'none'; }
@@ -198,9 +203,12 @@ async function onLoginSuccess(profil) {
   user.role = role;
 
   // Nav
-  document.getElementById('nav-login').style.display = 'none';
-  document.getElementById('nav-av').style.display = 'flex';
-  document.getElementById('nav-notif').style.display = 'block';
+  const navLoginEl = document.getElementById('nav-login');
+  if (navLoginEl) navLoginEl.style.display = 'none';
+  const navAvEl = document.getElementById('nav-av');
+  if (navAvEl) navAvEl.style.display = 'flex';
+  const navNotifEl = document.getElementById('nav-notif');
+  if (navNotifEl) navNotifEl.style.display = 'block';
   const navTxt = document.getElementById('nav-av-txt');
   if (navTxt) navTxt.textContent = (profil.prenom?.[0] || '?').toUpperCase();
   if (profil.photo_profil_url) {
@@ -272,6 +280,7 @@ async function onLoginSuccess(profil) {
   chargerActiviteRecente(profil.id);
   if (typeof chargerNotifsCount === 'function') chargerNotifsCount();
   if (typeof initNotifRealtime === 'function') initNotifRealtime();
+  if (typeof chargerRecus === 'function') chargerRecus(profil.id);
 }
 
 // ── Tabs auth ────────────────────────────

@@ -82,7 +82,10 @@ function fakeUp(type) {
       const reader = new FileReader();
       reader.onload = e => {
         document.getElementById('prev-em').innerHTML =
-          `<img src="${e.target.result}" style="width:56px;height:56px;border-radius:9px;object-fit:cover;border:2px solid var(--g200);">`;
+          `<div style="position:relative;display:inline-block;">
+            <img src="${e.target.result}" style="width:56px;height:56px;border-radius:9px;object-fit:cover;border:2px solid var(--g200);">
+            <button onclick="supprimerPhotoEm()" type="button" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;border:none;cursor:pointer;font-size:.65rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:900;">✕</button>
+          </div>`;
       };
       reader.readAsDataURL(files[0]);
       window._photoEmballee = files[0];
@@ -90,21 +93,56 @@ function fakeUp(type) {
       t('Photo emballée ajoutée ✅', 's');
     } else {
       let html = '';
-      for (const f of files.slice(0, 5)) {
+      const selectedFiles = files.slice(0, 5);
+      window._photosContenu = Array.from(selectedFiles);
+      selectedFiles.forEach((f, idx) => {
         const url = URL.createObjectURL(f);
         setTimeout(() => URL.revokeObjectURL(url), 30000);
-        html += `<div class="prev-locked" style="position:relative;overflow:hidden;">
+        html += `<div class="prev-locked" style="position:relative;overflow:visible;">
           <img src="${url}" style="width:100%;height:100%;object-fit:cover;opacity:.5;border-radius:7px;">
           <div style="position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:.4rem;font-weight:900;color:#fff;letter-spacing:.3px;">PRIVÉ</div>
+          <button onclick="supprimerPhotoCo(${idx})" type="button" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;border:none;cursor:pointer;font-size:.65rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:900;z-index:2;">✕</button>
         </div>`;
-      }
+      });
       document.getElementById('prev-co').innerHTML = html;
-      window._photosContenu = files;
-      coUp = true;
-      t(files.length + ' photo(s) contenu ajoutée(s) 🔒', 's');
+      coUp = window._photosContenu.length > 0;
+      t(selectedFiles.length + ' photo(s) contenu ajoutée(s) 🔒', 's');
     }
   };
   inp.click();
+}
+
+// ── Suppression photos ───────────────────
+function supprimerPhotoEm() {
+  document.getElementById('prev-em').innerHTML = '';
+  window._photoEmballee = null;
+  emUp = false;
+  t('Photo supprimée', '');
+}
+
+function supprimerPhotoCo(idx) {
+  if (!window._photosContenu) return;
+  window._photosContenu.splice(idx, 1);
+  if (window._photosContenu.length === 0) {
+    document.getElementById('prev-co').innerHTML = '';
+    coUp = false;
+    t('Photos supprimées', '');
+    return;
+  }
+  // Re-render
+  let html = '';
+  window._photosContenu.forEach((f, i) => {
+    const url = URL.createObjectURL(f);
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    html += `<div class="prev-locked" style="position:relative;overflow:visible;">
+      <img src="${url}" style="width:100%;height:100%;object-fit:cover;opacity:.5;border-radius:7px;">
+      <div style="position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:.4rem;font-weight:900;color:#fff;letter-spacing:.3px;">PRIVÉ</div>
+      <button onclick="supprimerPhotoCo(${i})" type="button" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;border:none;cursor:pointer;font-size:.65rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:900;z-index:2;">✕</button>
+    </div>`;
+  });
+  document.getElementById('prev-co').innerHTML = html;
+  coUp = window._photosContenu.length > 0;
+  t('Photo supprimée', '');
 }
 
 // ── Reset formulaire poster ──────────────
@@ -116,6 +154,16 @@ function resetPoster() {
   document.getElementById('prev-em').innerHTML = '';
   document.getElementById('prev-co').innerHTML = '';
 }
+
+// ── Toggle info crypto ───────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('input[name="payment"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const cryptoInfo = document.getElementById('crypto-info');
+      if (cryptoInfo) cryptoInfo.style.display = radio.value === 'crypto' && radio.checked ? 'block' : 'none';
+    });
+  });
+});
 
 // ── Publication colis ────────────────────
 async function publishColis() {

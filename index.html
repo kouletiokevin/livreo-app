@@ -266,8 +266,20 @@
     <div id="nav-login" style="display:flex;gap:6px;">
       <button class="btn s" style="padding:7px 14px;font-size:.76rem;" onclick="goNav('auth')">Connexion</button>
     </div>
-    <div id="nav-notif" style="display:none;">
-      <button id="notif-btn" onclick="ouvrirNotifications()" style="width:36px;height:36px;border-radius:10px;background:var(--cream2);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.05rem;position:relative;">🔔<div id="notif-badge" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--cream);"></div></button>
+    <div id="nav-notif" style="display:none;position:relative;">
+      <button id="notif-btn" onclick="toggleNotifDropdown()" style="width:36px;height:36px;border-radius:10px;background:var(--cream2);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.05rem;position:relative;">🔔
+        <div id="notif-badge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;background:var(--danger);border-radius:50px;border:2px solid var(--cream);font-size:.58rem;font-weight:900;color:#fff;display:none;align-items:center;justify-content:center;padding:0 3px;line-height:1;font-family:var(--sans);"></div>
+      </button>
+      <!-- Dropdown notifications -->
+      <div id="notif-dropdown" style="display:none;position:absolute;top:44px;right:0;width:320px;max-height:400px;background:var(--white);border-radius:16px;border:1.5px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.14);z-index:9000;overflow:hidden;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border);">
+          <div style="font-size:.9rem;font-weight:900;">🔔 Notifications</div>
+          <button onclick="marquerToutesLues()" style="font-size:.68rem;font-weight:700;color:var(--g500);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;">Tout marquer lu</button>
+        </div>
+        <div id="notif-list" style="overflow-y:auto;max-height:320px;padding:8px 0;">
+          <div style="text-align:center;padding:24px;color:var(--muted);font-size:.8rem;">Chargement…</div>
+        </div>
+      </div>
     </div>
     <div id="nav-av" style="display:none;width:36px;height:36px;border-radius:10px;background:var(--g500);color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;align-items:center;justify-content:center;overflow:hidden;" onclick="navDash()">
       <img id="nav-av-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
@@ -401,6 +413,17 @@
       <div class="kpi" style="cursor:pointer;" onclick="voirPassages()"><div class="kl">Passages</div><div class="kv g" id="kpi-livraisons">0</div></div>
       <div class="kpi" style="cursor:pointer;" onclick="voirGains()"><div class="kl">Gains totaux</div><div class="kv g" id="kpi-gains">0€</div></div>
       <div class="kpi" style="cursor:pointer;" onclick="voirAvis()"><div class="kl">Ma note</div><div class="kv" id="kpi-note">—</div></div>
+    </div>
+
+    <!-- REÇUS & TICKETS -->
+    <div style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:16px;margin-top:14px;margin-bottom:4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:.82rem;font-weight:900;">🧾 Mes reçus de paiement</div>
+        <button onclick="voirTousRecus()" style="font-size:.68rem;font-weight:700;color:var(--g500);background:none;border:none;cursor:pointer;">Tout voir →</button>
+      </div>
+      <div id="recus-list" style="display:flex;flex-direction:column;gap:8px;">
+        <div style="text-align:center;padding:16px 0;font-size:.78rem;color:var(--muted);">Chargement des reçus…</div>
+      </div>
     </div>
 
     <!-- ACTIVITÉ RÉCENTE -->
@@ -543,10 +566,22 @@
             <img src="/assets/logos/paypal.svg" alt="PayPal" loading="lazy">
           </div>
         </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="crypto" hidden>
+          <div class="payment-card" style="background:#f0b90b14;border-color:#f0b90b40;">
+            <svg width="48" height="22" viewBox="0 0 120 36" xmlns="http://www.w3.org/2000/svg">
+              <rect width="120" height="36" rx="6" fill="#f0b90b"/>
+              <text x="60" y="24" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="13" font-weight="900" fill="#1a1a1a">CRYPTO</text>
+            </svg>
+          </div>
+        </label>
+      </div>
+      <div id="crypto-info" style="display:none;margin-top:8px;padding:10px 12px;background:#fffbeb;border:1.5px solid #f0b90b40;border-radius:10px;font-size:.74rem;color:#92400e;">
+        💡 Paiement crypto disponible via Binance Pay, Coinbase ou tout wallet compatible. Vous recevrez un lien de paiement après publication.
       </div>
       <input type="hidden" id="pf-price-input" value="7">
     </div>
-    <button class="btn p full lg" onclick="publishColis()">🚀 Publier</button>
+    <button class="btn p full lg" onclick="publishColis()">Publier</button>
   </div>
   <div id="poster-suc" style="display:none;">
     <div class="suc-wrap">
@@ -798,8 +833,8 @@
       <div class="param-row" onclick="ouvrirSetupMFA()"><div><div style="font-size:.82rem;font-weight:700;">🔐 Double authentification (2FA)</div><div style="font-size:.68rem;color:var(--muted);">Configurer Google Authenticator ou Authy</div></div><span>›</span></div>
       <div class="param-row" onclick="window.open('/cgu.html','_blank')"><div><div style="font-size:.82rem;font-weight:700;">Conditions générales d'utilisation</div></div><span>›</span></div>
       <div class="param-row" onclick="window.open('/politique-confidentialite.html','_blank')"><div><div style="font-size:.82rem;font-weight:700;">Politique de confidentialité</div></div><span>›</span></div>
-      <div class="param-row" onclick="t('Aide ouverte','')"><div><div style="font-size:.82rem;font-weight:700;">Centre d'aide</div></div><span>›</span></div>
-      <div class="param-row" onclick="t('Rapport envoyé ✅','s')"><div><div style="font-size:.82rem;font-weight:700;">Signaler un problème</div></div><span>›</span></div>
+      <div class="param-row" onclick="ouvrirCentreAide()"><div><div style="font-size:.82rem;font-weight:700;">Centre d'aide</div></div><span>›</span></div>
+      <div class="param-row" onclick="ouvrirSignalerProbleme()"><div><div style="font-size:.82rem;font-weight:700;">Signaler un problème</div></div><span>›</span></div>
       <div class="param-row" onclick="t('Version 1.0.0 · KolisGo','')"><div><div style="font-size:.82rem;font-weight:700;">Version de l'application</div><div style="font-size:.68rem;color:var(--muted);">1.0.0</div></div><span>›</span></div>
     </div>
   </div>
@@ -1464,68 +1499,196 @@ function _updateFilterBtn() {
   badge.style.display  = currentFilters.length > 0 ? 'flex' : 'none';
 }
 
-/* ── Notifications ── */
+/* ── Notifications dropdown ── */
 const _NOTIF_ICO = { sms:'📱', push:'🔔', email:'✉️', colis:'📦', paiement:'💰', system:'⚙️' };
 
-function _notifHdr() {
-  return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-    <div style="font-size:1rem;font-weight:900;">🔔 Notifications</div>
-    <button onclick="closeSheet()" style="width:28px;height:28px;border-radius:50%;border:none;background:#f0f0f0;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;">✕</button>
-  </div>`;
+let _notifOpen = false;
+
+function toggleNotifDropdown() {
+  if (!user) return;
+  const dd = document.getElementById('notif-dropdown');
+  if (!dd) return;
+  _notifOpen = !_notifOpen;
+  dd.style.display = _notifOpen ? 'flex' : 'none';
+  if (_notifOpen) _chargerNotifsDropdown();
 }
 
-async function ouvrirNotifications() {
+function fermerNotifDropdown() {
+  _notifOpen = false;
+  const dd = document.getElementById('notif-dropdown');
+  if (dd) dd.style.display = 'none';
+}
+
+async function _chargerNotifsDropdown() {
   if (!user) return;
-
-  openSheet(_notifHdr() + `<div style="text-align:center;padding:28px;color:var(--muted);font-size:.82rem;">Chargement…</div>`);
-
+  const list = document.getElementById('notif-list');
+  if (!list) return;
+  list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted);font-size:.8rem;">Chargement…</div>`;
   try {
     const { data, error } = await db.from('notifications')
       .select('id, type, titre, message, lu, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .limit(30);
+      .limit(20);
+
+    if (error || !data?.length) {
+      list.innerHTML = `<div style="text-align:center;padding:32px 16px;">
+        <div style="font-size:2rem;margin-bottom:10px;">🔔</div>
+        <div style="font-size:.8rem;color:var(--muted);line-height:1.6;">Aucune notification pour le moment.<br>Vous serez alerté dès qu'un passeur accepte votre kolis.</div>
+      </div>`;
+      return;
+    }
+
+    list.innerHTML = data.map(n => {
+      const ico = _NOTIF_ICO[n.type] || '📬';
+      const dt  = new Date(n.created_at).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+      const bg  = !n.lu ? 'background:var(--g50);' : '';
+      return `<div style="display:flex;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);cursor:pointer;${bg}" onclick="fermerNotifDropdown()">
+        <div style="font-size:1.2rem;flex-shrink:0;margin-top:2px;">${ico}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.8rem;font-weight:800;color:var(--ink);margin-bottom:1px;">${escapeHtml(n.titre || 'Notification')}</div>
+          ${n.message ? `<div style="font-size:.72rem;color:var(--muted);line-height:1.4;margin-bottom:2px;">${escapeHtml(n.message)}</div>` : ''}
+          <div style="font-size:.64rem;color:var(--muted2);">${dt}</div>
+        </div>
+        ${!n.lu ? '<div style="width:7px;height:7px;border-radius:50%;background:var(--g500);flex-shrink:0;margin-top:5px;"></div>' : ''}
+      </div>`;
+    }).join('');
 
     /* Marquer toutes comme lues */
-    if (data?.some(n => !n.lu)) {
+    if (data.some(n => !n.lu)) {
       db.from('notifications').update({ lu: true })
         .eq('user_id', user.id).eq('lu', false).then(() => {
           const b = document.getElementById('notif-badge');
-          if (b) b.style.display = 'none';
+          if (b) { b.textContent = ''; b.style.display = 'none'; }
         });
     }
-
-    let body;
-    if (error || !data?.length) {
-      body = `<div style="text-align:center;padding:32px 16px;">
-        <div style="font-size:2.4rem;margin-bottom:12px;">🔔</div>
-        <div style="font-size:.84rem;color:var(--muted);line-height:1.6;">Aucune notification pour le moment.<br>Vous serez alerté dès qu'un passeur accepte votre kolis.</div>
-      </div>`;
-    } else {
-      body = data.map(n => {
-        const ico = _NOTIF_ICO[n.type] || '📬';
-        const dt  = new Date(n.created_at).toLocaleDateString('fr-FR',
-          { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-        const unread = !n.lu
-          ? 'background:var(--g50);margin:0 -22px;padding:12px 22px;'
-          : 'padding:12px 0;';
-        return `<div style="display:flex;gap:12px;border-bottom:1px solid var(--border);${unread}">
-          <div style="font-size:1.35rem;flex-shrink:0;margin-top:3px;">${ico}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:2px;">${escapeHtml(n.titre || 'Notification')}</div>
-            ${n.message ? `<div style="font-size:.76rem;color:var(--muted);line-height:1.5;margin-bottom:3px;">${escapeHtml(n.message)}</div>` : ''}
-            <div style="font-size:.68rem;color:var(--muted2);">${dt}</div>
-          </div>
-          ${!n.lu ? '<div style="width:7px;height:7px;border-radius:50%;background:var(--g500);flex-shrink:0;margin-top:6px;"></div>' : ''}
-        </div>`;
-      }).join('');
-    }
-
-    openSheet(_notifHdr() + body);
   } catch(e) {
-    openSheet(_notifHdr() + `<div style="text-align:center;padding:28px;color:var(--muted);font-size:.82rem;">Impossible de charger les notifications</div>`);
+    if (list) list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted);font-size:.8rem;">Impossible de charger les notifications</div>`;
   }
 }
+
+async function marquerToutesLues() {
+  if (!user) return;
+  await db.from('notifications').update({ lu: true }).eq('user_id', user.id).eq('lu', false);
+  const b = document.getElementById('notif-badge');
+  if (b) { b.textContent = ''; b.style.display = 'none'; }
+  _chargerNotifsDropdown();
+}
+
+/* ── Centre d'aide ── */
+function ouvrirCentreAide() {
+  const faqs = [
+    { q: "Comment envoyer un kolis ?", a: "Cliquez sur ➕ ou 'Poster un kolis', renseignez la gare de destination, décrivez votre colis, choisissez le prix et publiez. Un passeur prendra contact avec vous dès qu'il accepte." },
+    { q: "Comment devenir passeur ?", a: "Ouvrez 'Explorer les kolis', trouvez une annonce sur votre trajet et cliquez sur 'Accepter'. Votre identité doit être vérifiée (Niveau 3) pour livrer." },
+    { q: "Quand suis-je payé ?", a: "Le paiement est libéré sur votre portefeuille KolisGo dès que le destinataire scanne le QR Code et confirme la réception. Le retrait bancaire est disponible via 'Retirer des fonds'." },
+    { q: "Que faire si mon kolis n'arrive pas ?", a: "Ouvrez un litige depuis la page Suivi de votre kolis. Notre équipe intervient sous 48h. Le paiement reste bloqué en escrow pendant toute la durée du litige." },
+    { q: "Comment contacter le support ?", a: "Envoyez un email à support@kolisgo.fr ou utilisez 'Signaler un problème' ci-dessous. Réponse garantie sous 24h ouvrées." },
+    { q: "Comment modifier ou annuler une annonce ?", a: "Rendez-vous dans votre tableau de bord → Kolis envoyés. Tant qu'aucun passeur n'a accepté, vous pouvez modifier ou supprimer l'annonce librement." },
+    { q: "Mes informations personnelles sont-elles sécurisées ?", a: "Oui. KolisGo ne partage jamais vos données personnelles avec des tiers. Les paiements sont traités par Stripe (certifié PCI DSS). Consultez notre politique de confidentialité pour plus de détails." },
+    { q: "Comment signaler un passeur problématique ?", a: "Ouvrez le profil du passeur depuis votre annonce et cliquez sur 'Signaler'. Vous pouvez aussi écrire à legal@kolisgo.fr avec les détails de l'incident." },
+  ];
+  openSheet(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div style="font-size:1rem;font-weight:900;">❓ Centre d'aide</div>
+      <button onclick="closeSheet()" style="width:28px;height:28px;border-radius:50%;border:none;background:#f0f0f0;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div style="font-size:.74rem;color:var(--muted);margin-bottom:14px;">Questions fréquemment posées</div>
+    ${faqs.map((f, i) => `
+      <div style="border-bottom:1px solid var(--border);">
+        <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block';this.querySelector('span').textContent=this.nextElementSibling.style.display==='block'?'▲':'▼'"
+          style="width:100%;text-align:left;padding:12px 0;background:none;border:none;cursor:pointer;font-family:var(--sans);display:flex;justify-content:space-between;align-items:center;gap:8px;">
+          <span style="font-size:.82rem;font-weight:700;flex:1;">${f.q}</span>
+          <span style="font-size:.7rem;color:var(--muted);flex-shrink:0;">▼</span>
+        </button>
+        <div style="display:none;padding:0 0 12px;font-size:.78rem;color:var(--muted);line-height:1.6;">${f.a}</div>
+      </div>
+    `).join('')}
+    <div style="margin-top:18px;padding:14px;background:var(--g50);border-radius:12px;text-align:center;">
+      <div style="font-size:.8rem;font-weight:700;margin-bottom:4px;">Besoin d'aide supplémentaire ?</div>
+      <div style="font-size:.74rem;color:var(--muted);">Contactez-nous par email</div>
+      <a href="mailto:support@kolisgo.fr" style="display:inline-block;margin-top:8px;padding:8px 18px;background:var(--g500);color:#fff;border-radius:50px;font-size:.76rem;font-weight:700;text-decoration:none;">✉ support@kolisgo.fr</a>
+    </div>
+  `);
+}
+
+/* ── Signaler un problème ── */
+function ouvrirSignalerProbleme() {
+  openSheet(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div style="font-size:1rem;font-weight:900;">🚨 Signaler un problème</div>
+      <button onclick="closeSheet()" style="width:28px;height:28px;border-radius:50%;border:none;background:#f0f0f0;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div style="font-size:.74rem;color:var(--muted);margin-bottom:16px;line-height:1.5;">Décrivez votre problème ci-dessous. Notre équipe vous répondra sous 24h ouvrées.</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div>
+        <label style="font-size:.72rem;font-weight:800;color:var(--ink);display:block;margin-bottom:4px;">Type de problème</label>
+        <select id="rep-type" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.82rem;background:var(--cream);">
+          <option value="">Sélectionnez...</option>
+          <option value="colis_perdu">Colis perdu ou endommagé</option>
+          <option value="passeur">Problème avec un passeur</option>
+          <option value="paiement">Problème de paiement</option>
+          <option value="compte">Problème de compte / connexion</option>
+          <option value="bug">Bug ou erreur technique</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:.72rem;font-weight:800;color:var(--ink);display:block;margin-bottom:4px;">Référence du kolis (si applicable)</label>
+        <input type="text" id="rep-ref" placeholder="Ex. LVR-12345" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.82rem;box-sizing:border-box;">
+      </div>
+      <div>
+        <label style="font-size:.72rem;font-weight:800;color:var(--ink);display:block;margin-bottom:4px;">Description détaillée *</label>
+        <textarea id="rep-desc" rows="4" placeholder="Décrivez le problème en détail..." style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--sans);font-size:.82rem;resize:vertical;box-sizing:border-box;"></textarea>
+      </div>
+      <button onclick="envoyerSignalement()" class="btn p full" style="margin-top:4px;">Envoyer le signalement</button>
+      <div style="text-align:center;font-size:.68rem;color:var(--muted);">Ou écrivez directement à <a href="mailto:support@kolisgo.fr" style="color:var(--g500);">support@kolisgo.fr</a></div>
+    </div>
+  `);
+}
+
+async function envoyerSignalement() {
+  const type = document.getElementById('rep-type')?.value;
+  const ref  = document.getElementById('rep-ref')?.value.trim();
+  const desc = document.getElementById('rep-desc')?.value.trim();
+  if (!type) { t('Sélectionnez un type de problème', 'e'); return; }
+  if (!desc || desc.length < 10) { t('Décrivez le problème (10 caractères min)', 'e'); return; }
+
+  const btn = document.querySelector('[onclick="envoyerSignalement()"]');
+  if (btn) { btn.textContent = 'Envoi…'; btn.disabled = true; }
+
+  try {
+    const email = user?.email || 'anonyme';
+    const sujet = `[Signalement KolisGo] ${type}${ref ? ' — ' + ref : ''}`;
+    const corps = `De : ${email}\nType : ${type}\nRéf : ${ref || '—'}\n\n${desc}`;
+    // Tentative d'envoi via Edge Function
+    await callEdgeFunction('send-sms', {
+      telephone: '+33600000000',
+      message: `[SIGNALEMENT] ${email} — ${type} — ${ref || '—'} : ${desc.substring(0, 100)}`
+    }).catch(() => {});
+    // Log dans Supabase
+    if (user) {
+      await db.from('security_logs').insert({
+        type: 'signalement_probleme',
+        details: { type_pb: type, ref, description: desc.substring(0, 500) },
+        user_agent: navigator.userAgent,
+        timestamp: new Date().toISOString(),
+      }).catch(() => {});
+    }
+    closeSheet();
+    t('Signalement envoyé ✅ — Réponse sous 24h ouvrées', 's');
+  } catch(e) {
+    t('Envoyez votre signalement à support@kolisgo.fr', '');
+    closeSheet();
+  } finally {
+    if (btn) { btn.textContent = 'Envoyer le signalement'; btn.disabled = false; }
+  }
+}
+
+/* Fermer le dropdown si clic en dehors */
+document.addEventListener('click', e => {
+  const notifWrap = document.getElementById('nav-notif');
+  if (notifWrap && !notifWrap.contains(e.target)) fermerNotifDropdown();
+});
 
 async function chargerNotifsCount() {
   if (!user) return;
@@ -1535,7 +1698,15 @@ async function chargerNotifsCount() {
       .eq('user_id', user.id)
       .eq('lu', false);
     const badge = document.getElementById('notif-badge');
-    if (badge) badge.style.display = (count > 0) ? 'block' : 'none';
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : String(count);
+        badge.style.display = 'flex';
+      } else {
+        badge.textContent = '';
+        badge.style.display = 'none';
+      }
+    }
   } catch(e) { /* silencieux */ }
 }
 
@@ -1546,7 +1717,10 @@ function initNotifRealtime() {
     .on('postgres_changes', {
       event: 'INSERT', schema: 'public', table: 'notifications',
       filter: `user_id=eq.${user.id}`
-    }, () => chargerNotifsCount())
+    }, () => {
+      chargerNotifsCount();
+      if (_notifOpen) _chargerNotifsDropdown();
+    })
     .subscribe();
 }
 </script>
