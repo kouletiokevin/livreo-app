@@ -1306,6 +1306,7 @@ function clearGare(inpId, ddId, xId) {
 function swapGares() {
   const dep = document.getElementById('pf-dep');
   const arr = document.getElementById('pf-arr');
+  if (!dep || !arr) return;
   const tmp = dep.value; dep.value = arr.value; arr.value = tmp;
   const depX = document.getElementById('pf-dep-x');
   const arrX = document.getElementById('pf-arr-x');

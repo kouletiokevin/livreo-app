@@ -3,6 +3,13 @@
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
+// ── Valide une URL image (https uniquement) ──────────────
+function _safeImgUrl(url) {
+  if (!url || typeof url !== 'string') return null;
+  try { const u = new URL(url); return u.protocol === 'https:' ? url : null; }
+  catch(e) { return null; }
+}
+
 // ── Connexion email ──────────────────────
 async function doLogin() {
   const email = document.getElementById('l-em')?.value.trim().toLowerCase();
@@ -243,9 +250,10 @@ async function onLoginSuccess(profil) {
   if (navNotifEl) navNotifEl.style.display = 'block';
   const navTxt = document.getElementById('nav-av-txt');
   if (navTxt) navTxt.textContent = (profil.prenom?.[0] || '?').toUpperCase();
-  if (profil.photo_profil_url) {
+  const _safePhotoUrl = _safeImgUrl(profil.photo_profil_url);
+  if (_safePhotoUrl) {
     const navImg = document.getElementById('nav-av-img');
-    if (navImg) { navImg.src = profil.photo_profil_url; navImg.style.display = 'block'; }
+    if (navImg) { navImg.src = _safePhotoUrl; navImg.style.display = 'block'; }
     if (navTxt) navTxt.style.display = 'none';
   }
 
@@ -262,10 +270,10 @@ async function onLoginSuccess(profil) {
   });
 
   // Photo de profil
-  if (profil.photo_profil_url) {
+  if (_safePhotoUrl) {
     const img = document.getElementById('moi-av-img');
     const txt = document.getElementById('moi-av-txt');
-    if (img) { img.src = profil.photo_profil_url; img.style.display = 'block'; }
+    if (img) { img.src = _safePhotoUrl; img.style.display = 'block'; }
     if (txt) txt.style.display = 'none';
   }
 
