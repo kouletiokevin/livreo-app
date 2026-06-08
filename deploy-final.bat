@@ -12,12 +12,12 @@ echo === Ajout de tous les fichiers ===
 
 echo.
 echo === Commit ===
-%GIT% commit -m "feat: admin panel pro complet — dashboard KPI, graphiques Chart.js, gestion roles, equipe moderateurs, paramètres plateforme"
+%GIT% commit -m "fix: null-style crashes + security audit - add null guards app/suivi/booster/explorer/livreur, fix XSS+open-redirect in partners banner, tighten CSP, X-XSS-Protection header, SW v12 with affil.js"
 
 echo.
 echo === Push vers GitHub (master) ===
 %GIT% push origin master
 
 echo.
-echo === Termine ! Netlify va deployer automatiquement. ===
+echo === Deploy terminé ! Netlify va mettre à jour dans ~1 min ===
 pause

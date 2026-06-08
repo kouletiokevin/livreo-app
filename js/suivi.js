@@ -21,26 +21,29 @@ async function loadSuivi() {
 
   const isExp = user && user.id === colis.expediteur_id;
 
+  const svExp = document.getElementById('sv-exp');
+  const svDest = document.getElementById('sv-dest');
+
   if (isExp) {
-    document.getElementById('sv-exp').style.display = 'block';
-    document.getElementById('sv-dest').style.display = 'none';
+    if (svExp) svExp.style.display = 'block';
+    if (svDest) svDest.style.display = 'none';
 
     // Proposer de noter le passeur si la livraison est confirmée
     const expEl = document.getElementById('sv-exp');
     const existingBtn = document.getElementById('sv-noter-btn');
     if (existingBtn) existingBtn.remove();
-    if (colis.statut === 'livre' && colis.livreur_id && expEl) {
+    if (colis.statut === 'livre' && colis.livreur_id && svExp) {
       const btn = document.createElement('button');
       btn.id = 'sv-noter-btn';
       btn.className = 'btn p full';
       btn.style.marginTop = '16px';
       btn.textContent = '⭐ Notez votre passeur';
       btn.onclick = () => ouvrirNotation(colis.id, colis.livreur_id, 'le passeur');
-      expEl.appendChild(btn);
+      svExp.appendChild(btn);
     }
   } else {
-    document.getElementById('sv-exp').style.display = 'none';
-    document.getElementById('sv-dest').style.display = 'block';
+    if (svExp) svExp.style.display = 'none';
+    if (svDest) svDest.style.display = 'block';
     loadQR(colis);
   }
   t('Colis trouvé ✅', 's');
@@ -79,8 +82,10 @@ async function loadQR(colis) {
 // ── Bascule vue destinataire ─────────────
 function switchToDestView() {
   if (!_currentColis) return;
-  document.getElementById('sv-exp').style.display = 'none';
-  document.getElementById('sv-dest').style.display = 'block';
+  const svExp = document.getElementById('sv-exp');
+  const svDest = document.getElementById('sv-dest');
+  if (svExp) svExp.style.display = 'none';
+  if (svDest) svDest.style.display = 'block';
   qrLoaded = false;
   loadQR(_currentColis);
   document.getElementById('content').scrollTop = 0;

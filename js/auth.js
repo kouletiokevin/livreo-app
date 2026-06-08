@@ -75,12 +75,18 @@ async function doReg() {
       return;
     }
 
+    const refCode = localStorage.getItem('_ref_code') || null;
     const { error: profilErr } = await db.from('users').insert({
       id: data.user.id,
       email: em,
       prenom: pn,
       nom: nm,
       telephone: ph,
+      utm_source:      localStorage.getItem('_utm_source')   || null,
+      utm_medium:      localStorage.getItem('_utm_medium')   || null,
+      utm_campaign:    localStorage.getItem('_utm_campaign') || null,
+      utm_content:     localStorage.getItem('_utm_content')  || null,
+      referred_by_code: refCode,
     });
     if (profilErr) { t('Erreur création profil : ' + profilErr.message, 'e'); return; }
 
@@ -89,6 +95,14 @@ async function doReg() {
       role: ROLES.USER,
     });
     if (roleErr) console.warn('user_roles insert:', roleErr.message);
+
+    // Lier le code d'affiliation si présent
+    if (refCode) {
+      try {
+        await db.rpc('link_affiliate_referral', { p_user_id: data.user.id, p_code: refCode });
+        localStorage.removeItem('_ref_code');
+      } catch(e) { console.warn('Referral link error:', e); }
+    }
 
     t('✉️ Vérifiez votre email avant de vous connecter. Un lien de confirmation vous a été envoyé.', 's');
     goNav('auth');
@@ -292,30 +306,6 @@ async function onLoginSuccess(profil) {
     window._notifRealtimeStarted = true;
   }
   if (typeof chargerRecus === 'function') chargerRecus(profil.id);
+  if (typeof loadAffiliateCard === 'function') loadAffiliateCard();
   } finally {
     window._loginInProgress = false;
-  }
-}
-
-// ── Tabs auth ────────────────────────────
-function authTab(tab, el) {
-  ['at-login', 'at-register', 'at-forgot', 'at-verify-code'].forEach(id => {
-    const e2 = document.getElementById(id);
-    if (e2) e2.style.display = 'none';
-  });
-  document.querySelectorAll('.atab').forEach(a => a.classList.remove('on'));
-  const target = document.getElementById('at-' + tab);
-  if (target) target.style.display = 'block';
-  if (el) el.classList.add('on');
-  if (tab === 'login') document.querySelector('.atab:first-child')?.classList.add('on');
-  if (tab === 'register') document.querySelector('.atab:last-child')?.classList.add('on');
-}
-
-function atab(tab, el) { authTab(tab === 'l' ? 'login' : 'register', el); }
-
-function togglePw(id, btn) {
-  const inp = document.getElementById(id);
-  if (!inp) return;
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-  btn.textContent = inp.type === 'password' ? '👁️' : '🙈';
-}

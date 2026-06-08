@@ -148,8 +148,10 @@ function selectBoostOption(hours) {
   });
 
   // Afficher zone paiement et bouton
-  document.getElementById('boost-payment-zone').style.display = 'block';
-  document.getElementById('boost-confirm-btn').style.display = 'block';
+  const bpz = document.getElementById('boost-payment-zone');
+  const bcb = document.getElementById('boost-confirm-btn');
+  if (bpz) bpz.style.display = 'block';
+  if (bcb) bcb.style.display = 'block';
 
   // Mettre à jour le texte du bouton
   const price = BOOST_PRICES[hours];

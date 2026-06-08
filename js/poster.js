@@ -1,6 +1,6 @@
-﻿/* ═══════════════════════════════════════
+/* ═══════════════════════════════════════
    KOLISGO — Module Poster un kolis
-   Version 1.0 — Mai 2026
+   Version 2.0 — Juin 2026
 ═══════════════════════════════════════ */
 
 // ── Prix conseillé par défaut ─────────────
@@ -29,40 +29,40 @@ function onPrixInput(val, conseille) {
     bg   = 'var(--g50)';
   }
 
-  document.getElementById('speed-icon').textContent  = icon;
-  document.getElementById('speed-title').textContent = title;
-  document.getElementById('speed-sub').textContent   = sub;
-  document.getElementById('speed-indicator').style.background = bg;
+  const si = document.getElementById('speed-indicator');
+  const sIco = document.getElementById('speed-icon');
+  const sTit = document.getElementById('speed-title');
+  const sSub = document.getElementById('speed-sub');
+  if (sIco) sIco.textContent  = icon;
+  if (sTit) sTit.textContent = title;
+  if (sSub) sSub.textContent   = sub;
+  if (si) si.style.background = bg;
 }
 
 // ── Upload photo colis ───────────────────
-async function uploadPhotoColis(file, userId, colisId, isPrivate = false) {
+async function uploadPhotoColis(file, userId, colisId, isPrivate) {
+  if (isPrivate === undefined) isPrivate = false;
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   const MAX_SIZE = 10 * 1024 * 1024;
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    throw new Error('Format non autorisé. Utilisez JPG, PNG ou WebP.');
-  }
-  if (file.size > MAX_SIZE) {
-    throw new Error('Fichier trop lourd. Maximum 10MB.');
-  }
+  if (!ALLOWED_TYPES.includes(file.type)) throw new Error('Format non autorisé. Utilisez JPG, PNG ou WebP.');
+  if (file.size > MAX_SIZE) throw new Error('Fichier trop lourd. Maximum 10MB.');
+
   const buffer = await file.slice(0, 4).arrayBuffer();
   const bytes = new Uint8Array(buffer);
-  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
-  const isWebP = hex.startsWith('52494646') && hex.substring(16, 24) === '57455250';
+  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  const isWebP = hex.startsWith('52494646');
   const isValid = hex.startsWith('ffd8ff') || hex.startsWith('89504e47') || isWebP;
-  if (!isValid) {
-    throw new Error('Fichier invalide. Contenu ne correspond pas au format.');
-  }
+  if (!isValid) throw new Error('Fichier invalide.');
+
   const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
   const filename = `${userId}/${colisId}/${Date.now()}.${ext}`;
   const { data, error } = await db.storage
     .from('photos-colis')
     .upload(filename, file, { contentType: file.type, upsert: false });
   if (error) throw new Error(error.message);
+
   if (isPrivate) {
-    const { data: s, error: sErr } = await db.storage
-      .from('photos-colis')
-      .createSignedUrl(data.path, 3600);
+    const { data: s, error: sErr } = await db.storage.from('photos-colis').createSignedUrl(data.path, 3600);
     if (sErr) throw new Error(sErr.message);
     return s.signedUrl;
   }
@@ -81,7 +81,8 @@ function fakeUp(type) {
     if (type === 'em') {
       const reader = new FileReader();
       reader.onload = e => {
-        document.getElementById('prev-em').innerHTML =
+        const prevEm = document.getElementById('prev-em');
+        if (prevEm) prevEm.innerHTML =
           `<div style="position:relative;display:inline-block;">
             <img src="${e.target.result}" style="width:56px;height:56px;border-radius:9px;object-fit:cover;border:2px solid var(--g200);">
             <button onclick="supprimerPhotoEm()" type="button" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;border:none;cursor:pointer;font-size:.65rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:900;">✕</button>
@@ -104,7 +105,8 @@ function fakeUp(type) {
           <button onclick="supprimerPhotoCo(${idx})" type="button" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;border:none;cursor:pointer;font-size:.65rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:900;z-index:2;">✕</button>
         </div>`;
       });
-      document.getElementById('prev-co').innerHTML = html;
+      const prevCo = document.getElementById('prev-co');
+      if (prevCo) prevCo.innerHTML = html;
       coUp = window._photosContenu.length > 0;
       t(selectedFiles.length + ' photo(s) contenu ajoutée(s) 🔒', 's');
     }
@@ -114,7 +116,8 @@ function fakeUp(type) {
 
 // ── Suppression photos ───────────────────
 function supprimerPhotoEm() {
-  document.getElementById('prev-em').innerHTML = '';
+  const el = document.getElementById('prev-em');
+  if (el) el.innerHTML = '';
   window._photoEmballee = null;
   emUp = false;
   t('Photo supprimée', '');
@@ -123,13 +126,13 @@ function supprimerPhotoEm() {
 function supprimerPhotoCo(idx) {
   if (!window._photosContenu) return;
   window._photosContenu.splice(idx, 1);
+  const prevCo = document.getElementById('prev-co');
   if (window._photosContenu.length === 0) {
-    document.getElementById('prev-co').innerHTML = '';
+    if (prevCo) prevCo.innerHTML = '';
     coUp = false;
     t('Photos supprimées', '');
     return;
   }
-  // Re-render
   let html = '';
   window._photosContenu.forEach((f, i) => {
     const url = URL.createObjectURL(f);
@@ -140,19 +143,25 @@ function supprimerPhotoCo(idx) {
       <button onclick="supprimerPhotoCo(${i})" type="button" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:#fff;border:none;cursor:pointer;font-size:.65rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:900;z-index:2;">✕</button>
     </div>`;
   });
-  document.getElementById('prev-co').innerHTML = html;
+  if (prevCo) prevCo.innerHTML = html;
   coUp = window._photosContenu.length > 0;
   t('Photo supprimée', '');
 }
 
 // ── Reset formulaire poster ──────────────
 function resetPoster() {
-  document.getElementById('poster-form').style.display = 'block';
-  document.getElementById('poster-suc').style.display = 'none';
+  const pf = document.getElementById('poster-form');
+  const ps = document.getElementById('poster-suc');
+  const pe = document.getElementById('prev-em');
+  const pc = document.getElementById('prev-co');
+  if (pf) pf.style.display = 'block';
+  if (ps) ps.style.display = 'none';
+  if (pe) pe.innerHTML = '';
+  if (pc) pc.innerHTML = '';
   emUp = false;
   coUp = false;
-  document.getElementById('prev-em').innerHTML = '';
-  document.getElementById('prev-co').innerHTML = '';
+  window._photoEmballee = null;
+  window._photosContenu = [];
 }
 
 // ── Toggle info crypto ───────────────────
@@ -160,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('input[name="payment"]').forEach(radio => {
     radio.addEventListener('change', () => {
       const cryptoInfo = document.getElementById('crypto-info');
-      if (cryptoInfo) cryptoInfo.style.display = radio.value === 'crypto' && radio.checked ? 'block' : 'none';
+      if (cryptoInfo) cryptoInfo.style.display = (radio.value === 'crypto' && radio.checked) ? 'block' : 'none';
     });
   });
 });
@@ -169,27 +178,33 @@ document.addEventListener('DOMContentLoaded', () => {
 async function publishColis() {
   if (!user) { t('Connectez-vous d\'abord', 'e'); goNav('auth'); return; }
 
-  const arr = document.getElementById('pf-arr').value;
-  const titre = sanitize(document.getElementById('pf-title').value.trim());
-  const desc = sanitize(document.getElementById('pf-desc').value.trim());
-  const dateRaw = document.getElementById('pf-date').value.trim();
-  // Convertit jj/mm/aaaa → yyyy-mm-dd pour Supabase
-  const dated = dateRaw.length === 10 ? dateRaw.split('/').reverse().join('-') : null;
-  const rnom = document.getElementById('pf-rname').value.trim();
-  const rtel = document.getElementById('pf-rphone').value.trim();
-  let prix = parseFloat(document.getElementById('pf-price-input')?.value || '0') || 0;
-  const paymentEl = document.querySelector('input[name="payment"]:checked');
-  const moyen_paiement = paymentEl ? paymentEl.value : null;
+  // Lire les champs
+  const arr = (document.getElementById('pf-arr') || {}).value || '';
+  const titreRaw = (document.getElementById('pf-title') || {}).value || '';
+  const descRaw  = (document.getElementById('pf-desc')  || {}).value || '';
+  const dateRaw  = (document.getElementById('pf-date')  || {}).value || '';
+  const rnom     = ((document.getElementById('pf-rname') || {}).value || '').trim();
+  const rtel     = ((document.getElementById('pf-rphone') || {}).value || '').trim();
+  const priceEl  = document.getElementById('pf-price-input');
+  const payEl    = document.querySelector('input[name="payment"]:checked');
 
-  if (!arr) { t('Choisissez la gare de destination', 'e'); return; }
-  if (!titre) { t('Décrivez ce que c\'est', 'e'); return; }
-  if (titre.length > 100) { t('Titre trop long (100 caractères max)', 'e'); return; }
-  if (desc.length > 500) { t('Description trop longue (500 caractères max)', 'e'); return; }
-  if (!moyen_paiement) { t('Choisissez un moyen de paiement', 'e'); return; }
+  const titre         = typeof sanitize === 'function' ? sanitize(titreRaw.trim()) : titreRaw.trim();
+  const desc          = typeof sanitize === 'function' ? sanitize(descRaw.trim())  : descRaw.trim();
+  const dated         = dateRaw.length === 10 ? dateRaw.split('/').reverse().join('-') : null;
+  let prix            = parseFloat(priceEl ? priceEl.value : '0') || 0;
+  const moyen_paiement = payEl ? payEl.value : null;
+
+  // Validations
+  if (!arr)             { t('Choisissez la gare de destination', 'e'); return; }
+  if (!titre)           { t('Décrivez ce que c\'est', 'e'); return; }
+  if (titre.length > 100)  { t('Titre trop long (100 caractères max)', 'e'); return; }
+  if (desc.length > 500)   { t('Description trop longue (500 caractères max)', 'e'); return; }
+  if (!moyen_paiement)  { t('Choisissez un moyen de paiement', 'e'); return; }
   if (prix <= 0) prix = 7;
-  if (!rnom) { t('Renseignez le nom du destinataire', 'e'); return; }
-  if (!rtel || !validatePhone(rtel)) {
-    t('Numéro de téléphone du destinataire invalide. Format attendu : 06XXXXXXXX ou +336XXXXXXXX', 'e');
+  if (!rnom)            { t('Renseignez le nom du destinataire', 'e'); return; }
+
+  if (!rtel || (typeof validatePhone === 'function' && !validatePhone(rtel))) {
+    t('Numéro du destinataire invalide (ex: 06XXXXXXXX)', 'e');
     const telEl = document.getElementById('pf-rphone');
     if (telEl) {
       telEl.style.borderColor = 'var(--danger)';
@@ -203,22 +218,21 @@ async function publishColis() {
     return;
   }
 
-  const btn = document.getElementById('publish-btn');
+  const btn = document.getElementById('publish-btn') || document.querySelector('#poster-form .btn');
   if (btn) { btn.textContent = 'Publication en cours…'; btn.disabled = true; }
 
   try {
     // 1. Insérer le kolis en base
     const colisData = {
-      user_id:        user.id,
-      gare_arrivee:   arr,
-      titre:          titre,
-      description:    desc || null,
-      date_voyage:    dated || null,
-      prix:           prix,
-      moyen_paiement: moyen_paiement,
-      nom_destinataire:  rnom,
-      tel_destinataire:  rtel,
-      statut:         'en_attente',
+      expediteur_id:    user.id,
+      gare_arrivee:     arr,
+      titre:            titre,
+      description:      desc || null,
+      date_souhaitee:   dated || null,
+      prix:             prix,
+      destinataire_nom: rnom,
+      destinataire_tel: rtel,
+      statut:           'en_attente',
     };
 
     const { data: colis, error: colisErr } = await db
@@ -234,24 +248,22 @@ async function publishColis() {
       try {
         const url = await uploadPhotoColis(window._photoEmballee, user.id, colis.id, false);
         await db.from('colis').update({ photo_emballee_url: url }).eq('id', colis.id);
-      } catch(e) { console.warn('Photo emballée:', e.message); }
+      } catch (e) { console.warn('Photo emballée:', e.message); }
     }
 
-    // 3. Upload photos contenu (privées — URL signée)
-    if (window._photosContenu?.length) {
+    // 3. Upload photos contenu (privées)
+    if (window._photosContenu && window._photosContenu.length) {
       const urls = [];
       for (const f of window._photosContenu) {
         try {
           const url = await uploadPhotoColis(f, user.id, colis.id, true);
           urls.push(url);
-        } catch(e) { console.warn('Photo contenu:', e.message); }
+        } catch (e) { console.warn('Photo contenu:', e.message); }
       }
-      if (urls.length) {
-        await db.from('colis').update({ photos_contenu_urls: urls }).eq('id', colis.id);
-      }
+      if (urls.length) await db.from('colis').update({ photos_contenu_urls: urls }).eq('id', colis.id);
     }
 
-    // 4. Lancer le paiement selon le moyen choisi
+    // 4. Paiement selon le moyen choisi
     if (moyen_paiement === 'carte') {
       try {
         const result = await callEdgeFunction('create-payment', {
@@ -259,108 +271,56 @@ async function publishColis() {
           montant:  Math.round(prix * 100),
           user_id:  user.id,
         });
-        if (result?.url) { window.location.href = result.url; return; }
-      } catch(e) { console.warn('Stripe:', e.message); }
+        if (result && result.url) { window.location.href = result.url; return; }
+      } catch (e) { console.warn('Stripe:', e.message); }
     }
 
     if (moyen_paiement === 'crypto') {
-      t('Kolis publié ✅ — Envoyez le paiement en crypto à l\'adresse indiquée. Votre kolis sera activé dès réception.', 's');
+      t('Kolis publié ✅ — Envoyez le paiement crypto. Votre kolis sera activé dès réception.', 's');
     }
 
-    // 5. Succès
+    // 5. Reset état
     window._photoEmballee = null;
     window._photosContenu = [];
-    emUp = false; coUp = false;
+    emUp = false;
+    coUp = false;
 
+    // 6. Afficher écran succès
     const codeLvr = colis.code_lvr || colis.id.substring(0, 8).toUpperCase();
-    const sucEl = document.getElementById('poster-suc');
-    const codeEl = document.getElementById('suc-code');
-    if (sucEl) sucEl.style.display = 'block';
+    const sucEl   = document.getElementById('poster-suc');
+    const codeEl  = document.getElementById('suc-code');
+    const refEl   = document.getElementById('suc-ref');
+    const formEl  = document.getElementById('poster-form');
+
     if (codeEl) codeEl.textContent = codeLvr;
-    document.getElementById('poster-form').style.display = 'none';
+    if (refEl)  refEl.textContent  = codeLvr;
+    if (formEl) formEl.style.display = 'none';
+    if (sucEl)  sucEl.style.display  = 'block';
 
-    t(`Kolis publié ! Code : ${codeLvr} 🎉`, 's');
+    const cont = document.getElementById('content');
+    if (cont) cont.scrollTop = 0;
 
-  } catch(e) {
-    t('Erreur : ' + e.message, 'e');
+    t('Kolis publié ! Code : ' + codeLvr + ' 🎉', 's');
+
+    // 7. Proposer boost après 1.5s
+    setTimeout(() => {
+      if (typeof afficherModalBoost === 'function') afficherModalBoost(colis.id, codeLvr);
+    }, 1500);
+
+    // 8. SMS destinataire
+    if (typeof envoyerSMS === 'function') {
+      envoyerSMS(rtel,
+        'Bonjour ' + rnom + ' ! Un kolis vous est envoyé via KolisGo. ' +
+        'Votre code : ' + codeLvr + '. Ouvrez KolisGo > Suivi > entrez ce code pour votre QR Code.'
+      );
+    }
+
+  } catch (e) {
+    t('Erreur : ' + (e.message || 'Erreur inconnue'), 'e');
+    console.error('publishColis:', e);
   } finally {
     if (btn) { btn.textContent = 'Publier le kolis'; btn.disabled = false; }
   }
 }
-        telEl.style.boxShadow = '';
-      }, { once: true });
-    }
-    return;
-  }
-  if (!emUp) { t('Ajoutez la photo de l\'emballage (visible sur la marketplace) 📸', 'e'); return; }
 
-  const btn = document.querySelector('#poster-form .btn.p.full');
-  if (btn) { btn.textContent = 'Publication...'; btn.disabled = true; }
-
-  try {
-    const { data, error } = await db.from('colis').insert({
-      titre, description: desc,
-      gare_depart: null, gare_arrivee: arr,
-      prix,
-      date_souhaitee: dated || null,
-      destinataire_nom: rnom, destinataire_tel: rtel,
-      moyen_paiement,
-      expediteur_id: user.id,
-      statut: 'en_attente'
-    }).select().single();
-
-    if (error) { t('Erreur : ' + error.message, 'e'); return; }
-
-    try {
-      await callEdgeFunction('create-payment', {
-        amount: Math.round(parseFloat(prix) * 100),
-        colis_id: data.id,
-        expediteur_id: user.id
-      });
-    } catch (e) {
-      console.log('Paiement en attente:', e.message);
-    }
-
-    const ref = data.code_lvr;
-    const colisId = data.id;
-    document.getElementById('suc-ref').textContent = ref;
-    document.getElementById('poster-form').style.display = 'none';
-    document.getElementById('poster-suc').style.display = 'block';
-    document.getElementById('content').scrollTop = 0;
-    t(`Kolis publié ! Code : ${ref} 🚀`, 's');
-
-    // Proposer le boost de visibilité après publication
-    setTimeout(() => afficherModalBoost(colisId, ref), 1200);
-
-    // Photo emballage (champ em) → photo_emballee_url — visible sur la marketplace
-    if (window._photoEmballee) {
-      try {
-        const url = await uploadPhotoColis(window._photoEmballee, user.id, data.id, false);
-        if (url) await db.from('colis').update({ photo_emballee_url: url }).eq('id', data.id);
-      } catch (e) { t('Photo emballage : ' + e.message, 'e'); }
-    }
-    // Photos contenu (champ co) → photos_contenu_urls — privées, visibles après acceptation
-    if (window._photosContenu && window._photosContenu.length) {
-      try {
-        const urls = [];
-        for (const photo of Array.from(window._photosContenu).slice(0, 5)) {
-          const url = await uploadPhotoColis(photo, user.id, data.id, true);
-          if (url) urls.push(url);
-        }
-        if (urls.length) await db.from('colis').update({ photos_contenu_urls: urls }).eq('id', data.id);
-      } catch (e) { t('Photo contenu : ' + e.message, 'e'); }
-    }
-    window._photoEmballee = null;
-    window._photosContenu = null;
-
-    envoyerSMS(rtel,
-      `Bonjour ${rnom} ! Un kolis vous est envoyé via KolisGo. ` +
-      `Votre code : ${ref}. Ouvrez KolisGo → Suivi → entrez ce code pour votre QR Code. 🚆`
-    );
-
-  } catch (e) {
-    t('Erreur : ' + e.message, 'e');
-  } finally {
-    if (btn) { btn.textContent = '🚀 Publier'; btn.disabled = false; }
-  }
-}
+  if (desc.length > 500)   { t('Description trop longue (500 caractères max)', 'e'); retur

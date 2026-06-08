@@ -127,13 +127,16 @@ function initPhotoRemise() {
 
 function doPhoto() {
   livrPhoto = true;
-  document.getElementById('pz').style.display         = 'none';
-  document.getElementById('photo-ok').style.display   = 'block';
-  document.getElementById('ls1').classList.remove('active');
-  document.getElementById('ls1').classList.add('done');
-  document.getElementById('ls2').classList.remove('locked');
-  document.getElementById('ls2').classList.add('active');
-  document.getElementById('ls2-body').style.display   = 'block';
+  const pz      = document.getElementById('pz');
+  const photoOk = document.getElementById('photo-ok');
+  const ls2body = document.getElementById('ls2-body');
+  if (pz)      pz.style.display      = 'none';
+  if (photoOk) photoOk.style.display = 'block';
+  const ls1 = document.getElementById('ls1');
+  const ls2 = document.getElementById('ls2');
+  if (ls1) { ls1.classList.remove('active'); ls1.classList.add('done'); }
+  if (ls2) { ls2.classList.remove('locked'); ls2.classList.add('active'); }
+  if (ls2body) ls2body.style.display = 'block';
   t('📸 Photo prise ! Cochez les cases.', 's');
 }
 
@@ -144,11 +147,12 @@ async function checkAll() {
   cs.forEach(c => { if (!c.checked) ok = false; });
   if (ok) {
     livrChecksOk = true;
-    document.getElementById('ls2').classList.remove('active');
-    document.getElementById('ls2').classList.add('done');
-    document.getElementById('ls3').classList.remove('locked');
-    document.getElementById('ls3').classList.add('active');
-    document.getElementById('ls3-body').style.display = 'block';
+    const ls2c = document.getElementById('ls2');
+    const ls3c = document.getElementById('ls3');
+    const ls3body = document.getElementById('ls3-body');
+    if (ls2c) { ls2c.classList.remove('active'); ls2c.classList.add('done'); }
+    if (ls3c) { ls3c.classList.remove('locked'); ls3c.classList.add('active'); }
+    if (ls3body) ls3body.style.display = 'block';
     t('Checklist complète ✅ Activation caméra…', 's');
     const camOk = await demanderCamera();
     if (!camOk) return;

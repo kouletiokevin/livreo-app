@@ -321,11 +321,14 @@ function previewBillet(input) {
   if (file.type !== 'application/pdf') { t('PDF uniquement accepté', 'e'); input.value = ''; return; }
   if (file.size > 10 * 1024 * 1024) { t('Fichier trop lourd (max 10 MB)', 'e'); input.value = ''; return; }
   _accBilletFile = file;
-  document.getElementById('acc-billet-zone').style.display = 'none';
-  document.getElementById('acc-billet-ok').style.display = 'block';
+  const billetZone = document.getElementById('acc-billet-zone');
+  const billetOk   = document.getElementById('acc-billet-ok');
+  const billetErr  = document.getElementById('err-acc-billet');
+  if (billetZone) billetZone.style.display = 'none';
+  if (billetOk)   billetOk.style.display   = 'block';
   const nameEl = document.getElementById('acc-billet-name');
   if (nameEl) nameEl.textContent = file.name.length > 40 ? file.name.substring(0, 37) + '...' : file.name;
-  document.getElementById('err-acc-billet').style.display = 'none';
+  if (billetErr) billetErr.style.display = 'none';
 }
 
 async function confirmerPassage(colisId) {
@@ -333,9 +336,12 @@ async function confirmerPassage(colisId) {
   const date = document.getElementById('acc-date')?.value;
   let valid  = true;
 
-  if (!dep)            { document.getElementById('err-acc-dep').style.display    = 'block'; valid = false; }
-  if (!date)           { document.getElementById('err-acc-date').style.display   = 'block'; valid = false; }
-  if (!_accBilletFile) { document.getElementById('err-acc-billet').style.display = 'block'; valid = false; }
+  const errDep    = document.getElementById('err-acc-dep');
+  const errDate   = document.getElementById('err-acc-date');
+  const errBillet = document.getElementById('err-acc-billet');
+  if (!dep)            { if (errDep)    errDep.style.display    = 'block'; valid = false; }
+  if (!date)           { if (errDate)   errDate.style.display   = 'block'; valid = false; }
+  if (!_accBilletFile) { if (errBillet) errBillet.style.display = 'block'; valid = false; }
   if (!valid) return;
 
   const btn = document.getElementById('acc-confirm-btn');

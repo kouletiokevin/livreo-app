@@ -12,6 +12,7 @@ let livrPhoto = false, livrChecksOk = false;
 // ── Splash ───────────────────────────────
 function closeSplash() {
   const s = document.getElementById('splash');
+  if (!s) return;
   s.classList.add('hide');
   setTimeout(() => {
     s.style.display = 'none';
@@ -58,6 +59,7 @@ let _obIdx = 0;
 function showOnboarding() {
   _obIdx = 0;
   const ov = document.getElementById('onboarding-ov');
+  if (!ov) return;
   ov.style.display = 'flex';
   obGoTo(0);
   _obInitSwipe();
@@ -65,7 +67,8 @@ function showOnboarding() {
 
 function obGoTo(n) {
   _obIdx = Math.max(0, Math.min(3, n));
-  document.getElementById('ob-track').style.transform = `translateX(-${_obIdx * 25}%)`;
+  const obTrack = document.getElementById('ob-track');
+  if (obTrack) obTrack.style.transform = `translateX(-${_obIdx * 25}%)`;
   document.querySelectorAll('.ob-dot').forEach((d, i) => d.classList.toggle('on', i === _obIdx));
   const skip = document.getElementById('ob-skip');
   if (skip) skip.style.display = _obIdx === 3 ? 'none' : 'block';
@@ -194,6 +197,7 @@ function closeSheet() {
 
 function toggle(id) {
   const el = document.getElementById(id);
+  if (!el) return;
   el.classList.toggle('on');
   t(el.classList.contains('on') ? 'Notification activée ✅' : 'Notification désactivée', '');
 }
@@ -236,6 +240,23 @@ db.auth.onAuthStateChange(async (event, session) => {
 });
 
 // ── Init DOM ─────────────────────────────
+// ── Capture UTM au premier atterrissage ──────────────────
+(function captureUTM() {
+  try {
+    const p = new URLSearchParams(window.location.search);
+    const src = p.get('utm_source');
+    if (src) {
+      localStorage.setItem('_utm_source',   src);
+      localStorage.setItem('_utm_medium',   p.get('utm_medium')   || '');
+      localStorage.setItem('_utm_campaign', p.get('utm_campaign') || '');
+      localStorage.setItem('_utm_content',  p.get('utm_content')  || '');
+    }
+    // Capture code d'affiliation
+    const ref = p.get('ref');
+    if (ref) localStorage.setItem('_ref_code', ref.toLowerCase().trim().slice(0, 30));
+  } catch(e) {}
+})();
+
 document.addEventListener('DOMContentLoaded', async () => {
   // Masquer sections suivi/poster par défaut
   ['sv-exp', 'sv-dest', 'poster-suc', 'dest-suc'].forEach(id => {
@@ -244,6 +265,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   loadCards();
+  if (typeof loadPartnersBanner === 'function') loadPartnersBanner();
 
   // Affichage INSTANTANÉ : si le localStorage indique une session précédente,
   // on affiche le dashboard tout de suite sans attendre checkSession (~300ms)
