@@ -615,7 +615,7 @@
   <div class="s-h">Suivre <em>mon kolis</em></div>
   <div class="s-sub">Expéditeur ou destinataire : entrez le code reçu par SMS.</div>
   <div class="srch-bar">
-    <input type="text" id="sv-input" placeholder="Ex: LVR-452" value="LVR-48291">
+    <input type="text" id="sv-input" placeholder="Ex: LVR-452">
     <button onclick="loadSuivi()">Suivre →</button>
   </div>
   <!-- VUE EXPÉDITEUR -->
@@ -747,8 +747,8 @@
     </div>
     <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="previewPhoto(this)">
     <div style="flex:1;">
-      <div id="moi-name" style="font-size:1rem;font-weight:900;color:#fff;letter-spacing:-.3px;">Kevin Martin</div>
-      <div id="moi-email" style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:1px;">kevin@email.com</div>
+      <div id="moi-name" style="font-size:1rem;font-weight:900;color:#fff;letter-spacing:-.3px;"></div>
+      <div id="moi-email" style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:1px;"></div>
       <div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;">
         <span id="badge-certifie" style="display:none;background:rgba(37,99,235,.2);border:1px solid rgba(37,99,235,.4);color:#93c5fd;font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;">🏅 Certifié</span>
         <span style="background:rgba(34,168,87,.2);border:1px solid rgba(34,168,87,.3);color:var(--g200);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;" id="badge-livr">⭐ — · — passage</span>
@@ -761,11 +761,11 @@
   <div class="fcard" style="margin-bottom:10px;">
     <div class="fc-lbl">👤 Informations personnelles</div>
     <div class="f2">
-      <div class="field"><label>Prénom</label><input type="text" id="m-pn" value="Kevin"></div>
-      <div class="field"><label>Nom <span style="color:var(--muted2);font-size:.6rem;font-weight:400;">(non modifiable sans justificatif)</span></label><input type="text" id="m-nm" value="Martin" readonly style="color:var(--muted);background:var(--cream2);"></div>
+      <div class="field"><label>Prénom</label><input type="text" id="m-pn" value=""></div>
+      <div class="field"><label>Nom <span style="color:var(--muted2);font-size:.6rem;font-weight:400;">(non modifiable sans justificatif)</span></label><input type="text" id="m-nm" value="" readonly style="color:var(--muted);background:var(--cream2);"></div>
     </div>
-    <div class="field"><label>Email</label><input type="email" id="m-em" value="kevin@email.com"></div>
-    <div class="field"><label>Téléphone</label><input type="tel" id="m-ph" value="06 12 34 56 78"></div>
+    <div class="field"><label>Email</label><input type="email" id="m-em" value=""></div>
+    <div class="field"><label>Téléphone</label><input type="tel" id="m-ph" value=""></div>
     <div class="field"><label>Date de naissance</label><input type="date" id="m-dn"></div>
     <div class="field"><label>Adresse</label><input type="text" id="m-adr" placeholder="12 rue de la Paix"></div>
     <div class="f2">
@@ -1753,9 +1753,4 @@ function initNotifRealtime() {
   <div style="font-size:.8rem;margin-bottom:10px;">🍪 KolisGo utilise des cookies <strong>essentiels</strong> au fonctionnement (session, préférences). Aucun cookie publicitaire ou de suivi tiers. <a href="/politique-confidentialite.html" style="color:var(--g400);font-size:.75rem;">En savoir plus</a></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <button onclick="acceptCookies()" style="padding:8px 20px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;">Accepter</button>
-    <button onclick="refuserCookies()" style="padding:8px 20px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:50px;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;">Refuser</button>
-  </div>
-</div>
-
-</body>
-</html>
+    <button onclick="refuserCookies()" style="padding:8px 20px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:50px;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;

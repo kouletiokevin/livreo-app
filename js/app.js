@@ -211,7 +211,7 @@ function tt(el) { el.classList.toggle('on'); }
 // ── Auth state change (OAuth redirect) ───
 db.auth.onAuthStateChange(async (event, session) => {
   if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && !user) {
-    const { data: profil } = await db.from('users').select('*').eq('email', session.user.email).single();
+    const { data: profil } = await db.from('users').select('*').eq('id', session.user.id).single();
     if (profil) {
       await onLoginSuccess(profil);
       if (event === 'SIGNED_IN') { goNav('home'); refreshHome(); t(`Bienvenue ${profil.prenom} ! 👋`, 's'); }

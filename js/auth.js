@@ -161,6 +161,15 @@ async function doLogout() {
   const navTxt2 = document.getElementById('nav-av-txt');
   if (navImg2) { navImg2.src = ''; navImg2.style.display = 'none'; }
   if (navTxt2) navTxt2.style.display = '';
+  // Réinitialiser les champs profil (évite d'afficher les données de l'ancien compte)
+  const moiName = document.getElementById('moi-name');
+  const moiEmail = document.getElementById('moi-email');
+  if (moiName) moiName.textContent = '';
+  if (moiEmail) moiEmail.textContent = '';
+  ['m-pn','m-nm','m-em','m-ph','m-adr','m-cp','m-vil','m-dn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   refreshHome();
   goNav('home');
   t('Vous êtes déconnecté · À bientôt !', '');
