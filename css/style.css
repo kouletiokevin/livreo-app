@@ -551,3 +551,20 @@ td strong { color: var(--ink); }
   .tg   { grid-template-columns: 1fr 1fr; }
   .krow { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── Bannière partenaires défilante ── */
+@keyframes partnerScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+#partners-track {
+  animation: partnerScroll 22s linear infinite;
+  will-change: transform;
+}
+#partners-track:hover { animation-play-state: paused; }
+.partner-logo-wrap:hover {
+  border-color: var(--green) !important;
+  box-shadow: 0 2px 12px rgba(46,204,113,.18);
+  transform: translateY(-2px);
+  transition: all .2s;
+}

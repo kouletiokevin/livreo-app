@@ -411,7 +411,7 @@ function telechargerRecu(txId) {
       const dt = new Date(tx?.created_at || Date.now()).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
       const ref = tx?.colis?.code_lvr || '—';
       const montant = parseFloat(tx?.montant || 0).toFixed(2);
-      const trajet = tx?.colis ? `${tx.colis.gare_depart || '?'} → ${tx.colis.gare_arrivee || '?'}` : '—';
+      const trajet = tx?.colis ? `${escapeHtml(tx.colis.gare_depart || '?')} → ${escapeHtml(tx.colis.gare_arrivee || '?')}` : '—';
       win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reçu KolisGo — ${ref}</title>
       <style>body{font-family:Georgia,serif;max-width:600px;margin:40px auto;padding:0 20px;color:#111;}
       h1{font-size:1.4rem;color:#1a3320;}.lbl{font-size:.8rem;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-top:16px;}

@@ -8,7 +8,9 @@ let _currentColis = null;
 
 // ── Recherche suivi ──────────────────────
 async function loadSuivi() {
-  const val = document.getElementById('sv-input').value.trim().toUpperCase();
+  const svInput = document.getElementById('sv-input');
+  if (!svInput) return;
+  const val = svInput.value.trim().toUpperCase();
   if (!val) { t('Entrez votre numéro de suivi', 'e'); return; }
 
   const { data: colis, error } = await db.from('colis_public').select('*').eq('code_lvr', val).single();

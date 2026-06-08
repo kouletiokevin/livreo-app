@@ -270,8 +270,8 @@ async function doScan(ref, dest, prix) {
     _lastScannedQrSecret = null;
   }
 
-  document.getElementById('ls3').classList.remove('active');
-  document.getElementById('ls3').classList.add('done');
+  const ls3el = document.getElementById('ls3');
+  if (ls3el) { ls3el.classList.remove('active'); ls3el.classList.add('done'); }
 
   try {
     const { data: { session } } = await db.auth.getSession();

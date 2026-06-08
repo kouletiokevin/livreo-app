@@ -197,8 +197,7 @@ async function publishColis() {
   // Validations
   if (!arr)             { t('Choisissez la gare de destination', 'e'); return; }
   if (!titre)           { t('Décrivez ce que c\'est', 'e'); return; }
-  if (titre.length > 100)  { t('Titre trop long (100 caractères max)', 'e'); return; }
-  if (desc.length > 500)   { t('Description trop longue (500 caractères max)', 'e'); return; }
+  if (titre.length > 100)  { t('Titre trop long (100 caractères max)', 'e'); return; }n; }
   if (!moyen_paiement)  { t('Choisissez un moyen de paiement', 'e'); return; }
   if (prix <= 0) prix = 7;
   if (!rnom)            { t('Renseignez le nom du destinataire', 'e'); return; }
@@ -322,5 +321,3 @@ async function publishColis() {
     if (btn) { btn.textContent = 'Publier le kolis'; btn.disabled = false; }
   }
 }
-
-  if (desc.length > 500)   { t('Description trop longue (500 caractères max)', 'e'); retur

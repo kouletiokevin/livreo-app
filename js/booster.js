@@ -137,7 +137,6 @@ function afficherModalBoost(colisId, codeRef) {
 // Sélectionner une option de durée
 // ─────────────────────────────────────────────
 let _selectedBoostHours = null;
-let _boostClientSecret  = null;
 
 function selectBoostOption(hours) {
   _selectedBoostHours = hours;
@@ -292,7 +291,6 @@ function fermerModalBoost() {
   if (overlay) overlay.remove();
   _boostElements = null;
   _selectedBoostHours = null;
-  _boostClientSecret = null;
 }
 
 // ─────────────────────────────────────────────
