@@ -15,4 +15,9 @@ echo === Commit ===
 %GIT% commit -m "fix: null-style crashes + security audit - add null guards app/suivi/booster/explorer/livreur, fix XSS+open-redirect in partners banner, tighten CSP, X-XSS-Protection header, SW v12 with affil.js"
 
 echo.
-echo === 
+echo === Push vers GitHub (master) ===
+%GIT% push origin master
+
+echo.
+echo === Deploy terminé ! Netlify va mettre à jour dans ~1 min ===
+pause
