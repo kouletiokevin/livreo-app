@@ -156,9 +156,9 @@ async function loadPartnersBanner() {
       const safeLogo = _safeUrl(p.logo_url);
       const safeName = escapeHtml(p.nom || '');
       return `<a ${safeUrl ? `href="${safeUrl}" target="_blank" rel="noopener noreferrer"` : ''} class="partner-logo-wrap" title="${safeName}" style="display:flex;align-items:center;justify-content:center;min-width:110px;height:54px;padding:0 14px;background:var(--white);border-radius:12px;border:1.5px solid var(--border);text-decoration:none;flex-shrink:0;transition:.15s;gap:8px;">
-        ${safeLogo ? `<img src="${safeLogo}" alt="${safeName}" style="max-height:36px;max-width:80px;object-fit:contain;">` : `<span style="font-size:.8rem;font-weight:800;color:var(--ink);">${safeName}</span>`}
-      </a>`;
-    }).join('');
+            ${safeLogo ? `<img src="${safeLogo}" alt="${safeName}" style="max-height:36px;max-width:80px;object-fit:contain;">` : `<span style="font-size:.8rem;font-weight:800;color:var(--ink);">${safeName}</span>`}
+          </a>`;
+        }).join('');
   } catch(e) {
     wrap.style.display = 'none';
   }

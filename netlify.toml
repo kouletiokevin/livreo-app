@@ -17,14 +17,4 @@
     Permissions-Policy = "geolocation=(self), camera=(self), microphone=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
     X-XSS-Protection = "1; mode=block"
-    Content-Security-Policy = "default-src 'self' https: data: blob: 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.stripe.com https://api.stripe.com; object-src 'none'; base-uri 'self';"
-
-[[headers]]
-  for = "/js/*"
-  [headers.values]
-    Cache-Control = "public, max-age=86400, stale-while-revalidate=3600"
-
-[[headers]]
-  for = "/css/*"
-  [headers.values]
-    Cache-Control = "public, max-age=86400, stale-while-revalidate=3600"
+    Content-Security-Policy = "default-src 'self' https: data: blob: 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.stripe.com https://api.stripe.com; object-src 'none'; ba
