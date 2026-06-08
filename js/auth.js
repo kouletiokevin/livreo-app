@@ -341,5 +341,5 @@ function togglePw(id, btn) {
   const inp = document.getElementById(id);
   if (!inp) return;
   inp.type = inp.type === 'password' ? 'text' : 'password';
-  btn.textContent = inp.type === 'password' ? '\u{1F441}\uFE0F' : '\U0001F648';
+  btn.textContent = inp.type === 'password' ? '👁️' : '🙈';
 }
