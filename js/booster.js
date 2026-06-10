@@ -169,19 +169,18 @@ async function _initStripeBoostElement() {
 
   try {
     // Stripe est chargé dans app.js via la clé publishable globale
-    if (!window._stripeInstance) {
+    if (!window.stripeClient) {
       if (typeof Stripe === 'undefined') {
-        document.getElementById('boost-stripe-error').textContent =
-          'Paiement indisponible. Réessayez dans quelques secondes.';
+        const errEl2 = document.getElementById('boost-stripe-error');
+        if (errEl2) errEl2.textContent = 'Paiement indisponible. Réessayez dans quelques secondes.';
         return;
       }
-      // Utiliser la même clé Stripe que app.js
       const pkKey = typeof STRIPE_PK !== 'undefined'
         ? STRIPE_PK
         : 'pk_live_51QLFSSFQ0erFJFSmQsXFjgC9CcH1CCKfyL0KueBKHZ9Dy34QD2zVjtWxiqngJDFaOBjzFfpklvE6PJCOXDb8bzpL00peOcylDb';
-      window._stripeInstance = Stripe(pkKey);
+      window.stripeClient = Stripe(pkKey);
     }
-    _boostStripe = window._stripeInstance;
+    _boostStripe = window.stripeClient;
 
     _boostElements = _boostStripe.elements({
       appearance: {

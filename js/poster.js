@@ -264,14 +264,13 @@ async function publishColis() {
 
     // 4. Paiement selon le moyen choisi
     if (moyen_paiement === 'carte') {
-      try {
-        const result = await callEdgeFunction('create-payment', {
-          colis_id: colis.id,
-          montant:  Math.round(prix * 100),
-          user_id:  user.id,
-        });
-        if (result && result.url) { window.location.href = result.url; return; }
-      } catch (e) { console.warn('Stripe:', e.message); }
+      const result = await callEdgeFunction('create-payment', {
+        colis_id: colis.id,
+        montant:  Math.round(prix * 100),
+        user_id:  user.id,
+      });
+      if (result && result.url) { window.location.href = result.url; return; }
+      throw new Error('Impossible de créer le lien de paiement Stripe. Réessayez.');
     }
 
     if (moyen_paiement === 'crypto') {

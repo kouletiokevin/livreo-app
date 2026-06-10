@@ -19,7 +19,8 @@ async function loadSuivi() {
   _currentColis = colis;
   qrLoaded = false;
 
-  document.getElementById('sv-ref').textContent = colis.code_lvr;
+  const svRef = document.getElementById('sv-ref');
+  if (svRef) svRef.textContent = colis.code_lvr;
 
   const isExp = user && user.id === colis.expediteur_id;
 
@@ -49,7 +50,8 @@ async function loadSuivi() {
     loadQR(colis);
   }
   t('Colis trouvé ✅', 's');
-  document.getElementById('content').scrollTop = 100;
+  const contentEl = document.getElementById('content');
+  if (contentEl) contentEl.scrollTop = 100;
 }
 
 // ── Génération QR Code ───────────────────
@@ -90,5 +92,6 @@ function switchToDestView() {
   if (svDest) svDest.style.display = 'block';
   qrLoaded = false;
   loadQR(_currentColis);
-  document.getElementById('content').scrollTop = 0;
+  const contentEl2 = document.getElementById('content');
+  if (contentEl2) contentEl2.scrollTop = 0;
 }

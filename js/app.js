@@ -176,6 +176,7 @@ function refreshHome() {
 // ── Toast ────────────────────────────────
 function t(msg, type = '') {
   const c = document.getElementById('toasts');
+  if (!c) return;
   const d = document.createElement('div');
   d.className = `toast ${type}`;
   d.textContent = msg;

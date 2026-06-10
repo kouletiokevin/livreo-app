@@ -25,11 +25,14 @@ async function saveProfil() {
   const { error } = await db.from('users').update(updates).eq('id', user.id);
   if (error) { t('Erreur : ' + error.message, 'e'); return; }
 
-  document.getElementById('moi-name').textContent = pn + ' ' + nm;
-  document.getElementById('moi-av-txt').textContent = pn[0].toUpperCase();
+  const moiName = document.getElementById('moi-name');
+  const moiAvTxt = document.getElementById('moi-av-txt');
+  const dashH = document.getElementById('dash-h');
+  if (moiName) moiName.textContent = pn + ' ' + nm;
+  if (moiAvTxt) moiAvTxt.textContent = pn[0].toUpperCase();
   const navTxtSave = document.getElementById('nav-av-txt');
   if (navTxtSave) navTxtSave.textContent = pn[0].toUpperCase();
-  document.getElementById('dash-h').innerHTML = `Bonjour <em>${escapeHtml(pn)}</em> 👋`;
+  if (dashH) dashH.innerHTML = `Bonjour <em>${escapeHtml(pn)}</em> 👋`;
   if (user) user.prenom = pn;
   t('Profil mis à jour ✅', 's');
 }
