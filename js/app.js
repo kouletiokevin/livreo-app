@@ -242,12 +242,16 @@ function t(msg, type = '') {
 
 // ── Sheet ────────────────────────────────
 function openSheet(html) {
-  document.getElementById('sh-content').innerHTML = `<div class="sh"></div>${html}`;
-  document.getElementById('ov').classList.add('open');
+  const shContent = document.getElementById('sh-content');
+  const ov = document.getElementById('ov');
+  if (!shContent || !ov) return;
+  shContent.innerHTML = `<div class="sh"></div>${html}`;
+  ov.classList.add('open');
 }
 function cov(e) { if (e.target === document.getElementById('ov')) closeSheet(); }
 function closeSheet() {
-  document.getElementById('ov').classList.remove('open');
+  const ov = document.getElementById('ov');
+  if (ov) ov.classList.remove('open');
   if (typeof stopCamera === 'function') stopCamera();
 }
 

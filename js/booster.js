@@ -194,8 +194,8 @@ async function _initStripeBoostElement() {
 
   } catch (e) {
     console.error('Stripe Elements init:', e);
-    document.getElementById('boost-stripe-error').textContent =
-      'Erreur initialisation paiement : ' + e.message;
+    const errInit = document.getElementById('boost-stripe-error');
+    if (errInit) errInit.textContent = 'Erreur initialisation paiement : ' + e.message;
   }
 }
 
@@ -207,9 +207,8 @@ async function confirmerBoost(colisId) {
 
   const btn = document.getElementById('boost-confirm-btn');
   const errEl = document.getElementById('boost-stripe-error');
-  btn.textContent = 'Traitement...';
-  btn.disabled = true;
-  errEl.textContent = '';
+  if (btn) { btn.textContent = 'Traitement...'; btn.disabled = true; }
+  if (errEl) errEl.textContent = '';
 
   try {
     // 1. Créer le PaymentIntent via Edge Function

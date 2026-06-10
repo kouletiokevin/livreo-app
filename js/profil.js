@@ -39,7 +39,8 @@ async function saveProfil() {
 
 // ── Changer la photo de profil ───────────
 function changerPhoto() {
-  document.getElementById('photo-input').click();
+  const inp = document.getElementById('photo-input');
+  if (inp) inp.click();
 }
 
 async function previewPhoto(input) {
