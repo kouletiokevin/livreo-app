@@ -1,5 +1,5 @@
-/* KolisGo — Service Worker v21 */
-const CACHE = 'kolisgo-v21';
+/* KolisGo — Service Worker v22 */
+const CACHE = 'kolisgo-v22';
 const ASSETS = [
   './',
   './css/style.css',
@@ -19,7 +19,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+  e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS.map(u => new Request(u, { cache: 'reload' })))));
   self.skipWaiting();
 });
 
