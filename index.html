@@ -3,6 +3,7 @@
 <html lang="fr" prefix="og: https://ogp.me/ns#">
 <head>
 <meta charset="UTF-8">
+<base href="/livreo-app/">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob: 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.stripe.com https://api.stripe.com; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
@@ -99,10 +100,10 @@
 <script src="https://js.stripe.com/v3/"></script>
 
 <!-- ══ CONFIG SUPABASE (doit être chargé avant app.js) ══ -->
-<script src="/js/supabase.js"></script>
+<script src="js/supabase.js"></script>
 
 <!-- ══ CSS EXTERNE ══ -->
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -378,7 +379,7 @@
     </div>
 
     <!-- LIEN ADMIN (visible seulement si rôle admin) -->
-    <a id="admin-link" class="admin-banner" href="/admin/" style="display:none;">
+    <a id="admin-link" class="admin-banner" href="admin/" style="display:none;">
       <div style="font-size:1.4rem;">⚙️</div>
       <div>
         <div style="font-size:.82rem;font-weight:800;color:#fff;">Administration KolisGo</div>
@@ -547,31 +548,31 @@
         <label class="payment-option">
           <input type="radio" name="payment" value="visa" hidden>
           <div class="payment-card">
-            <img src="/assets/logos/visa.svg" alt="Visa" loading="lazy">
+            <img src="assets/logos/visa.svg" alt="Visa" loading="lazy">
           </div>
         </label>
         <label class="payment-option">
           <input type="radio" name="payment" value="mastercard" hidden>
           <div class="payment-card">
-            <img src="/assets/logos/mastercard.svg" alt="Mastercard" loading="lazy">
+            <img src="assets/logos/mastercard.svg" alt="Mastercard" loading="lazy">
           </div>
         </label>
         <label class="payment-option">
           <input type="radio" name="payment" value="applepay" hidden>
           <div class="payment-card">
-            <img src="/assets/logos/apple-pay.svg" alt="Apple Pay" loading="lazy">
+            <img src="assets/logos/apple-pay.svg" alt="Apple Pay" loading="lazy">
           </div>
         </label>
         <label class="payment-option">
           <input type="radio" name="payment" value="googlepay" hidden>
           <div class="payment-card">
-            <img src="/assets/logos/google-pay.svg" alt="Google Pay" loading="lazy">
+            <img src="assets/logos/google-pay.svg" alt="Google Pay" loading="lazy">
           </div>
         </label>
         <label class="payment-option">
           <input type="radio" name="payment" value="paypal" hidden>
           <div class="payment-card">
-            <img src="/assets/logos/paypal.svg" alt="PayPal" loading="lazy">
+            <img src="assets/logos/paypal.svg" alt="PayPal" loading="lazy">
           </div>
         </label>
         <label class="payment-option">
@@ -845,8 +846,8 @@
     <div class="fc-lbl">⚙️ Paramètres du compte</div>
     <div style="display:flex;flex-direction:column;gap:2px;">
       <div class="param-row" onclick="ouvrirSetupMFA()"><div><div style="font-size:.82rem;font-weight:700;">🔐 Double authentification (2FA)</div><div style="font-size:.68rem;color:var(--muted);">Configurer Google Authenticator ou Authy</div></div><span>›</span></div>
-      <div class="param-row" onclick="window.open('/cgu.html','_blank')"><div><div style="font-size:.82rem;font-weight:700;">Conditions générales d'utilisation</div></div><span>›</span></div>
-      <div class="param-row" onclick="window.open('/politique-confidentialite.html','_blank')"><div><div style="font-size:.82rem;font-weight:700;">Politique de confidentialité</div></div><span>›</span></div>
+      <div class="param-row" onclick="window.open('cgu.html','_blank')"><div><div style="font-size:.82rem;font-weight:700;">Conditions générales d'utilisation</div></div><span>›</span></div>
+      <div class="param-row" onclick="window.open('politique-confidentialite.html','_blank')"><div><div style="font-size:.82rem;font-weight:700;">Politique de confidentialité</div></div><span>›</span></div>
       <div class="param-row" onclick="ouvrirCentreAide()"><div><div style="font-size:.82rem;font-weight:700;">Centre d'aide</div></div><span>›</span></div>
       <div class="param-row" onclick="ouvrirSignalerProbleme()"><div><div style="font-size:.82rem;font-weight:700;">Signaler un problème</div></div><span>›</span></div>
       <div class="param-row" onclick="t('Version 1.0.0 · KolisGo','')"><div><div style="font-size:.82rem;font-weight:700;">Version de l'application</div><div style="font-size:.68rem;color:var(--muted);">1.0.0</div></div><span>›</span></div>
@@ -951,7 +952,7 @@
         <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;">
           <input type="checkbox" id="accept-cgu" style="margin-top:3px;width:16px;height:16px;cursor:pointer;">
           <label for="accept-cgu" style="font-size:.78rem;color:var(--muted);line-height:1.5;cursor:pointer;">
-            J'accepte les <a href="/cgu.html" target="_blank" style="color:var(--g500);">CGU</a> et la <a href="/politique-confidentialite.html" target="_blank" style="color:var(--g500);">politique de confidentialité</a> de KolisGo
+            J'accepte les <a href="cgu.html" target="_blank" style="color:var(--g500);">CGU</a> et la <a href="politique-confidentialite.html" target="_blank" style="color:var(--g500);">politique de confidentialité</a> de KolisGo
           </label>
         </div>
         <button class="btn p full" id="reg-btn" onclick="doReg()">Créer mon compte gratuitement</button>
@@ -1014,17 +1015,17 @@
 </div>
 
 <!-- ════ SCRIPTS ════ -->
-<script src="/js/app.js"></script>
-<script src="/js/auth.js"></script>
-<script src="/js/home.js"></script>
-<script src="/js/explorer.js"></script>
-<script src="/js/poster.js"></script>
-<script src="/js/booster.js"></script>
-<script src="/js/suivi.js"></script>
-<script src="/js/profil.js"></script>
-<script src="/js/affil.js"></script>
-<script src="/js/livreur.js"></script>
-<script src="/js/admin.js"></script>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/home.js"></script>
+<script src="js/explorer.js"></script>
+<script src="js/poster.js"></script>
+<script src="js/booster.js"></script>
+<script src="js/suivi.js"></script>
+<script src="js/profil.js"></script>
+<script src="js/affil.js"></script>
+<script src="js/livreur.js"></script>
+<script src="js/admin.js"></script>
 
 <!-- ════ UI EXTENSIONS ════ -->
 <style>
@@ -1751,7 +1752,7 @@ function initNotifRealtime() {
 
 <!-- ════ BANNIÈRE COOKIES ════ -->
 <div id="cookie-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px;z-index:4000;box-shadow:0 4px 20px rgba(0,0,0,.3);">
-  <div style="font-size:.8rem;margin-bottom:10px;">🍪 KolisGo utilise des cookies <strong>essentiels</strong> au fonctionnement (session, préférences). Aucun cookie publicitaire ou de suivi tiers. <a href="/politique-confidentialite.html" style="color:var(--g400);font-size:.75rem;">En savoir plus</a></div>
+  <div style="font-size:.8rem;margin-bottom:10px;">🍪 KolisGo utilise des cookies <strong>essentiels</strong> au fonctionnement (session, préférences). Aucun cookie publicitaire ou de suivi tiers. <a href="politique-confidentialite.html" style="color:var(--g400);font-size:.75rem;">En savoir plus</a></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <button onclick="acceptCookies()" style="padding:8px 20px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;">Accepter</button>
     <button onclick="refuserCookies()" style="padding:8px 20px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:50px;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;

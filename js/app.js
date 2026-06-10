@@ -341,7 +341,7 @@ if (!localStorage.getItem('cookie_consent')) {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+      await navigator.serviceWorker.register('./sw.js', { scope: './' });
 
       window.addEventListener('beforeinstallprompt', e => {
         e.preventDefault();
