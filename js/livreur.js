@@ -22,9 +22,9 @@ function openLivrFlow(ref, trajet, train, dest, prix, colisId = null, expediteur
   const eTrain  = escapeHtml(train);
   const eDest   = escapeHtml(dest);
   const ePrix   = escapeHtml(String(prix));
-  const jRef    = JSON.stringify(ref);
-  const jDest   = JSON.stringify(dest);
-  const jPrix   = JSON.stringify(prix);
+  const jRef  = "'" + String(ref).replace(/[^A-Za-z0-9_-]/g, '') + "'";
+  const jDest = "'" + String(dest).replace(/[^A-Za-z0-9 _-]/g, '') + "'";
+  const jPrix = "'" + String(prix).replace(/[^0-9.,]/g, '') + "'";
 
   openSheet(`
     <div style="font-size:1rem;font-weight:900;letter-spacing:-.4px;margin-bottom:2px;">Passage ${eRef}</div>

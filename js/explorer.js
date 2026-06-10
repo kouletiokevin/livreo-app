@@ -84,7 +84,7 @@ async function loadCards(reset = true) {
       const titre    = escapeHtml(col.titre || 'Colis');
       const poids    = escapeHtml(col.poids || '');
       const photoUrl = col.photo_emballee_url ? escapeHtml(col.photo_emballee_url) : null;
-      const codeLvrJs = JSON.stringify(col.code_lvr);
+      const codeLvrJs = "'" + String(col.code_lvr).replace(/[^A-Za-z0-9_-]/g, '') + "'";
 
       g.insertAdjacentHTML('beforeend',
         '<div class="cc" onclick="openDetail(' + codeLvrJs + ')">'
@@ -184,7 +184,7 @@ async function openDetail(id) {
   const emojis     = { 'Lettre': '✉️', 'Pochette': '📬', 'Colis': '📦', 'Bagage': '🧳' };
   const em         = emojis[(col.format || '').split(' ')[0]] || '📦';
   const photoUrl   = col.photo_emballee_url ? escapeHtml(col.photo_emballee_url) : null;
-  const codeLvrJs  = JSON.stringify(col.code_lvr);
+  const codeLvrJs  = "'" + String(col.code_lvr).replace(/[^A-Za-z0-9_-]/g, '') + "'";
 
   openSheet(`
     <div style="font-size:1.1rem;font-weight:900;letter-spacing:-.5px;margin-bottom:3px;">${titre}</div>
@@ -308,7 +308,7 @@ function accepterC(id) {
       <div id="err-acc-billet" style="display:none;font-size:.72rem;color:var(--danger);margin-top:4px;font-weight:700;">Ce champ est obligatoire</div>
     </div>
 
-    <button id="acc-confirm-btn" onclick="confirmerPassage(${JSON.stringify(id)})"
+    <button id="acc-confirm-btn" onclick="confirmerPassage('${String(id).replace(/[^A-Za-z0-9_-]/g, '')}')"
       class="btn p full" style="font-size:.88rem;font-weight:900;letter-spacing:.4px;">
       CONFIRMER LE PASSAGE →
     </button>
