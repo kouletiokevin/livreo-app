@@ -330,6 +330,8 @@ async function onLoginSuccess(profil) {
   }
   if (typeof chargerRecus === 'function') chargerRecus(profil.id);
   if (typeof loadAffiliateCard === 'function') loadAffiliateCard();
+  if (typeof majBadgeMessages === 'function') majBadgeMessages();
+  if (typeof initMessagesRealtime === 'function') initMessagesRealtime();
 
   // App tour — première connexion uniquement
   const tourKey = 'kolisgo_app_tour_' + profil.id;

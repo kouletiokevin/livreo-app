@@ -328,6 +328,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadCards();
   if (typeof loadPartnersBanner === 'function') loadPartnersBanner();
 
+  // ?suivi=CODE → ouvrir l'écran suivi avec le code pré-rempli
+  try {
+    const _sp = new URLSearchParams(window.location.search);
+    const _suiviCode = _sp.get('suivi');
+    if (_suiviCode) {
+      goNav('suivi');
+      const svInput = document.getElementById('sv-input');
+      if (svInput) svInput.value = _suiviCode.trim().toUpperCase();
+    }
+  } catch(e) {}
+
   // Affichage INSTANTANÉ : si le localStorage indique une session précédente,
   // on affiche le dashboard tout de suite sans attendre checkSession (~300ms)
   const wasLoggedIn = localStorage.getItem('kolisgo_logged_in') === '1';

@@ -1,5 +1,5 @@
-/* KolisGo — Service Worker v18 */
-const CACHE = 'kolisgo-v18';
+/* KolisGo — Service Worker v19 */
+const CACHE = 'kolisgo-v19';
 const ASSETS = [
   './',
   './css/style.css',
@@ -15,6 +15,7 @@ const ASSETS = [
   './js/profil.js',
   './js/affil.js',
   './js/admin.js',
+  './js/messages.js',
 ];
 
 self.addEventListener('install', e => {
