@@ -1,5 +1,5 @@
-/* KolisGo — Service Worker v19 */
-const CACHE = 'kolisgo-v19';
+/* KolisGo — Service Worker v20 */
+const CACHE = 'kolisgo-v20';
 const ASSETS = [
   './',
   './css/style.css',
@@ -36,6 +36,21 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = e.request.url;
   if (!url.startsWith('http')) return;
+  // HTML : réseau d'abord (jamais de page périmée/tronquée)
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          if (res.status === 200) {
+            const clone = res.clone();
+            caches.open(CACHE).then(cache => cache.put(e.request, clone));
+          }
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
   if (url.includes('supabase') || url.includes('stripe') || url.includes('twilio')) return;
   e.respondWith(
     caches.match(e.request).then(cached => {
