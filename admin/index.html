@@ -55,7 +55,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 
 /* KPI GRID */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:20px;}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;cursor:default;transition:.15s;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;cursor:pointer;transition:.15s;}
 .kpi:hover{border-color:var(--border2);}
 .kpi-ico{position:absolute;top:14px;right:14px;font-size:1rem;opacity:.2;}
 .kpi-val{font-size:1.8rem;font-weight:900;letter-spacing:-1px;line-height:1;margin-bottom:4px;}
@@ -213,11 +213,11 @@ select.role-sel:focus{border-color:var(--border2);}
       <div class="page on" id="page-dashboard">
         <div class="page-title">Vue d'ensemble <span style="font-size:.75rem;font-weight:400;color:var(--muted);margin-left:6px;">Aujourd'hui · <span id="today-date"></span></span></div>
         <div class="kpi-grid">
-          <div class="kpi"><span class="kpi-ico">👥</span><div class="kpi-val" id="k-users"><span class="skel" style="width:36px"></span></div><div class="kpi-label">Utilisateurs</div><div class="kpi-sub" id="k-users-sub"></div></div>
-          <div class="kpi"><span class="kpi-ico">📦</span><div class="kpi-val amber" id="k-pending"><span class="skel" style="width:28px"></span></div><div class="kpi-label">En attente</div></div>
-          <div class="kpi"><span class="kpi-ico">✅</span><div class="kpi-val" id="k-done"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Livrés</div></div>
-          <div class="kpi"><span class="kpi-ico">💳</span><div class="kpi-val" id="k-tx"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Transactions</div></div>
-          <div class="kpi green"><span class="kpi-ico">💰</span><div class="kpi-val green" id="k-rev"><span class="skel" style="width:52px"></span></div><div class="kpi-label">Revenus (15%)</div></div>
+          <div class="kpi" onclick="goKpi('users')"><span class="kpi-ico">👥</span><div class="kpi-val" id="k-users"><span class="skel" style="width:36px"></span></div><div class="kpi-label">Utilisateurs</div><div class="kpi-sub" id="k-users-sub"></div></div>
+          <div class="kpi" onclick="goKpi('kolis')"><span class="kpi-ico">📦</span><div class="kpi-val amber" id="k-pending"><span class="skel" style="width:28px"></span></div><div class="kpi-label">En attente</div></div>
+          <div class="kpi" onclick="goKpi('kolis')"><span class="kpi-ico">✅</span><div class="kpi-val" id="k-done"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Livrés</div></div>
+          <div class="kpi" onclick="goKpi('transactions')"><span class="kpi-ico">💳</span><div class="kpi-val" id="k-tx"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Transactions</div></div>
+          <div class="kpi green" onclick="goKpi('transactions')"><span class="kpi-ico">💰</span><div class="kpi-val green" id="k-rev"><span class="skel" style="width:52px"></span></div><div class="kpi-label">Revenus (15%)</div></div>
         </div>
 
         <div class="charts-row">
@@ -591,18 +591,8 @@ function bdg(s){
 }
 function empty(cols,txt){return`<tr><td colspan="${cols}" class="empty-state"><div class="e-ico">🔍</div>${txt||'Aucune donnée'}</td></tr>`;}
 
-// ── Navigation ─────────────────────────────────────────
-function nav(id, el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));
-  document.getElementById('page-'+id)?.classList.add('on');
-  if(el)el.classList.add('on');
-  if(id==='analytics')loadAnalytics();
-  if(id==='users'&&_users.length===0)loadUsers();
-  if(id==='kolis')loadKolis();
-  if(id==='transactions')loadTx();
-  if(id==='moderators')loadMods();
-}
+// ── Navigation helper (KPI cards) ──────────────────────
+function goKpi(id){ const item=document.querySelector(`.nav-item[onclick*="'${id}'"]`); if(item) nav(id,item); }
 
 // ── DASHBOARD ──────────────────────────────────────────
 async function loadDashboard(){

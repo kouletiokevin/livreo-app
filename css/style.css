@@ -600,5 +600,4 @@ td strong { color: var(--ink); }
   transition: all .2s;
 }
 
-body:not(.no-botnav) #partners-sticky { bottom: var(--bot, 64px); }
-body:not(.no-botnav) .content { padding-bottom: 56px; }
+body:not(.no-botnav) #partners-sticky { display: none !important; }
