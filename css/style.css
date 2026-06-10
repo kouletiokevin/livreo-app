@@ -104,6 +104,10 @@ nav {
   overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
 
+/* ── BOTTOM NAV masquée hors connexion ── */
+body.no-botnav .bot-nav  { display: none; }
+body.no-botnav .content  { bottom: 0; }
+
 /* ── BOTTOM NAV ── */
 .bot-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 500;

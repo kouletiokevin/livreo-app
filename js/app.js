@@ -189,8 +189,15 @@ function refreshHome() {
   const landing = document.getElementById('home-landing');
   const dash = document.getElementById('home-dash');
   if (!landing || !dash) return;
-  if (user) { landing.style.display = 'none'; dash.style.display = 'block'; }
-  else { landing.style.display = 'block'; dash.style.display = 'none'; }
+  if (user) {
+    landing.style.display = 'none';
+    dash.style.display = 'block';
+    document.body.classList.remove('no-botnav');
+  } else {
+    landing.style.display = 'block';
+    dash.style.display = 'none';
+    document.body.classList.add('no-botnav');
+  }
 }
 
 // ── Auto-hide bottom nav on scroll ───────
