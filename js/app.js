@@ -20,10 +20,11 @@ function closeSplash() {
   }, 650);
 }
 
+// Fermer le splash immédiatement — pas d'animation au chargement
 setTimeout(() => {
   const s = document.getElementById('splash');
   if (s && s.style.display !== 'none') closeSplash();
-}, 4200);
+}, 0);
 
 // ── Permissions contextuelles ─────────────
 async function demanderCamera() {

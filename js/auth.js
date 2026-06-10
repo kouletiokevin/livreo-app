@@ -277,6 +277,12 @@ async function onLoginSuccess(profil) {
     if (txt) txt.style.display = 'none';
   }
 
+  // Fallback email depuis la session auth si absent dans la table users
+  if (!profil.email) {
+    const { data: authData } = await db.auth.getSession();
+    if (authData?.session?.user?.email) profil.email = authData.session.user.email;
+  }
+
   // Remplir les champs du formulaire profil
   const inputs = {
     'm-pn': profil.prenom, 'm-nm': profil.nom, 'm-em': profil.email,

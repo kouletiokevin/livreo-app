@@ -122,7 +122,7 @@ body.no-botnav .content  { bottom: 0; }
 }
 .bni:active { background: var(--g50); }
 .bni-icon { font-size: 1.25rem; line-height: 1; }
-.bni-lbl  { font-size: .52rem; font-weight: 700; color: var(--muted); letter-spacing: .2px; white-space: nowrap; }
+.bni-lbl  { font-size: .62rem; font-weight: 700; color: var(--muted); letter-spacing: .2px; white-space: nowrap; }
 .bni.on .bni-lbl  { color: var(--g500); }
 .bni.on .bni-icon { filter: drop-shadow(0 0 5px rgba(34,168,87,.45)); }
 .bni-pip  { position: absolute; top: 3px; right: 8px; width: 6px; height: 6px; background: var(--danger); border-radius: 50%; border: 1.5px solid var(--white); display: none; }

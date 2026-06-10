@@ -150,23 +150,39 @@ function _safeAttrUrl(url) {
 }
 
 async function loadPartnersBanner() {
+  // Remplir la bannière en haut (landing page) ET le ticker sticky permanent
   const wrap = document.getElementById('partners-banner');
-  if (!wrap) return;
+  const sticky = document.getElementById('partners-sticky');
   try {
     const { data: partners } = await db.from('partners').select('*').eq('actif', true).order('ordre');
-    if (!partners || partners.length === 0) { wrap.style.display = 'none'; return; }
-    wrap.style.display = 'block';
-    const track = document.getElementById('partners-track');
-    if (!track) return;
-    track.innerHTML = [...partners, ...partners].map(p => {
+    if (!partners || partners.length === 0) {
+      if (wrap) wrap.style.display = 'none';
+      if (sticky) sticky.style.display = 'none';
+      return;
+    }
+    const html = [...partners, ...partners, ...partners].map(p => {
       const safeUrl  = _safeAttrUrl(p.site_url);
       const safeLogo = _safeAttrUrl(p.logo_url);
       const safeName = escapeHtml(p.nom || '');
-      return `<a ${safeUrl ? `href="${safeUrl}" target="_blank" rel="noopener noreferrer"` : ''} class="partner-logo-wrap" title="${safeName}" style="display:flex;align-items:center;justify-content:center;min-width:110px;height:54px;padding:0 14px;background:var(--white);border-radius:12px;border:1.5px solid var(--border);text-decoration:none;flex-shrink:0;transition:.15s;gap:8px;">
-            ${safeLogo ? `<img src="${safeLogo}" alt="${safeName}" style="max-height:36px;max-width:80px;object-fit:contain;">` : `<span style="font-size:.8rem;font-weight:800;color:var(--ink);">${safeName}</span>`}
+      return `<a ${safeUrl ? `href="${safeUrl}" target="_blank" rel="noopener noreferrer"` : ''} class="partner-logo-wrap" title="${safeName}" style="display:flex;align-items:center;justify-content:center;min-width:100px;height:36px;padding:0 12px;background:var(--white);border-radius:8px;border:1.5px solid var(--border);text-decoration:none;flex-shrink:0;transition:.15s;gap:6px;">
+            ${safeLogo ? `<img src="${safeLogo}" alt="${safeName}" style="max-height:24px;max-width:70px;object-fit:contain;">` : `<span style="font-size:.72rem;font-weight:800;color:var(--ink);">${safeName}</span>`}
           </a>`;
-        }).join('');
+    }).join('');
+
+    // Bannière landing (inchangée)
+    if (wrap) {
+      wrap.style.display = 'block';
+      const track = document.getElementById('partners-track');
+      if (track) track.innerHTML = html;
+    }
+
+    // Ticker sticky permanent
+    if (sticky) {
+      const stickyTrack = sticky.querySelector('.partners-sticky-track');
+      if (stickyTrack) { stickyTrack.innerHTML = html; sticky.style.display = 'flex'; }
+    }
   } catch(e) {
-    wrap.style.display = 'none';
+    if (wrap) wrap.style.display = 'none';
+    if (sticky) sticky.style.display = 'none';
   }
 }

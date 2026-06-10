@@ -792,7 +792,7 @@ async function saveMod(){
   if(!email){toast('Email requis','2000');return;}
   const {data:u}=await db.from('users').select('id').eq('email',email).single();
   if(!u){toast('Utilisateur introuvable');return;}
-  const {error}=await db.from('user_roles  const {error}=await db.from('user_roles').upsert({user_id:u.id,role},{onConflict:'user_id'});
+  const {error}=await db.from('user_roles').upsert({user_id:u.id,role},{onConflict:'user_id'});
   if(error){toast('Erreur : '+error.message);return;}
   toast('Rôle assigné ✅');
   closeModal();
