@@ -76,7 +76,7 @@ async function loadCards(reset = true) {
       const badge    = col.expediteur_badge;
       const userPhoto = col.expediteur_photo ? escapeHtml(col.expediteur_photo) : null;
       const isBoosted = col.is_boosted === true;
-      const dep      = col.gare_depart ? escapeHtml(col.gare_depart.split(' ')[0]) : '?';
+      const dep      = col.gare_depart ? escapeHtml(col.gare_depart.split(' ')[0]) : 'À définir';
       const arr      = escapeHtml((col.gare_arrivee || '').split(' ')[0]);
       const dt       = col.date_souhaitee
         ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })

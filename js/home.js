@@ -109,7 +109,7 @@ async function chargerActiviteRecente(userId) {
     tbody.innerHTML = data.map(tx => `
       <tr>
         <td><strong>${escapeHtml(tx.colis?.code_lvr || '—')}</strong></td>
-        <td style="font-size:.76rem;">${escapeHtml(tx.colis?.gare_depart || '?')} → ${escapeHtml(tx.colis?.gare_arrivee || '?')}</td>
+        <td style="font-size:.76rem;text-transform:capitalize;">${escapeHtml(tx.colis?.gare_depart || 'À définir')} → ${escapeHtml(tx.colis?.gare_arrivee || 'À définir')}</td>
         <td style="color:var(--g500);font-weight:800;">${parseFloat(tx.montant || 0).toFixed(2)}€</td>
         <td>${escapeHtml(tx.statut || '—')}</td>
       </tr>
@@ -313,7 +313,7 @@ async function chargerKPIs(userId, profil) {
   set('kpi-envoyes',    nbEnvoyes);
   set('kpi-livraisons', nbLivraisons);
   set('kpi-gains',      gains.toFixed(0) + '€');
-  set('kpi-note',       note > 0 ? note.toFixed(1) + '⭐' : '—');
+  set('kpi-note',       note > 0 ? note.toFixed(1) + '⭐' : 'Pas encore de note ⭐');
 }
 
 // ── Reçus de paiement ─────────────────────
@@ -374,7 +374,7 @@ async function voirTousRecus() {
       html += data.map(tx => {
         const dt = new Date(tx.created_at).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
         const ref = tx.colis?.code_lvr || '—';
-        const trajet = tx.colis ? `${tx.colis.gare_depart || '?'} → ${tx.colis.gare_arrivee || '?'}` : '—';
+        const trajet = tx.colis ? `${tx.colis.gare_depart || 'À définir'} → ${tx.colis.gare_arrivee || 'À définir'}` : '—';
         const montant = parseFloat(tx.montant || 0).toFixed(2).replace('.', ',');
         return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
           <div style="font-size:1.4rem;">🧾</div>
@@ -411,7 +411,7 @@ function telechargerRecu(txId) {
       const dt = new Date(tx?.created_at || Date.now()).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
       const ref = tx?.colis?.code_lvr || '—';
       const montant = parseFloat(tx?.montant || 0).toFixed(2);
-      const trajet = tx?.colis ? `${escapeHtml(tx.colis.gare_depart || '?')} → ${escapeHtml(tx.colis.gare_arrivee || '?')}` : '—';
+      const trajet = tx?.colis ? `${escapeHtml(tx.colis.gare_depart || 'À définir')} → ${escapeHtml(tx.colis.gare_arrivee || 'À définir')}` : '—';
       win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reçu KolisGo — ${ref}</title>
       <style>body{font-family:Georgia,serif;max-width:600px;margin:40px auto;padding:0 20px;color:#111;}
       h1{font-size:1.4rem;color:#1a3320;}.lbl{font-size:.8rem;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-top:16px;}

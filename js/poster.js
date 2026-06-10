@@ -221,10 +221,28 @@ async function publishColis() {
   if (btn) { btn.textContent = 'Publication en cours…'; btn.disabled = true; }
 
   try {
+    // 0. Géolocalisation de la ville de départ (best-effort, 5 s)
+    let villeDepart = null;
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('timeout')), 5000);
+        navigator.geolocation.getCurrentPosition(
+          p => { clearTimeout(timer); resolve(p); },
+          e => { clearTimeout(timer); reject(e); },
+          { enableHighAccuracy: false, timeout: 5000 }
+        );
+      });
+      const { latitude: lat, longitude: lon } = pos.coords;
+      const geoRes  = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+      const geoData = await geoRes.json();
+      villeDepart = geoData.address?.city || geoData.address?.town || geoData.address?.village || null;
+    } catch(e) { /* refus ou timeout — on publie quand même */ }
+
     // 1. Insérer le kolis en base
     const colisData = {
       expediteur_id:    user.id,
       gare_arrivee:     arr,
+      gare_depart:      villeDepart,
       titre:            titre,
       description:      desc || null,
       date_souhaitee:   dated || null,

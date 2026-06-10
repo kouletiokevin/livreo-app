@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <base href="/livreo-app/">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob: 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.stripe.com https://api.stripe.com https://cdn.jsdelivr.net; object-src 'none'; base-uri 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob: 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.stripe.com https://api.stripe.com https://cdn.jsdelivr.net https://nominatim.openstreetmap.org; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <!-- ══ SEO PRIMAIRE ══ -->
@@ -457,9 +457,11 @@
     </div>
 
     <!-- LIVRAISONS EN COURS -->
-    <div style="font-size:.74rem;font-weight:800;color:var(--ink);margin-bottom:8px;">🚆 Mes passages en cours</div>
-    <div id="livraisons-list">
-      <div id="livraisons-empty" style="text-align:center;padding:20px 0;font-size:.8rem;color:var(--muted);">Aucun passage en cours.</div>
+    <div style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:16px;margin-bottom:14px;">
+      <div style="font-size:.82rem;font-weight:900;margin-bottom:10px;">🚆 Mes passages en cours</div>
+      <div id="livraisons-list">
+        <div id="livraisons-empty" style="text-align:center;padding:16px 0;font-size:.8rem;color:var(--muted);">Aucun passage en cours.</div>
+      </div>
     </div>
 
     <!-- KPIs -->

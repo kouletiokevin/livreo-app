@@ -601,3 +601,7 @@ td strong { color: var(--ink); }
 }
 
 body:not(.no-botnav) #partners-sticky { display: none !important; }
+
+@media (min-width: 900px) {
+  .screen { max-width: 760px; margin-left: auto; margin-right: auto; }
+}
