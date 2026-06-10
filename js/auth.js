@@ -127,7 +127,7 @@ async function loginGoogle() {
   try {
     const { error } = await db.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin }
+      options: { redirectTo: window.location.origin + window.location.pathname }
     });
     if (error) t('Erreur Google : ' + error.message, 'e');
   } catch (e) {
@@ -140,7 +140,7 @@ async function loginApple() {
   try {
     const { error } = await db.auth.signInWithOAuth({
       provider: 'apple',
-      options: { redirectTo: window.location.origin }
+      options: { redirectTo: window.location.origin + window.location.pathname }
     });
     if (error) t('Erreur Apple : ' + error.message, 'e');
   } catch (e) {
