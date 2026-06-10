@@ -150,14 +150,11 @@ function _safeAttrUrl(url) {
 }
 
 async function loadPartnersBanner() {
-  // Remplir la bannière en haut (landing page) ET le ticker sticky permanent
   const wrap = document.getElementById('partners-banner');
-  const sticky = document.getElementById('partners-sticky');
   try {
     const { data: partners } = await db.from('partners').select('*').eq('actif', true).order('ordre');
     if (!partners || partners.length === 0) {
       if (wrap) wrap.style.display = 'none';
-      if (sticky) sticky.style.display = 'none';
       return;
     }
     const html = [...partners, ...partners, ...partners].map(p => {
@@ -169,20 +166,12 @@ async function loadPartnersBanner() {
           </a>`;
     }).join('');
 
-    // Bannière landing (inchangée)
     if (wrap) {
       wrap.style.display = 'block';
       const track = document.getElementById('partners-track');
       if (track) track.innerHTML = html;
     }
-
-    // Ticker sticky permanent
-    if (sticky) {
-      const stickyTrack = sticky.querySelector('.partners-sticky-track');
-      if (stickyTrack) { stickyTrack.innerHTML = html; sticky.style.display = 'flex'; }
-    }
   } catch(e) {
     if (wrap) wrap.style.display = 'none';
-    if (sticky) sticky.style.display = 'none';
   }
 }

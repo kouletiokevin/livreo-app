@@ -1,0 +1,12 @@
+{
+  "name": "KolisGo",
+  "short_name": "KolisGo",
+  "description": "Quelqu'un prend le train. Votre kolis aussi.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0e1a10",
+  "theme_color": "#0e1a10",
+  "orientation": "portrait",
+  "icons": [{ "src": "assets/kolisgo-logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

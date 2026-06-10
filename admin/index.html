@@ -176,7 +176,7 @@ select.role-sel:focus{border-color:var(--border2);}
     <div class="topbar-brand">Kolis<span>Go</span><sub>ADMIN</sub></div>
     <div class="topbar-right">
       <span class="topbar-email" id="admin-email"></span>
-      <button class="btn-ghost" onclick="location.href='/'">← App</button>
+      <button class="btn-ghost" onclick="location.href='../'">← App</button>
       <button class="btn-ghost" onclick="doLogout()">Déconnexion</button>
     </div>
   </header>
@@ -1250,7 +1250,7 @@ async function deletePartner(id) {
 }
 
 // ── AUTH & LOGOUT ──────────────────────────────────────
-async function doLogout(){await db.auth.signOut();location.href='/';}
+async function doLogout(){await db.auth.signOut();location.href='../';}
 
 (async()=>{
   try{

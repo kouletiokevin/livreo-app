@@ -1,5 +1,5 @@
-/* KolisGo — Service Worker v15 */
-const CACHE = 'kolisgo-v15';
+/* KolisGo — Service Worker v16 */
+const CACHE = 'kolisgo-v16';
 const ASSETS = [
   './',
   './css/style.css',
@@ -34,6 +34,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = e.request.url;
+  if (!url.startsWith('http')) return;
   if (url.includes('supabase') || url.includes('stripe') || url.includes('twilio')) return;
   e.respondWith(
     caches.match(e.request).then(cached => {
