@@ -118,6 +118,58 @@ function _obInitSwipe() {
   }, { passive: true });
 }
 
+// ── App Tour (post-login, première connexion) ─
+let _atIdx = 0;
+const AT_TOTAL = 5;
+
+function showAppTour(userId) {
+  _atIdx = 0;
+  const ov = document.getElementById('app-tour-ov');
+  if (!ov) return;
+  ov.style.display = 'flex';
+  ov.style.opacity = '1';
+  ov.style.transition = '';
+  atGoTo(0);
+  _atInitSwipe();
+  if (userId) localStorage.setItem('kolisgo_app_tour_' + userId, '1');
+}
+
+function atGoTo(n) {
+  _atIdx = Math.max(0, Math.min(AT_TOTAL - 1, n));
+  const track = document.getElementById('at-track');
+  if (track) track.style.transform = `translateX(-${_atIdx * (100 / AT_TOTAL)}%)`;
+  document.querySelectorAll('#at-dots .ob-dot').forEach((d, i) => d.classList.toggle('on', i === _atIdx));
+  const skip = document.getElementById('at-skip');
+  if (skip) skip.style.display = _atIdx === AT_TOTAL - 1 ? 'none' : 'block';
+}
+
+function finishAppTour() {
+  const ov = document.getElementById('app-tour-ov');
+  if (ov) {
+    ov.style.opacity = '0';
+    ov.style.transition = 'opacity .4s';
+    setTimeout(() => { ov.style.display = 'none'; ov.style.opacity = '1'; }, 420);
+  }
+}
+
+function _atInitSwipe() {
+  const ov = document.getElementById('app-tour-ov');
+  if (!ov || ov._swipeInited) return;
+  ov._swipeInited = true;
+  let startX = 0, startY = 0;
+  ov.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  ov.addEventListener('touchend', e => {
+    const dx = startX - e.changedTouches[0].clientX;
+    const dy = startY - e.changedTouches[0].clientY;
+    if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
+    if (dx > 0 && _atIdx < AT_TOTAL - 1) atGoTo(_atIdx + 1);
+    else if (dx < 0 && _atIdx > 0) atGoTo(_atIdx - 1);
+  }, { passive: true });
+}
+
 // ── Navigation ───────────────────────────
 function goNav(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
@@ -236,6 +288,7 @@ db.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_OUT') {
     user = null;
     window._loginInProgress = false;
+    goNav('home');
     refreshHome();
   }
 });

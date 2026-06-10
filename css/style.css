@@ -13,7 +13,7 @@
   --sans: 'Outfit', sans-serif; --serif: 'Instrument Serif', Georgia, serif;
   --r: 14px; --rl: 22px; --rxl: 28px;
   --sh: 0 2px 16px rgba(14,26,16,.07); --shl: 0 8px 40px rgba(14,26,16,.13);
-  --nav: 60px; --bot: 54px;
+  --nav: 60px; --bot: 64px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -113,11 +113,13 @@ nav {
 }
 .bn-row { display: flex; justify-content: space-around; align-items: center; height: 100%; }
 .bni {
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; padding: 8px 14px; border-radius: 12px; transition: .15s; position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  cursor: pointer; padding: 5px 10px; border-radius: 12px; transition: .15s; position: relative;
 }
 .bni:active { background: var(--g50); }
-.bni-icon { font-size: 1.4rem; line-height: 1; }
+.bni-icon { font-size: 1.25rem; line-height: 1; }
+.bni-lbl  { font-size: .52rem; font-weight: 700; color: var(--muted); letter-spacing: .2px; white-space: nowrap; }
+.bni.on .bni-lbl  { color: var(--g500); }
 .bni.on .bni-icon { filter: drop-shadow(0 0 5px rgba(34,168,87,.45)); }
 .bni-pip  { position: absolute; top: 3px; right: 8px; width: 6px; height: 6px; background: var(--danger); border-radius: 50%; border: 1.5px solid var(--white); display: none; }
 
@@ -544,6 +546,31 @@ td strong { color: var(--ink); }
   text-underline-offset: 3px;
 }
 @keyframes obFadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── APP TOUR (post-login, 5 slides) ── */
+#app-tour-ov {
+  position: fixed; inset: 0; z-index: 8600;
+  background: var(--ink);
+  display: none; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  overflow: hidden;
+}
+#at-skip {
+  position: absolute; top: calc(env(safe-area-inset-top) + 18px); right: 20px;
+  background: transparent; border: none; color: rgba(255,255,255,.4);
+  font-family: var(--sans); font-size: .82rem; font-weight: 600;
+  cursor: pointer; z-index: 10; padding: 8px 4px;
+}
+#at-track {
+  display: flex; width: 500%; height: 100%;
+  transition: transform .38s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+#at-track .ob-slide { width: 20%; }
+#at-dots {
+  position: absolute; bottom: calc(env(safe-area-inset-bottom) + 44px);
+  display: flex; gap: 8px; align-items: center;
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 380px) {

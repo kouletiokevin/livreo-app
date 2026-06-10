@@ -324,6 +324,12 @@ async function onLoginSuccess(profil) {
   }
   if (typeof chargerRecus === 'function') chargerRecus(profil.id);
   if (typeof loadAffiliateCard === 'function') loadAffiliateCard();
+
+  // App tour — première connexion uniquement
+  const tourKey = 'kolisgo_app_tour_' + profil.id;
+  if (!localStorage.getItem(tourKey) && typeof showAppTour === 'function') {
+    setTimeout(() => showAppTour(profil.id), 900);
+  }
   } finally {
     window._loginInProgress = false;
   }

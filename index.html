@@ -254,6 +254,59 @@
   </div>
 </div>
 
+<!-- ════ APP TOUR (post-login, première connexion) ════ -->
+<div id="app-tour-ov" style="display:none;">
+  <button id="at-skip" onclick="finishAppTour()">Passer</button>
+  <div id="at-track">
+
+    <!-- Slide 1 — Accueil -->
+    <div class="ob-slide">
+      <div style="width:80px;height:80px;border-radius:24px;background:rgba(46,204,113,.15);border:2px solid rgba(46,204,113,.25);display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin:0 auto 28px;">🏠</div>
+      <div class="ob-title">Accueil</div>
+      <div class="ob-sub">Retrouvez vos kolis en cours, vos gains et vos statistiques en un coup d'œil</div>
+    </div>
+
+    <!-- Slide 2 — Explorer -->
+    <div class="ob-slide">
+      <div style="width:80px;height:80px;border-radius:24px;background:rgba(46,204,113,.15);border:2px solid rgba(46,204,113,.25);display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin:0 auto 28px;">🔍</div>
+      <div class="ob-title">Explorer</div>
+      <div class="ob-sub">Parcourez les kolis disponibles et acceptez des passages rémunérés sur votre trajet du jour</div>
+    </div>
+
+    <!-- Slide 3 — Publier -->
+    <div class="ob-slide">
+      <div style="width:80px;height:80px;border-radius:50%;background:rgba(46,204,113,.25);border:2px solid rgba(46,204,113,.4);display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin:0 auto 28px;">➕</div>
+      <div class="ob-title">Publier un kolis</div>
+      <div class="ob-sub">Postez votre envoi en 2 minutes et trouvez un passeur parmi des milliers de voyageurs</div>
+    </div>
+
+    <!-- Slide 4 — Suivi -->
+    <div class="ob-slide">
+      <div style="width:80px;height:80px;border-radius:24px;background:rgba(46,204,113,.15);border:2px solid rgba(46,204,113,.25);display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin:0 auto 28px;">📍</div>
+      <div class="ob-title">Suivi en direct</div>
+      <div class="ob-sub">Votre QR Code unique pour confirmer la remise et débloquer le paiement automatiquement</div>
+    </div>
+
+    <!-- Slide 5 — Profil -->
+    <div class="ob-slide">
+      <div style="width:80px;height:80px;border-radius:24px;background:rgba(46,204,113,.15);border:2px solid rgba(46,204,113,.25);display:flex;align-items:center;justify-content:center;font-size:2.8rem;margin:0 auto 28px;">👤</div>
+      <div class="ob-title">Votre profil</div>
+      <div class="ob-sub">Avis, badges de confiance, gains et programme d'affiliation — tout au même endroit</div>
+      <div class="ob-cta" style="margin-top:32px;">
+        <button class="ob-btn-main" onclick="finishAppTour()">C'est parti ! 🚀</button>
+      </div>
+    </div>
+
+  </div>
+  <div id="at-dots">
+    <div class="ob-dot on" onclick="atGoTo(0)"></div>
+    <div class="ob-dot" onclick="atGoTo(1)"></div>
+    <div class="ob-dot" onclick="atGoTo(2)"></div>
+    <div class="ob-dot" onclick="atGoTo(3)"></div>
+    <div class="ob-dot" onclick="atGoTo(4)"></div>
+  </div>
+</div>
+
 <!-- ════ NAV ════ -->
 <nav>
   <div class="logo" onclick="goNav('home')" style="cursor:pointer;display:flex;align-items:center;gap:7px;">
@@ -1006,11 +1059,11 @@
 <!-- ════ BOTTOM NAV ════ -->
 <div class="bot-nav">
   <div class="bn-row">
-    <div class="bni on" id="bn-home" onclick="goNav('home')"><div class="bni-icon">🏠</div></div>
-    <div class="bni" id="bn-explorer" onclick="goNav('explorer')"><div class="bni-icon">🔍</div></div>
-    <div class="bni" id="bn-poster" onclick="goPost()"><div class="bni-icon">➕</div></div>
-    <div class="bni" id="bn-suivi" onclick="goNav('suivi')"><div class="bni-icon">📍</div></div>
-    <div class="bni" id="bn-dashboard" onclick="navDash()"><div class="bni-icon">👤</div></div>
+    <div class="bni on" id="bn-home" onclick="goNav('home')"><div class="bni-icon">🏠</div><div class="bni-lbl">Accueil</div></div>
+    <div class="bni" id="bn-explorer" onclick="goNav('explorer')"><div class="bni-icon">🔍</div><div class="bni-lbl">Explorer</div></div>
+    <div class="bni" id="bn-poster" onclick="goPost()"><div class="bni-icon">➕</div><div class="bni-lbl">Publier</div></div>
+    <div class="bni" id="bn-suivi" onclick="goNav('suivi')"><div class="bni-icon">📍</div><div class="bni-lbl">Suivi</div></div>
+    <div class="bni" id="bn-dashboard" onclick="navDash()"><div class="bni-icon">👤</div><div class="bni-lbl">Profil</div></div>
   </div>
 </div>
 
