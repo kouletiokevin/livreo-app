@@ -308,8 +308,7 @@ async function publishColis() {
     // 8. SMS destinataire
     if (typeof envoyerSMS === 'function') {
       envoyerSMS(rtel,
-        'Bonjour ' + rnom + ' ! Un kolis vous est envoyé via KolisGo. ' +
-        'Votre code : ' + codeLvr + '. Ouvrez KolisGo > Suivi > entrez ce code pour votre QR Code.'
+        'Bonjour ' + rnom + ' ! Un kolis vous est envoyé via KolisGo. Votre code : ' + codeLvr + '. Suivez-le ici : https://kouletiokevin.github.io/livreo-app/?suivi=' + codeLvr
       );
     }
 
