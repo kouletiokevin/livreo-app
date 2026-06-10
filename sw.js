@@ -1,20 +1,20 @@
-/* KolisGo � Service Worker v1 */
-const CACHE = 'kolisgo-v12';
+/* KolisGo — Service Worker v13 */
+const CACHE = 'kolisgo-v13';
 const ASSETS = [
-  '/',
-  '/css/style.css',
-  '/js/supabase.js',
-  '/js/app.js',
-  '/js/auth.js',
-  '/js/home.js',
-  '/js/explorer.js',
-  '/js/livreur.js',
-  '/js/suivi.js',
-  '/js/poster.js',
-  '/js/booster.js',
-  '/js/profil.js',
-  '/js/affil.js',
-  '/js/admin.js',
+  './',
+  './css/style.css',
+  './js/supabase.js',
+  './js/app.js',
+  './js/auth.js',
+  './js/home.js',
+  './js/explorer.js',
+  './js/livreur.js',
+  './js/suivi.js',
+  './js/poster.js',
+  './js/booster.js',
+  './js/profil.js',
+  './js/affil.js',
+  './js/admin.js',
 ];
 
 self.addEventListener('install', e => {
@@ -54,14 +54,14 @@ self.addEventListener('push', e => {
   const data = e.data.json();
   self.registration.showNotification(data.title || 'KolisGo', {
     body: data.body || '',
-    icon: '/favicon.svg',
-    badge: '/favicon.svg',
+    icon: './favicon.svg',
+    badge: './favicon.svg',
     tag: data.tag || 'kolisgo-notif',
-    data: data.url || '/'
+    data: data.url || './'
   });
 });
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data || '/'));
+  e.waitUntil(clients.openWindow(e.notification.data || './'));
 });
