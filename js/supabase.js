@@ -32,12 +32,11 @@ const ROLES = {
 // ── Vérification des rôles ──────────────
 async function getUserRole(userId) {
   try {
-    const { data } = await db
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .single();
-    return data?.role || ROLES.USER;
+    const { data } = await db.from('user_roles').select('role').eq('user_id', userId);
+    const roles = (data || []).map(r => r.role);
+    if (roles.includes('admin')) return 'admin';
+    if (roles.includes('moderateur')) return 'moderateur';
+    return ROLES.USER;
   } catch (e) {
     return ROLES.USER;
   }

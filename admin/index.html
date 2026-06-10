@@ -1265,8 +1265,8 @@ async function doLogout(){await db.auth.signOut();location.href='/';}
     const SUPER=['kouletiokevinfr@gmail.com'];
     let ok=SUPER.includes(session.user.email);
     if(!ok){
-      const {data:r}=await db.from('user_roles').select('role').eq('user_id',session.user.id).single();
-      ok=r?.role==='admin'||r?.role==='moderateur';
+      const {data:r}=await db.from('user_roles').select('role').eq('user_id',session.user.id);
+      ok=(r||[]).some(x=>x.role==='admin'||x.role==='moderateur');
     }
     if(!ok){
       document.getElementById('auth-msg').style.display='none';
