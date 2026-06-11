@@ -265,7 +265,7 @@ select.role-sel:focus{border-color:var(--border2);}
           <span class="count-label" id="users-count"></span>
         </div>
         <div class="card">
-          <table><thead><tr><th>Utilisateur</th><th>Email</th><th>Tél</th><th>Rôle</th><th>Certifié</th><th>Statut</th><th>Inscrit</th><th></th></tr></thead>
+          <table><thead><tr><th>Utilisateur</th><th>Email</th><th>Tél</th><th>Rôle</th><th>Documents</th><th>Certifié</th><th>Statut</th><th>Inscrit</th><th></th></tr></thead>
           <tbody id="t-users"></tbody></table>
         </div>
       </div>
@@ -578,7 +578,7 @@ const db = supabase.createClient(
   'sb_publishable_pq9e6TM3kHwpZhoI8Fsq8Q_iIoKBPQ4'
 );
 
-let _users = [], _mods = [];
+let _users = [], _mods = [], _verifMap = {};
 
 // ── Helpers ────────────────────────────────────────────
 function toast(m,t=3000){const e=document.getElementById('toast');e.textContent=m;e.style.display='block';setTimeout(()=>e.style.display='none',t);}
@@ -694,18 +694,33 @@ async function loadAnalytics(){
 
 // ── USERS ──────────────────────────────────────────────
 async function loadUsers(){
-  const [uRes,rRes]=await Promise.all([
+  const [uRes,rRes,vRes]=await Promise.all([
     db.from('users').select('*').order('created_at',{ascending:false}).limit(300),
-    db.from('user_roles').select('user_id,role')
+    db.from('user_roles').select('user_id,role'),
+    db.from('verifications_identite').select('user_id,document_url,selfie_url,statut,created_at').order('created_at',{ascending:false})
   ]);
   const roleMap={};(rRes.data||[]).forEach(r=>roleMap[r.user_id]=r.role);
+  _verifMap={};(vRes.data||[]).forEach(v=>{if(!_verifMap[v.user_id])_verifMap[v.user_id]=v;});
   _users=(uRes.data||[]).map(u=>({...u,_role:roleMap[u.id]||'user'}));
   document.getElementById('users-count').textContent=_users.length+' utilisateurs';
   renderUsers(_users);
 }
 function renderUsers(list){
-  document.getElementById('t-users').innerHTML=list.length?list.map(u=>`<tr>
-    <td class="td-primary"><span class="av">${ini(u.prenom,u.nom)}</span>${u.prenom||''} ${u.nom||''}</td>
+  const vStatBdg={en_attente:'bdg-amber',approuve:'bdg-blue',refuse:'bdg-red'};
+  document.getElementById('t-users').innerHTML=list.length?list.map(u=>{
+    const av=u.photo_profil_url
+      ?`<span class="av" style="overflow:hidden;padding:0;"><img src="${escHtml(u.photo_profil_url)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></span>`
+      :`<span class="av">${ini(u.prenom,u.nom)}</span>`;
+    const v=_verifMap[u.id];
+    const docCell=v
+      ?`<div style="display:flex;flex-direction:column;gap:3px;font-size:.72rem;">
+          ${v.document_url?`<a href="${escHtml(v.document_url)}" target="_blank" style="color:var(--blue);">📄 Pièce</a>`:''}
+          ${v.selfie_url?`<a href="${escHtml(v.selfie_url)}" target="_blank" style="color:var(--blue);">🤳 Selfie</a>`:''}
+          <span class="bdg ${vStatBdg[v.statut]||'bdg-muted'}" style="align-self:start;">${v.statut||'—'}</span>
+        </div>`
+      :'—';
+    return`<tr>
+    <td class="td-primary">${av}${u.prenom||''} ${u.nom||''}</td>
     <td style="color:var(--muted)">${u.email}</td>
     <td style="color:var(--muted2)">${u.telephone||'—'}</td>
     <td><select class="role-sel" onchange="setRole('${u.id}',this.value)">
@@ -713,6 +728,7 @@ function renderUsers(list){
       <option value="moderateur" ${u._role==='moderateur'?'selected':''}>🛡️ moderateur</option>
       <option value="admin" ${u._role==='admin'?'selected':''}>👑 admin</option>
     </select></td>
+    <td>${docCell}</td>
     <td><span class="bdg ${u.verifie?'bdg-blue':'bdg-muted'}" style="cursor:pointer" onclick='toggleCertif("${u.id}",${u.verifie?'true':'false'})' title="Cliquer pour modifier">${u.verifie?'🔵 Certifié':'Non vérifié'}</span></td>
     <td>${bdg(u.statut||'actif')}</td>
     <td style="color:var(--muted2)">${fmt(u.created_at)}</td>
@@ -720,7 +736,7 @@ function renderUsers(list){
       ?`<button class="btn btn-success" onclick="setStatut('${u.id}','actif')">Réactiver</button>`
       :`<button class="btn btn-danger" onclick="setStatut('${u.id}','suspendu')">Suspendre</button>`}
     </td>
-  </tr>`).join(''):empty(8,'Aucun utilisateur');
+  </tr>`;}).join(''):empty(9,'Aucun utilisateur');
 }
 function filterUsers(q){
   q=q.toLowerCase();
