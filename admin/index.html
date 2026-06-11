@@ -591,6 +591,21 @@ function bdg(s){
 }
 function empty(cols,txt){return`<tr><td colspan="${cols}" class="empty-state"><div class="e-ico">🔍</div>${txt||'Aucune donnée'}</td></tr>`;}
 
+// ── Certification manuelle ──────────────────────────────
+async function toggleCertif(userId, current){
+  const next = !current;
+  if(!confirm(next ? 'Certifier cet utilisateur ?' : 'Retirer la certification ?')) return;
+  const {error} = await db.from('users').update({
+    verifie: next,
+    is_certified: next,
+    badge: next ? 'certifie' : 'aucun',
+    niveau_verification: next ? 3 : 1
+  }).eq('id', userId);
+  if(error){ toast('Erreur : '+error.message); return; }
+  toast(next ? '🔵 Utilisateur certifié' : 'Certification retirée');
+  loadUsers();
+}
+
 // ── Navigation helper (KPI cards) ──────────────────────
 function goKpi(id){ const item=document.querySelector(`.nav-item[onclick*="'${id}'"]`); if(item) nav(id,item); }
 
@@ -697,7 +712,7 @@ function renderUsers(list){
       <option value="moderateur" ${u._role==='moderateur'?'selected':''}>🛡️ moderateur</option>
       <option value="admin" ${u._role==='admin'?'selected':''}>👑 admin</option>
     </select></td>
-    <td>${u.verifie?'<span class="bdg bdg-blue">🔵 Certifié</span>':'<span class="bdg bdg-muted">Non vérifié</span>'}</td>
+    <td><span class="bdg ${u.verifie?'bdg-blue':'bdg-muted'}" style="cursor:pointer" onclick='toggleCertif("${u.id}",${u.verifie?'true':'false'})' title="Cliquer pour modifier">${u.verifie?'🔵 Certifié':'Non vérifié'}</span></td>
     <td>${bdg(u.statut||'actif')}</td>
     <td style="color:var(--muted2)">${fmt(u.created_at)}</td>
     <td>${u.statut==='suspendu'

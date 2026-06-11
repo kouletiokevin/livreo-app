@@ -87,13 +87,12 @@ async function previewPhoto(input) {
       const cleanUrl  = urlData.publicUrl;          // URL propre → stockée en base
       const freshUrl  = cleanUrl + '?t=' + Date.now(); // cache-buster → local uniquement
 
-      await db.from('users').update({ photo_profil_url: cleanUrl, is_certified: true }).eq('id', user.id);
+      await db.from('users').update({ photo_profil_url: cleanUrl }).eq('id', user.id);
       if (img) img.src = freshUrl;
       if (navImg) navImg.src = freshUrl;
-      if (user) { user.photo_profil_url = cleanUrl; user.is_certified = true; }
-      // Activer le badge certification (bleu)
+      if (user) { user.photo_profil_url = cleanUrl; }
       const badgeFill = document.getElementById('badge-certif-fill');
-      if (badgeFill) badgeFill.setAttribute('fill', '#1D9BF0');
+      if (badgeFill) badgeFill.setAttribute('fill', user.is_certified ? '#1D9BF0' : '#cccccc');
       const badgeCertifie = document.getElementById('badge-certifie');
       if (badgeCertifie) badgeCertifie.style.display = 'inline';
       t('Photo de profil mise à jour ✅ · Badge certifié activé', 's');
