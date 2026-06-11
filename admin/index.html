@@ -274,7 +274,7 @@ select.role-sel:focus{border-color:var(--border2);}
       <div class="page" id="page-kolis">
         <div class="page-title">Kolis</div>
         <div class="card">
-          <table><thead><tr><th>Réf</th><th>Destination</th><th>Expéditeur</th><th>Prix</th><th>Paiement</th><th>Statut</th><th>Date</th></tr></thead>
+          <table><thead><tr><th>Réf</th><th>Destination</th><th>Expéditeur</th><th>Prix</th><th>Paiement</th><th>Statut</th><th>Billet</th><th>Date</th></tr></thead>
           <tbody id="t-kolis"></tbody></table>
         </div>
       </div>
@@ -585,6 +585,7 @@ function toast(m,t=3000){const e=document.getElementById('toast');e.textContent=
 function fmt(d){return d?new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'—';}
 function money(v){return(parseFloat(v||0)).toFixed(2)+'€';}
 function ini(p,n){return(((p||'?')[0])+(n||' ')[0]).toUpperCase();}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function bdg(s){
   const map={actif:'bdg-green',livre:'bdg-green',accepte:'bdg-green',en_attente:'bdg-amber',suspendu:'bdg-red',refuse:'bdg-red',admin:'bdg-violet',moderateur:'bdg-blue',user:'bdg-muted',escrow:'bdg-blue',crypto:'bdg-amber',carte:'bdg-blue'};
   return`<span class="bdg ${map[s]||'bdg-muted'}">${s||'—'}</span>`;
@@ -749,8 +750,9 @@ async function loadKolis(){
     <td style="color:var(--green);font-weight:800">${money(c.prix)}</td>
     <td>${bdg(c.moyen_paiement||'autre')}</td>
     <td>${bdg(c.statut)}</td>
+    <td>${c.billet_verifie===true?'<span class="bdg bdg-green" title="'+escHtml(c.billet_verif_detail||'')+'">✅ Vérifié</span>':c.billet_verifie===false?'<span class="bdg bdg-red" title="'+escHtml(c.billet_verif_detail||'')+'">❌ Refusé</span>':'<span class="bdg bdg-muted">—</span>'}</td>
     <td style="color:var(--muted2)">${fmt(c.created_at)}</td>
-  </tr>`).join(''):empty(7,'Aucun kolis');
+  </tr>`).join(''):empty(8,'Aucun kolis');
 }
 
 // ── TRANSACTIONS ───────────────────────────────────────

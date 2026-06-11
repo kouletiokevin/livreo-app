@@ -355,6 +355,19 @@ async function confirmerPassage(colisId) {
       .upload(path, _accBilletFile, { contentType: 'application/pdf', upsert: false });
     if (uploadErr) throw new Error('Upload billet : ' + uploadErr.message);
 
+    // 1bis. Vérification automatique du billet (SNCF + date + nom + gares)
+    if (btn) btn.textContent = 'Vérification du billet...';
+    const verifRes = await fetchWithTimeout(`${SUPA_URL}/functions/v1/verify-billet`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (await db.auth.getSession()).data.session.access_token },
+      body: JSON.stringify({ billet_path: path, code_lvr: colisId, date_depart: date, gare_depart: dep })
+    }, 20000);
+    const verif = await verifRes.json();
+    if (!verif.valid) {
+      throw new Error('Billet refusé : ' + ((verif.reasons || []).join(' · ') || 'vérification impossible'));
+    }
+    if (btn) btn.textContent = 'Confirmation en cours...';
+
     // 2. Appel edge function pour accepter le colis
     const { data: { session } } = await db.auth.getSession();
     if (!session) throw new Error('Session expirée, reconnectez-vous');
