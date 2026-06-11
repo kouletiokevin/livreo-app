@@ -569,6 +569,17 @@ select.role-sel:focus{border-color:var(--border2);}
   </div>
 </div>
 
+<!-- MODAL FICHE UTILISATEUR -->
+<div class="modal-bg" id="modal-user" onclick="if(event.target===this)closeUserModal()">
+  <div class="modal" style="width:520px;max-height:88vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div class="modal-title">Fiche utilisateur</div>
+      <button class="btn-ghost" onclick="closeUserModal()">✕</button>
+    </div>
+    <div id="mu-body"></div>
+  </div>
+</div>
+
 <!-- MODAL DOCUMENTS UTILISATEUR -->
 <div class="modal-bg" id="modal-docs" onclick="if(event.target===this)closeDocsModal()">
   <div class="modal">
@@ -708,7 +719,7 @@ async function loadUsers(){
   const [uRes,rRes,vRes]=await Promise.all([
     db.from('users').select('*').order('created_at',{ascending:false}).limit(300),
     db.from('user_roles').select('user_id,role'),
-    db.from('verifications_identite').select('user_id,document_url,selfie_url,statut,created_at').order('created_at',{ascending:false})
+    db.from('verifications_identite').select('id,user_id,document_url,selfie_url,statut,type_document,created_at').order('created_at',{ascending:false})
   ]);
   const roleMap={};(rRes.data||[]).forEach(r=>roleMap[r.user_id]=r.role);
   _verifMap={};(vRes.data||[]).forEach(v=>{if(!_verifMap[v.user_id])_verifMap[v.user_id]=v;});
@@ -718,6 +729,8 @@ async function loadUsers(){
 }
 const FOLDER_GREEN=`<svg width="22" height="18" viewBox="0 0 24 20" fill="#22c55e"><path d="M2 3a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3z"/></svg>`;
 const FOLDER_GREY=`<svg width="22" height="18" viewBox="0 0 24 20" fill="#555"><path d="M2 3a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3z"/></svg>`;
+const BADGE_CERTIF_BLUE=`<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#1D9BF0" d="M12 0l2.4 2.1 3.1-.6 1.2 2.9 2.9 1.2-.6 3.1L24 12l-2.1 2.4.6 3.1-2.9 1.2-1.2 2.9-3.1-.6L12 24l-2.4-2.1-3.1.6-1.2-2.9-2.9-1.2.6-3.1L0 12l2.1-2.4-.6-3.1 2.9-1.2 1.2-2.9 3.1.6L12 0z"/><path fill="#fff" d="M10.5 16.2l-3.7-3.7 1.5-1.5 2.2 2.2 5.2-5.2 1.5 1.5-6.7 6.7z"/></svg>`;
+const BADGE_CERTIF_GREY=`<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#555" d="M12 0l2.4 2.1 3.1-.6 1.2 2.9 2.9 1.2-.6 3.1L24 12l-2.1 2.4.6 3.1-2.9 1.2-1.2 2.9-3.1-.6L12 24l-2.4-2.1-3.1.6-1.2-2.9-2.9-1.2.6-3.1L0 12l2.1-2.4-.6-3.1 2.9-1.2 1.2-2.9 3.1.6L12 0z"/><path fill="#fff" d="M10.5 16.2l-3.7-3.7 1.5-1.5 2.2 2.2 5.2-5.2 1.5 1.5-6.7 6.7z"/></svg>`;
 function renderUsers(list){
   document.getElementById('t-users').innerHTML=list.length?list.map(u=>{
     const av=u.photo_profil_url
@@ -728,8 +741,8 @@ function renderUsers(list){
       ?`<span style="position:relative;display:inline-flex;cursor:pointer;" title="Voir les documents" onclick='openDocsModal("${u.id}")'>${FOLDER_GREEN}${v.statut==='en_attente'?'<span style="position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:#f59e0b;border:1px solid var(--surface);"></span>':''}</span>`
       :`<span title="Aucun document reçu">${FOLDER_GREY}</span>`;
     return`<tr>
-    <td class="td-primary">${av}${u.prenom||''} ${u.nom||''}</td>
-    <td style="color:var(--muted)">${u.email}</td>
+    <td class="td-primary" style="cursor:pointer;" onclick='openUserModal("${u.id}")'>${av}${escHtml(u.prenom||'')} ${escHtml(u.nom||'')}</td>
+    <td style="color:var(--muted)">${escHtml(u.email||'')}</td>
     <td style="color:var(--muted2)">${u.telephone||'—'}</td>
     <td><select class="role-sel" onchange="setRole('${u.id}',this.value)">
       <option value="user" ${(u._role||'user')==='user'?'selected':''}>👤 user</option>
@@ -737,7 +750,7 @@ function renderUsers(list){
       <option value="admin" ${u._role==='admin'?'selected':''}>👑 admin</option>
     </select></td>
     <td>${docCell}</td>
-    <td><span class="bdg ${u.verifie?'bdg-blue':'bdg-muted'}" style="cursor:pointer" onclick='toggleCertif("${u.id}",${u.verifie?'true':'false'})' title="Cliquer pour modifier">${u.verifie?'🔵 Certifié':'Non vérifié'}</span></td>
+    <td style="text-align:center;"><span style="cursor:pointer;display:inline-flex;" onclick='toggleCertif("${u.id}",${u.verifie?'true':'false'})' title="${u.verifie?'Certifié — cliquer pour retirer':'Non certifié — cliquer pour certifier'}">${u.verifie?BADGE_CERTIF_BLUE:BADGE_CERTIF_GREY}</span></td>
     <td>${bdg(u.statut||'actif')}</td>
     <td style="color:var(--muted2)">${fmt(u.created_at)}</td>
     <td>${u.statut==='suspendu'
@@ -1011,8 +1024,8 @@ function filterVerifs(){
         ${u.verifie?'<br><span class="bdg bdg-blue" style="margin-top:3px;">🔵 Certifié</span>':''}
       </td>
       <td style="color:var(--muted2)">${v.type_document||'—'}</td>
-      <td>${v.document_url?`<a href="${v.document_url}" target="_blank" class="btn btn-neutral" style="font-size:.65rem;">📄 Voir</a>`:'—'}</td>
-      <td>${v.selfie_url?`<a href="${v.selfie_url}" target="_blank" class="btn btn-neutral" style="font-size:.65rem;">🤳 Voir</a>`:'—'}</td>
+      <td>${v.document_url?`<button class="btn btn-neutral" style="font-size:.65rem;" onclick='openDocSigned("${v.document_url}")'>📄 Voir</button>`:'—'}</td>
+      <td>${v.selfie_url?`<button class="btn btn-neutral" style="font-size:.65rem;" onclick='openDocSigned("${v.selfie_url}")'>🤳 Voir</button>`:'—'}</td>
       <td><span class="bdg ${sb[v.statut]||'bdg-muted'}">${v.statut}</span></td>
       <td style="color:var(--muted2)">${fmt(v.created_at)}</td>
       <td style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -1056,8 +1069,8 @@ function openDocsModal(userId){
       <span style="font-size:.7rem;color:var(--muted);">soumis le ${fmt(v.created_at)}</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
-      ${v.document_url?`<a href="${escHtml(v.document_url)}" target="_blank" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--blue);text-decoration:none;font-size:.78rem;font-weight:700;">📄 Pièce d'identité <span style="margin-left:auto;font-size:.65rem;color:var(--muted);">↗ ouvrir</span></a>`:'<div style="color:var(--muted2);font-size:.75rem;">Aucune pièce d\'identité fournie</div>'}
-      ${v.selfie_url?`<a href="${escHtml(v.selfie_url)}" target="_blank" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--blue);text-decoration:none;font-size:.78rem;font-weight:700;">🤳 Selfie avec pièce d'identité <span style="margin-left:auto;font-size:.65rem;color:var(--muted);">↗ ouvrir</span></a>`:'<div style="color:var(--muted2);font-size:.75rem;">Aucun selfie fourni</div>'}
+      ${v.document_url?`<button onclick='openDocSigned("${v.document_url}")' style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--blue);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;width:100%;text-align:left;">📄 Pièce d'identité <span style="margin-left:auto;font-size:.65rem;color:var(--muted);">↗ ouvrir</span></button>`:'<div style="color:var(--muted2);font-size:.75rem;">Aucune pièce d\'identité fournie</div>'}
+      ${v.selfie_url?`<button onclick='openDocSigned("${v.selfie_url}")' style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--blue);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;width:100%;text-align:left;">🤳 Selfie avec pièce d'identité <span style="margin-left:auto;font-size:.65rem;color:var(--muted);">↗ ouvrir</span></button>`:'<div style="color:var(--muted2);font-size:.75rem;">Aucun selfie fourni</div>'}
     </div>
     ${v.statut!=='approuve'?`<div style="display:flex;gap:8px;justify-content:flex-end;">
       ${v.statut==='en_attente'?`<button class="btn btn-danger" onclick="rejectFromModal('${v.id}')">✕ Refuser</button>`:''}
@@ -1083,6 +1096,78 @@ async function rejectFromModal(verifId){
   if(!confirm('Refuser cette demande de vérification ?'))return;
   await db.from('verifications_identite').update({statut:'refuse',traite_at:new Date().toISOString(),traite_par:'admin'}).eq('id',verifId);
   closeDocsModal();toast('Demande refusée');loadUsers();
+}
+
+// ── URL SIGNÉE BUCKET PRIVÉ ────────────────────────────────
+async function openDocSigned(stored){
+  let path=stored;
+  const m=String(stored).split('/documents-identite/');
+  if(m.length>1)path=decodeURIComponent(m[1]);
+  const {data,error}=await db.storage.from('documents-identite').createSignedUrl(path,3600);
+  if(error||!data?.signedUrl){toast('Impossible d\'ouvrir : '+(error?.message||''));return;}
+  window.open(data.signedUrl,'_blank');
+}
+
+// ── FICHE UTILISATEUR ─────────────────────────────────────
+function openUserModal(userId){
+  const u=_users.find(x=>x.id===userId);
+  if(!u)return;
+  const v=_verifMap[userId];
+  const avBig=u.photo_profil_url
+    ?`<img src="${escHtml(u.photo_profil_url)}" loading="lazy" style="width:96px;height:96px;object-fit:cover;border-radius:50%;border:3px solid var(--border);">`
+    :`<div style="width:96px;height:96px;border-radius:50%;background:var(--surface2);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:var(--muted);">${ini(u.prenom,u.nom)}</div>`;
+  const infoCards=[
+    ['📞 Téléphone',u.telephone||'—'],
+    ['📍 Ville',u.ville||'—'],
+    ['🏠 Adresse',u.adresse?(u.adresse+(u.code_postal?' · '+u.code_postal:'')):'—'],
+    ['⭐ Note',u.note_moyenne>0?parseFloat(u.note_moyenne).toFixed(1)+'/5':'—'],
+    ['📦 Livraisons',u.nb_livraisons||0],
+    ['🛡️ Rôle',u._role||'user'],
+    ['📌 Statut',u.statut||'actif'],
+    ['📅 Inscrit',fmt(u.created_at)],
+  ].map(([lbl,val])=>`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;"><div style="font-size:.58rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">${lbl}</div><div style="font-size:.78rem;font-weight:700;color:var(--text);">${escHtml(String(val))}</div></div>`).join('');
+  const sb2={en_attente:'bdg-amber',approuve:'bdg-blue',refuse:'bdg-red'};
+  const docsHtml=v?`
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">
+      <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);margin-bottom:10px;">Documents soumis</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+        <span class="bdg ${sb2[v.statut]||'bdg-muted'}">${v.statut||'—'}</span>
+        <span style="font-size:.68rem;color:var(--muted);">soumis le ${fmt(v.created_at)}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
+        ${v.document_url?`<button onclick='openDocSigned("${v.document_url}")' style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--blue);font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit;text-align:left;">📄 Pièce d'identité<span style="margin-left:auto;font-size:.65rem;color:var(--muted);">↗</span></button>`:'<div style="color:var(--muted2);font-size:.72rem;">Aucune pièce d\'identité</div>'}
+        ${v.selfie_url?`<button onclick='openDocSigned("${v.selfie_url}")' style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--blue);font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit;text-align:left;">🤳 Selfie<span style="margin-left:auto;font-size:.65rem;color:var(--muted);">↗</span></button>`:'<div style="color:var(--muted2);font-size:.72rem;">Aucun selfie</div>'}
+      </div>
+      ${v.statut!=='approuve'?`<div style="display:flex;gap:8px;justify-content:flex-end;">
+        ${v.statut==='en_attente'?`<button class="btn btn-danger" onclick="_rejectFromUser('${v.id}')">✕ Refuser</button>`:''}
+        <button class="btn btn-primary" onclick="_approveFromUser('${v.id}','${v.user_id}')">✅ Approuver → 🔵</button>
+      </div>`:'<div style="text-align:center;color:var(--green);font-size:.78rem;font-weight:700;">✅ Déjà approuvé</div>'}
+    </div>`:'<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);color:var(--muted2);font-size:.75rem;">Aucun document soumis</div>';
+  document.getElementById('mu-body').innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:20px;">
+      ${avBig}
+      <div style="margin-top:10px;font-size:1.05rem;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">${escHtml((u.prenom||'')+' '+(u.nom||''))} ${u.verifie?BADGE_CERTIF_BLUE:''}</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:3px;">${escHtml(u.email||'')}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">${infoCards}</div>
+    ${docsHtml}
+  `;
+  document.getElementById('modal-user').classList.add('open');
+}
+function closeUserModal(){document.getElementById('modal-user').classList.remove('open');}
+async function _approveFromUser(verifId,userId){
+  if(!confirm('Approuver cette vérification et attribuer le badge bleu 🔵 ?'))return;
+  const [r1,r2]=await Promise.all([
+    db.from('verifications_identite').update({statut:'approuve',traite_at:new Date().toISOString(),traite_par:'admin'}).eq('id',verifId),
+    db.from('users').update({verifie:true,badge:'certifie',is_certified:true,niveau_verification:3}).eq('id',userId)
+  ]);
+  if(r1.error||r2.error){toast('Erreur : '+(r1.error||r2.error).message);return;}
+  closeUserModal();toast('✅ Badge bleu 🔵 attribué !');loadUsers();
+}
+async function _rejectFromUser(verifId){
+  if(!confirm('Refuser cette demande ?'))return;
+  await db.from('verifications_identite').update({statut:'refuse',traite_at:new Date().toISOString(),traite_par:'admin'}).eq('id',verifId);
+  closeUserModal();toast('Demande refusée');loadUsers();
 }
 
 // ── NAVIGATION ─────────────────────────────────────────
