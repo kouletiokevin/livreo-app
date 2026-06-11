@@ -569,6 +569,17 @@ select.role-sel:focus{border-color:var(--border2);}
   </div>
 </div>
 
+<!-- MODAL DOCUMENTS UTILISATEUR -->
+<div class="modal-bg" id="modal-docs" onclick="if(event.target===this)closeDocsModal()">
+  <div class="modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div class="modal-title" id="md-title"></div>
+      <button class="btn-ghost" onclick="closeDocsModal()">✕</button>
+    </div>
+    <div id="md-body"></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -705,20 +716,17 @@ async function loadUsers(){
   document.getElementById('users-count').textContent=_users.length+' utilisateurs';
   renderUsers(_users);
 }
+const FOLDER_GREEN=`<svg width="22" height="18" viewBox="0 0 24 20" fill="#22c55e"><path d="M2 3a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3z"/></svg>`;
+const FOLDER_GREY=`<svg width="22" height="18" viewBox="0 0 24 20" fill="#555"><path d="M2 3a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3z"/></svg>`;
 function renderUsers(list){
-  const vStatBdg={en_attente:'bdg-amber',approuve:'bdg-blue',refuse:'bdg-red'};
   document.getElementById('t-users').innerHTML=list.length?list.map(u=>{
     const av=u.photo_profil_url
       ?`<span class="av" style="overflow:hidden;padding:0;"><img src="${escHtml(u.photo_profil_url)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></span>`
       :`<span class="av">${ini(u.prenom,u.nom)}</span>`;
     const v=_verifMap[u.id];
     const docCell=v
-      ?`<div style="display:flex;flex-direction:column;gap:3px;font-size:.72rem;">
-          ${v.document_url?`<a href="${escHtml(v.document_url)}" target="_blank" style="color:var(--blue);">📄 Pièce</a>`:''}
-          ${v.selfie_url?`<a href="${escHtml(v.selfie_url)}" target="_blank" style="color:var(--blue);">🤳 Selfie</a>`:''}
-          <span class="bdg ${vStatBdg[v.statut]||'bdg-muted'}" style="align-self:start;">${v.statut||'—'}</span>
-        </div>`
-      :'—';
+      ?`<span style="position:relative;display:inline-flex;cursor:pointer;" title="Voir les documents" onclick='openDocsModal("${u.id}")'>${FOLDER_GREEN}${v.statut==='en_attente'?'<span style="position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:#f59e0b;border:1px solid var(--surface);"></span>':''}</span>`
+      :`<span title="Aucun document reçu">${FOLDER_GREY}</span>`;
     return`<tr>
     <td class="td-primary">${av}${u.prenom||''} ${u.nom||''}</td>
     <td style="color:var(--muted)">${u.email}</td>
@@ -1029,6 +1037,52 @@ async function rejectVerif(verifId){
   await db.from('verifications_identite').update({statut:'refuse',traite_at:new Date().toISOString(),traite_par:'admin'}).eq('id',verifId);
   _verifsAll=_verifsAll.map(v=>v.id===verifId?{...v,statut:'refuse'}:v);
   filterVerifs();toast('Demande refusée');
+}
+
+// ── MODAL DOCUMENTS ────────────────────────────────────────
+let _mdUserId=null;
+function openDocsModal(userId){
+  _mdUserId=userId;
+  const u=_users.find(x=>x.id===userId);
+  const v=_verifMap[userId];
+  const title=document.getElementById('md-title');
+  const body=document.getElementById('md-body');
+  if(!u||!v){return;}
+  if(title)title.textContent=(u.prenom||'')+' '+(u.nom||'')+' — Documents';
+  const statutBdg={en_attente:'bdg-amber',approuve:'bdg-blue',refuse:'bdg-red'};
+  body.innerHTML=`
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
+      <span class="bdg ${statutBdg[v.statut]||'bdg-muted'}">${v.statut||'—'}</span>
+      <span style="font-size:.7rem;color:var(--muted);">soumis le ${fmt(v.created_at)}</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+      ${v.document_url?`<a href="${escHtml(v.document_url)}" target="_blank" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--blue);text-decoration:none;font-size:.78rem;font-weight:700;">📄 Pièce d'identité <span style="margin-left:auto;font-size:.65rem;color:var(--muted);">↗ ouvrir</span></a>`:'<div style="color:var(--muted2);font-size:.75rem;">Aucune pièce d\'identité fournie</div>'}
+      ${v.selfie_url?`<a href="${escHtml(v.selfie_url)}" target="_blank" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--blue);text-decoration:none;font-size:.78rem;font-weight:700;">🤳 Selfie avec pièce d'identité <span style="margin-left:auto;font-size:.65rem;color:var(--muted);">↗ ouvrir</span></a>`:'<div style="color:var(--muted2);font-size:.75rem;">Aucun selfie fourni</div>'}
+    </div>
+    ${v.statut!=='approuve'?`<div style="display:flex;gap:8px;justify-content:flex-end;">
+      ${v.statut==='en_attente'?`<button class="btn btn-danger" onclick="rejectFromModal('${v.id}')">✕ Refuser</button>`:''}
+      ${v.statut!=='approuve'?`<button class="btn btn-primary" onclick="approveFromModal('${v.id}','${v.user_id}')">✅ Approuver → 🔵</button>`:''}
+    </div>`:'<div style="text-align:center;color:var(--green);font-size:.78rem;font-weight:700;">✅ Déjà approuvé</div>'}
+  `;
+  document.getElementById('modal-docs').classList.add('open');
+}
+function closeDocsModal(){
+  document.getElementById('modal-docs').classList.remove('open');
+  _mdUserId=null;
+}
+async function approveFromModal(verifId,userId){
+  if(!confirm('Approuver cette vérification et attribuer le badge bleu 🔵 ?'))return;
+  const [r1,r2]=await Promise.all([
+    db.from('verifications_identite').update({statut:'approuve',traite_at:new Date().toISOString(),traite_par:'admin'}).eq('id',verifId),
+    db.from('users').update({verifie:true,badge:'certifie',is_certified:true,niveau_verification:3}).eq('id',userId)
+  ]);
+  if(r1.error||r2.error){toast('Erreur : '+(r1.error||r2.error).message);return;}
+  closeDocsModal();toast('✅ Badge bleu 🔵 attribué !');loadUsers();
+}
+async function rejectFromModal(verifId){
+  if(!confirm('Refuser cette demande de vérification ?'))return;
+  await db.from('verifications_identite').update({statut:'refuse',traite_at:new Date().toISOString(),traite_par:'admin'}).eq('id',verifId);
+  closeDocsModal();toast('Demande refusée');loadUsers();
 }
 
 // ── NAVIGATION ─────────────────────────────────────────
