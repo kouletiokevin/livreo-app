@@ -229,7 +229,12 @@ function badgeHTML(badge) {
 
 function afficherBadgeProfil(badge) {
   const el = document.getElementById('moi-badge');
-  if (el) el.innerHTML = badgeHTML(badge || 'aucun');
+  if (!el) return;
+  if (badge === 'certifie') {
+    el.innerHTML = badgeBleuSVG(20);
+  } else {
+    el.innerHTML = badgeHTML(badge || 'aucun');
+  }
 }
 
 // ── Vérification d'identité ──────────────
@@ -286,5 +291,47 @@ async function soumettreVerifIdentite() {
   } catch (e) {
     t('Erreur : ' + e.message, 'e');
     if (btn) { btn.textContent = '📋 Soumettre une demande de vérification'; btn.disabled = false; }
+  }
+}
+
+// ── Justificatif de domicile — upload réel ─
+function ouvrirJustificatif() {
+  if (!user) { t('Connectez-vous d\'abord', 'e'); return; }
+  let inp = document.getElementById('_justif-input');
+  if (!inp) {
+    inp = document.createElement('input');
+    inp.type = 'file';
+    inp.id = '_justif-input';
+    inp.accept = 'application/pdf,image/jpeg,image/png';
+    inp.style.display = 'none';
+    inp.addEventListener('change', _uploadJustificatif);
+    document.body.appendChild(inp);
+  }
+  inp.value = '';
+  inp.click();
+}
+
+async function _uploadJustificatif(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const ALLOWED = ['application/pdf','image/jpeg','image/png'];
+  if (!ALLOWED.includes(file.type)) { t('Format non autorisé (PDF, JPG, PNG)', 'e'); return; }
+  if (file.size > 10 * 1024 * 1024) { t('Fichier trop lourd (max 10 Mo)', 'e'); return; }
+  t('Envoi en cours…', '');
+  try {
+    const ext = file.name.split('.').pop().toLowerCase().replace('jpg','jpeg');
+    const path = `${user.id}/justificatif_${Date.now()}.${ext}`;
+    const { error: upErr } = await db.storage
+      .from('documents-identite')
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) throw new Error('Upload : ' + upErr.message);
+    const { data: urlData } = db.storage.from('documents-identite').getPublicUrl(path);
+    const { error: rpcErr } = await db.rpc('soumettre_justificatif_domicile', { p_document_url: urlData.publicUrl });
+    if (rpcErr) throw new Error(rpcErr.message);
+    t('Justificatif envoyé, en attente de validation ✅', 's');
+    const btnEl = document.querySelector('[onclick="ouvrirJustificatif()"]');
+    if (btnEl) btnEl.textContent = 'En attente';
+  } catch (err) {
+    t('Erreur : ' + err.message, 'e');
   }
 }

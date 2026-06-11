@@ -501,8 +501,10 @@
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
     <div class="s-h" style="margin-bottom:0;">Kolis à <em>transporter</em></div>
     <button id="filter-btn" onclick="ouvrirFiltres()" style="position:relative;width:36px;height:36px;border-radius:50%;background:var(--g50);border:1.5px solid var(--g100);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--g600)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--g600)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="6" x2="20" y2="6"/><circle cx="8" cy="6" r="2" fill="var(--g600)" stroke="none"/>
+        <line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2" fill="var(--g600)" stroke="none"/>
+        <line x1="4" y1="18" x2="20" y2="18"/><circle cx="10" cy="18" r="2" fill="var(--g600)" stroke="none"/>
       </svg>
       <span id="filter-badge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;border-radius:50%;background:var(--g500);color:#fff;font-size:.55rem;font-weight:900;align-items:center;justify-content:center;border:2px solid var(--white);padding:0 2px;"></span>
     </button>
@@ -872,7 +874,7 @@
       <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--cream);border-radius:var(--r);border:1.5px dashed var(--border);">
         <div style="font-size:1.2rem;">🏠</div>
         <div style="flex:1;"><div style="font-size:.82rem;font-weight:800;">Justificatif de domicile</div><div style="font-size:.7rem;color:var(--muted);">Requis pour modifier le nom</div></div>
-        <button class="btn s" style="padding:5px 12px;font-size:.7rem;" onclick="t('Envoyez votre justificatif à verification@kolisgo.fr 📧','')">Envoyer</button>
+        <button class="btn s" style="padding:5px 12px;font-size:.7rem;" onclick="ouvrirJustificatif()">Envoyer</button>
       </div>
     </div>
   </div>

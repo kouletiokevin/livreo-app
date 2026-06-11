@@ -79,7 +79,7 @@ async function loadCards(reset = true) {
       const dep      = col.gare_depart ? escapeHtml(col.gare_depart.split(' ')[0]) : 'À définir';
       const arr      = escapeHtml((col.gare_arrivee || '').split(' ')[0]);
       const dt       = col.date_souhaitee
-        ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
+        ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'})
         : '';
       const titre    = escapeHtml(col.titre || 'Colis');
       const poids    = escapeHtml(col.poids || '');
@@ -110,9 +110,8 @@ async function loadCards(reset = true) {
         + (userPhoto
           ? '<div class="cav" style="overflow:hidden;padding:0;"><img src="' + userPhoto + '" style="width:100%;height:100%;object-fit:cover;" loading="lazy"></div>'
           : '<div class="cav">' + prenomInit + '</div>')
-        + '<div class="pname">' + prenom + (note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : '') + '</div>'
+        + '<div class="pname">' + prenom + (badge === 'certifie' ? badgeBleuSVG(14) : '') + (note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : '') + '</div>'
         + '</div>'
-        + (badge && badge !== 'aucun' && typeof badgeHTML === 'function' ? badgeHTML(badge) : '')
         + '</div></div></div></div>'
       );
     });
@@ -179,7 +178,7 @@ async function openDetail(id) {
   const arr        = escapeHtml(col.gare_arrivee || '');
   const prix       = parseFloat(col.prix) || 0;
   const dt         = col.date_souhaitee
-    ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
+    ? new Date(col.date_souhaitee).toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'})
     : '—';
   const emojis     = { 'Lettre': '✉️', 'Pochette': '📬', 'Colis': '📦', 'Bagage': '🧳' };
   const em         = emojis[(col.format || '').split(' ')[0]] || '📦';
@@ -198,18 +197,14 @@ async function openDetail(id) {
       <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Format</div><div style="font-weight:800;font-size:.84rem;">${fmt}</div></div>
       <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Poids</div><div style="font-weight:800;font-size:.84rem;">${poids}</div></div>
       <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Date</div><div style="font-weight:800;font-size:.84rem;">${dt}</div></div>
-      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${prix.toFixed(2).replace('.',',')}€</div></div>
+      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${prix.toFixed(2).replace('.',',')}€</div><div style="font-size:.6rem;color:var(--muted);margin-top:3px;">Vous recevez ${(prix*0.85).toFixed(2).replace('.',',')} € net (après commission KolisGo 15 %)</div></div>
     </div>
     ${logged ? `
       <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px;margin-bottom:11px;">
-        <div style="font-size:.66rem;font-weight:800;color:var(--g600);margin-bottom:6px;">📸 Contenu du colis</div>
-        <div style="font-size:.7rem;color:var(--muted);">Détails complets visibles après acceptation.</div>
+        <div style="font-size:.66rem;font-weight:800;color:var(--g600);margin-bottom:6px;">👤 Expéditeur</div>
+        <div style="font-size:.82rem;font-weight:700;">${prenom}${badge === 'certifie' ? badgeBleuSVG() : ''}${note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : ''}</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:2px;">Contenu détaillé visible après acceptation · Messagerie intégrée</div>
       </div>
-      <div style="background:var(--cream);border-radius:var(--r);padding:11px;margin-bottom:12px;">
-        <div style="font-size:.64rem;font-weight:800;color:var(--muted);margin-bottom:3px;">📞 Contact expéditeur (après acceptation)</div>
-        <div style="font-size:.82rem;font-weight:700;">${prenom}${note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : ''} · <span style="color:var(--g500);">06 ·· ·· ·· ··</span></div>
-      </div>
-      ${badge && badge !== 'aucun' && typeof badgeHTML === 'function' ? '<div style="margin-bottom:12px;">' + badgeHTML(badge) + '</div>' : ''}
       ${col.statut === 'en_attente'
         ? `<button class="btn p full" onclick="accepterC(${codeLvrJs})">🤝 Accepter de livrer ce kolis</button>`
         : `<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:var(--r);padding:14px;text-align:center;font-size:.84rem;font-weight:700;color:#166534;">✅ Ce kolis a déjà un passeur assigné</div>`

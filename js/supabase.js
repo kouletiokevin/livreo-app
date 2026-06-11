@@ -198,6 +198,9 @@ async function envoyerSMS(telephone, message) {
   }
 }
 
+// ── Badge bleu officiel (style Instagram) ─
+function badgeBleuSVG(size=16){return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" style="vertical-align:-2px;"><path fill="#1D9BF0" d="M12 0l2.4 2.1 3.1-.6 1.2 2.9 2.9 1.2-.6 3.1L24 12l-2.1 2.4.6 3.1-2.9 1.2-1.2 2.9-3.1-.6L12 24l-2.4-2.1-3.1.6-1.2-2.9-2.9-1.2.6-3.1L0 12l2.1-2.4-.6-3.1 2.9-1.2 1.2-2.9 3.1.6L12 0z"/><path fill="#fff" d="M10.5 16.2l-3.7-3.7 1.5-1.5 2.2 2.2 5.2-5.2 1.5 1.5-6.7 6.7z"/></svg>`;}
+
 // ── Log de sécurité ──────────────────────
 async function logSecurityEvent(type, details = {}) {
   try {
