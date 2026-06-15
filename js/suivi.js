@@ -61,11 +61,20 @@ async function loadQR(colis) {
   const d = document.getElementById('qr-canvas');
   d.innerHTML = '';
   // qr_secret non exposé dans colis_public — récupéré via RPC serveur
-  let secret = crypto.randomUUID();
+  let secret = null;
+  // 1) Secret transmis au destinataire via le lien SMS (?k=)
   try {
-    const { data: s } = await db.rpc('get_qr_secret', { p_code_lvr: colis.code_lvr });
-    if (s?.secret) secret = s.secret;
-  } catch (e) { /* fallback UUID si RPC indisponible */ }
+    const k = new URLSearchParams(window.location.search).get('k');
+    if (k && k.length >= 16) secret = k;
+  } catch (e) {}
+  // 2) Sinon recuperation serveur (expediteur/passeur connecte)
+  if (!secret) {
+    try {
+      const { data: s } = await db.rpc('get_qr_secret', { p_code_lvr: colis.code_lvr });
+      if (s?.secret) secret = s.secret;
+    } catch (e) { /* fallback ci-dessous */ }
+  }
+  if (!secret) secret = crypto.randomUUID();
   const qrText = `KOLISGO|${colis.code_lvr}|${secret}|${Date.now()}`;
   try {
     new QRCode(d, {

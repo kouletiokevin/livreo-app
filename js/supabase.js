@@ -209,7 +209,7 @@ async function logSecurityEvent(type, details = {}) {
       details,
       user_agent: navigator.userAgent,
       timestamp: new Date().toISOString(),
-    }).single();
+    });
   } catch (e) {
     // Silencieux — ne pas bloquer l'app
   }

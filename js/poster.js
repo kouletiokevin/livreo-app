@@ -55,18 +55,21 @@ async function uploadPhotoColis(file, userId, colisId, isPrivate) {
   if (!isValid) throw new Error('Fichier invalide.');
 
   const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+  // Photo "contenu" (privee) -> bucket prive photos-colis (URL signee, expirante)
+  // Photo "emballee" (vitrine publique affichee dans la marketplace) -> bucket public photos-colis-public
+  const bucket = isPrivate ? 'photos-colis' : 'photos-colis-public';
   const filename = `${userId}/${colisId}/${Date.now()}.${ext}`;
   const { data, error } = await db.storage
-    .from('photos-colis')
+    .from(bucket)
     .upload(filename, file, { contentType: file.type, upsert: false });
   if (error) throw new Error(error.message);
 
   if (isPrivate) {
-    const { data: s, error: sErr } = await db.storage.from('photos-colis').createSignedUrl(data.path, 3600);
+    const { data: s, error: sErr } = await db.storage.from(bucket).createSignedUrl(data.path, 3600);
     if (sErr) throw new Error(sErr.message);
     return s.signedUrl;
   }
-  return db.storage.from('photos-colis').getPublicUrl(data.path).data.publicUrl;
+  return db.storage.from(bucket).getPublicUrl(data.path).data.publicUrl;
 }
 
 // ── Sélection photos ─────────────────────
@@ -317,6 +320,7 @@ async function publishColis() {
     if (cont) cont.scrollTop = 0;
 
     t('Kolis publié ! Code : ' + codeLvr + ' 🎉', 's');
+    if (typeof celebrate === 'function') celebrate();
 
     // 7. Proposer boost après 1.5s
     setTimeout(() => {
@@ -326,7 +330,7 @@ async function publishColis() {
     // 8. SMS destinataire
     if (typeof envoyerSMS === 'function') {
       envoyerSMS(rtel,
-        'Bonjour ' + rnom + ' ! Un kolis vous est envoyé via KolisGo. Votre code : ' + codeLvr + '. Suivez-le ici : https://kouletiokevin.github.io/livreo-app/?suivi=' + codeLvr
+        'Bonjour ' + rnom + ' ! Un kolis vous est envoyé via KolisGo. Votre code : ' + codeLvr + '. Suivez-le ici : https://kouletiokevin.github.io/livreo-app/?suivi=' + codeLvr + (colis.qr_secret ? '&k=' + encodeURIComponent(colis.qr_secret) : '')
       );
     }
 

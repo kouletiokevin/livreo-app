@@ -314,6 +314,17 @@ async function chargerKPIs(userId, profil) {
   set('kpi-livraisons', nbLivraisons);
   set('kpi-gains',      gains.toFixed(0) + '€');
   set('kpi-note',       note > 0 ? note.toFixed(1) + '⭐' : 'Pas encore de note ⭐');
+
+  // ── Impact : économies vs La Poste + CO₂ évité (estimations) ──
+  const nEnv = nbEnvoyes || 0;
+  const euros = Math.round(nEnv * 4.5);
+  const co2 = nEnv * 0.5;
+  set('impact-savings', euros + ' €');
+  set('impact-co2', (co2 % 1 === 0 ? String(co2) : co2.toFixed(1).replace('.', ',')) + ' kg');
+  const noteEl = document.getElementById('impact-note');
+  if (noteEl) noteEl.textContent = nEnv > 0
+    ? `Sur ${nEnv} envoi${nEnv > 1 ? 's' : ''} — merci de rendre la livraison plus verte 🌱`
+    : `Envoie ton 1er kolis : moins cher que La Poste et plus écolo 🌱`;
 }
 
 // ── Reçus de paiement ─────────────────────

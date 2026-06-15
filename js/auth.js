@@ -298,6 +298,7 @@ async function onLoginSuccess(profil) {
   if (role === ROLES.ADMIN) {
     const adminLink = document.getElementById('admin-link');
     if (adminLink) adminLink.style.display = 'flex';
+    if (typeof chargerAdminStats === 'function') chargerAdminStats();
   }
 
   // Badge certifié (texte)

@@ -240,6 +240,31 @@ function t(msg, type = '') {
   setTimeout(() => d.remove(), 3200);
 }
 
+// ── Confettis de célébration (dopamine) ──
+function celebrate(count) {
+  try {
+    if (!document.getElementById('kg-confetti-css')) {
+      const st = document.createElement('style');
+      st.id = 'kg-confetti-css';
+      st.textContent = '@keyframes kgConfetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:.9}}';
+      document.head.appendChild(st);
+    }
+    const N = count || 90;
+    const colors = ['#22a857','#2ecc71','#f59e0b','#1D9BF0','#ef4444','#a855f7'];
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:99999;overflow:hidden;';
+    document.body.appendChild(wrap);
+    for (let i = 0; i < N; i++) {
+      const p = document.createElement('div');
+      const size = 6 + Math.random() * 8;
+      const dur = 1.8 + Math.random() * 1.4;
+      p.style.cssText = `position:absolute;top:-20px;left:${Math.random()*100}vw;width:${size}px;height:${size*0.6}px;background:${colors[i%colors.length]};border-radius:2px;animation:kgConfetti ${dur}s ${Math.random()*0.3}s ease-in forwards;`;
+      wrap.appendChild(p);
+    }
+    setTimeout(() => wrap.remove(), 3600);
+  } catch (e) {}
+}
+
 // ── Sheet ────────────────────────────────
 function openSheet(html) {
   const shContent = document.getElementById('sh-content');

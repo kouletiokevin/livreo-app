@@ -295,6 +295,7 @@ async function doScan(ref, dest, prix) {
   setTimeout(() => {
     closeSheet();
     t(`🎉 Passage confirmé ! Paiement de ${prix}€ déclenché.`, 's');
+    if (typeof celebrate === 'function') celebrate();
 
     const pill = document.getElementById('sv-pill');
     if (pill) { pill.className = 'tpill pill-ok'; pill.textContent = '✅ Livré'; }
