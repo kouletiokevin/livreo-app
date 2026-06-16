@@ -600,6 +600,8 @@
     <div class="fcard">
       <div class="fc-lbl">📞 Destinataire</div>
 
+      <button type="button" onclick="importerContact()" class="btn s" style="width:100%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:7px;">📇 Importer depuis mes contacts</button>
+
       <!-- Nom + suggestions contacts -->
       <div class="field" style="position:relative;margin-bottom:10px;">
         <label>Nom du destinataire</label>
@@ -614,6 +616,9 @@
       </div>
 
       <div class="fhint">🔒 Ces informations sont strictement confidentielles. Le destinataire recevra automatiquement son code de suivi unique par SMS dès qu'un passeur accepte.</div>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--rl);padding:12px 14px;margin-bottom:10px;font-size:.72rem;color:#92400e;line-height:1.55;">
+      ⚠️ <strong>Objets interdits</strong> : armes, drogues, produits dangereux/inflammables, argent liquide, contrefaçons. Chaque colis est <strong>tracé</strong> (code unique, QR horodaté) et toute infraction peut être signalée aux autorités. En publiant, tu acceptes les <a href="cgu.html" target="_blank" style="color:#b45309;font-weight:700;">CGU</a>.
     </div>
     <div style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:18px;margin-bottom:10px;">
       <div class="fc-lbl">💳 Moyen de paiement</div>
@@ -1581,6 +1586,25 @@ function selContact(e, idx) {
   document.getElementById('pf-rname').value  = c.name[0];
   document.getElementById('pf-rphone').value = c.tel[0].replace(/\s+/g, '');
   document.getElementById('pf-contact-dd').style.display = 'none';
+}
+
+async function importerContact() {
+  if (!('contacts' in navigator) || !navigator.contacts || !navigator.contacts.select) {
+    t('Sélecteur de contacts indisponible sur cet appareil — saisis le destinataire manuellement.', '');
+    document.getElementById('pf-rname')?.focus();
+    return;
+  }
+  try {
+    const sel = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+    if (!sel || !sel.length) return;
+    const c = sel[0];
+    const nom = (c.name && c.name[0]) || '';
+    const tel = ((c.tel && c.tel[0]) || '').replace(/\s+/g, '');
+    const rn = document.getElementById('pf-rname'); if (rn && nom) rn.value = nom;
+    const rp = document.getElementById('pf-rphone'); if (rp && tel) rp.value = tel;
+    const dd = document.getElementById('pf-contact-dd'); if (dd) dd.style.display = 'none';
+    t('Contact importé ✅', 's');
+  } catch (e) { t('Import annulé', ''); }
 }
 
 /* ── Filtre marketplace ── */
