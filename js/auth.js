@@ -72,46 +72,43 @@ async function doReg() {
 
   try {
     rateLimit('register', 3, 600000);
-
-    const { data, error } = await db.auth.signUp({ email: em, password: pw });
-    if (error) { t('Erreur : ' + error.message, 'e'); return; }
-
-    if (!data.user?.id) {
-      t('✉️ Vérifiez votre email avant de vous connecter. Un lien de confirmation vous a été envoyé.', 's');
-      authTab('login', document.querySelector('.atab:first-child'));
-      return;
-    }
-
     const refCode = localStorage.getItem('_ref_code') || null;
-    const { error: profilErr } = await db.from('users').insert({
-      id: data.user.id,
+
+    // Le profil (table users) + le rôle sont créés automatiquement côté serveur par un trigger.
+    const { data, error } = await db.auth.signUp({
       email: em,
-      prenom: pn,
-      nom: nm,
-      telephone: ph,
-      utm_source:      localStorage.getItem('_utm_source')   || null,
-      utm_medium:      localStorage.getItem('_utm_medium')   || null,
-      utm_campaign:    localStorage.getItem('_utm_campaign') || null,
-      utm_content:     localStorage.getItem('_utm_content')  || null,
-      referred_by_code: refCode,
+      password: pw,
+      options: { data: {
+        prenom: pn, nom: nm, telephone: ph,
+        utm_source:   localStorage.getItem('_utm_source')   || null,
+        utm_medium:   localStorage.getItem('_utm_medium')   || null,
+        utm_campaign: localStorage.getItem('_utm_campaign') || null,
+        utm_content:  localStorage.getItem('_utm_content')  || null,
+        referred_by_code: refCode
+      } }
     });
-    if (profilErr) { t('Erreur création profil : ' + profilErr.message, 'e'); return; }
+    if (error) { t('Erreur : ' + error.message, 'e'); return; }
+    if (refCode) localStorage.removeItem('_ref_code');
 
-    const { error: roleErr } = await db.from('user_roles').insert({
-      user_id: data.user?.id,
-      role: ROLES.USER,
-    });
-    if (roleErr) console.warn('user_roles insert:', roleErr.message);
-
-    // Lier le code d'affiliation si présent
-    if (refCode) {
-      try {
-        await db.rpc('link_affiliate_referral', { p_user_id: data.user.id, p_code: refCode });
-        localStorage.removeItem('_ref_code');
-      } catch(e) { console.warn('Referral link error:', e); }
+    // Session ouverte directement (confirmation email désactivée) -> connexion immédiate
+    if (data.session && data.user) {
+      const profil = await chargerProfil(data.user.id);
+      if (profil) {
+        await onLoginSuccess(profil);
+        localStorage.setItem('kolisgo_logged_in', '1');
+        t(`Bienvenue ${pn} ! 🎉`, 's');
+        goNav('home');
+        const _l = document.getElementById('home-landing');
+        const _d = document.getElementById('home-dash');
+        if (_l) _l.style.display = 'none';
+        if (_d) _d.style.display = 'block';
+        if (typeof celebrate === 'function') celebrate();
+        return;
+      }
     }
 
-    t('✉️ Vérifiez votre email avant de vous connecter. Un lien de confirmation vous a été envoyé.', 's');
+    // Sinon : confirmation par email requise
+    t('✉️ Compte créé ! Vérifiez votre email pour le confirmer, puis connectez-vous.', 's');
     goNav('auth');
     authTab('login', document.querySelector('.atab:first-child'));
 
