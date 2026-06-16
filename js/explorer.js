@@ -27,6 +27,7 @@ async function loadCards(reset = true) {
   try {
     let query = db.from('colis_public')
       .select('*')
+      .eq('statut', 'en_attente')   // ne montrer que les colis encore disponibles (pas ceux déjà acceptés)
       // Boost d'abord : is_boosted DESC, puis date DESC
       .order('is_boosted', { ascending: false })
       .order('created_at', { ascending: false })

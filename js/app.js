@@ -206,14 +206,15 @@ function refreshHome() {
     if (!ticking) {
       requestAnimationFrame(() => {
         const botNav = document.querySelector('.bot-nav');
+        const topNav = document.querySelector('nav');
+        const goingDown = currentY > lastScrollY && currentY > 60;
         if (botNav) {
-          if (currentY > lastScrollY && currentY > 60) {
-            botNav.style.transform = 'translateY(100%)';
-            botNav.style.transition = 'transform .28s cubic-bezier(.4,0,.2,1)';
-          } else {
-            botNav.style.transform = 'translateY(0)';
-            botNav.style.transition = 'transform .22s cubic-bezier(.4,0,.2,1)';
-          }
+          botNav.style.transform = goingDown ? 'translateY(100%)' : 'translateY(0)';
+          botNav.style.transition = goingDown ? 'transform .28s cubic-bezier(.4,0,.2,1)' : 'transform .22s cubic-bezier(.4,0,.2,1)';
+        }
+        if (topNav) {
+          topNav.style.transform = goingDown ? 'translateY(-100%)' : 'translateY(0)';
+          topNav.style.transition = goingDown ? 'transform .28s cubic-bezier(.4,0,.2,1)' : 'transform .22s cubic-bezier(.4,0,.2,1)';
         }
         lastScrollY = currentY;
         ticking = false;

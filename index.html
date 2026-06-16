@@ -335,9 +335,16 @@
         </div>
       </div>
     </div>
-    <div id="nav-av" style="display:none;width:36px;height:36px;border-radius:10px;background:var(--g500);color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;align-items:center;justify-content:center;overflow:hidden;" onclick="navDash()">
-      <img id="nav-av-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
-      <span id="nav-av-txt">K</span>
+    <div id="nav-av-wrap" style="display:none;position:relative;width:36px;height:36px;cursor:pointer;" onclick="navDash()">
+      <div id="nav-av" style="width:36px;height:36px;border-radius:10px;background:var(--g500);color:#fff;font-size:.9rem;font-weight:900;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+        <img id="nav-av-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
+        <span id="nav-av-txt">K</span>
+      </div>
+      <svg id="nav-av-badge" width="15" height="15" viewBox="0 0 24 24" title="Certification" style="position:absolute;bottom:-3px;right:-3px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));">
+        <circle cx="12" cy="12" r="11" fill="#ffffff"/>
+        <path id="nav-av-badge-fill" fill="#cccccc" d="M12 2.2L9.9 4.3 7 3.9l-.8 2.9L3.3 8 4.5 10.7 3.3 13.4l2.9 1.2.8 2.9 2.9-.4 2.1 2.1 2.1-2.1 2.9.4.8-2.9 2.9-1.2-1.2-2.7 1.2-2.7-2.9-1.2-.8-2.9-2.9.4z"/>
+        <path fill="#ffffff" d="M10.6 15.4l-2.8-2.8 1.3-1.3 1.5 1.5 3.6-3.6 1.3 1.3z"/>
+      </svg>
     </div>
   </div>
 </nav>

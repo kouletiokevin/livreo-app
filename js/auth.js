@@ -158,7 +158,7 @@ async function doLogout() {
   if (adminLink) adminLink.style.display = 'none';
   const navLogin2 = document.getElementById('nav-login');
   if (navLogin2) navLogin2.style.display = 'block';
-  const navAv2 = document.getElementById('nav-av');
+  const navAv2 = document.getElementById('nav-av-wrap');
   if (navAv2) navAv2.style.display = 'none';
   const navNotif2 = document.getElementById('nav-notif');
   if (navNotif2) navNotif2.style.display = 'none';
@@ -244,8 +244,10 @@ async function onLoginSuccess(profil) {
   // Nav
   const navLoginEl = document.getElementById('nav-login');
   if (navLoginEl) navLoginEl.style.display = 'none';
-  const navAvEl = document.getElementById('nav-av');
-  if (navAvEl) navAvEl.style.display = 'flex';
+  const navAvEl = document.getElementById('nav-av-wrap');
+  if (navAvEl) navAvEl.style.display = 'block';
+  const navAvBadge = document.getElementById('nav-av-badge-fill');
+  if (navAvBadge) navAvBadge.setAttribute('fill', profil.is_certified ? '#1D9BF0' : '#cccccc');
   const navNotifEl = document.getElementById('nav-notif');
   if (navNotifEl) navNotifEl.style.display = 'block';
   const navTxt = document.getElementById('nav-av-txt');
