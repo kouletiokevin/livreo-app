@@ -136,7 +136,7 @@ async function ouvrirSetupMFA() {
   try {
     const { data, error } = await db.auth.mfa.enroll({
       factorType: 'totp',
-      friendlyName: 'KolisGo'
+      friendlyName: 'Transcolisgo'
     });
     if (error) throw new Error(error.message);
 

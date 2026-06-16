@@ -17,7 +17,7 @@ const db = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
   },
   global: {
     headers: {
-      'X-App-Name': 'KolisGo',
+      'X-App-Name': 'Transcolisgo',
       'X-App-Version': '1.0.0',
     }
   }

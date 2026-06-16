@@ -1,6 +1,6 @@
 {
   "appId": "fr.kolisgo.app",
-  "appName": "KolisGo",
+  "appName": "Transcolisgo",
   "webDir": ".",
   "bundledWebRuntime": false,
   "server": {

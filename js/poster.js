@@ -330,7 +330,7 @@ async function publishColis() {
     // 8. SMS destinataire
     if (typeof envoyerSMS === 'function') {
       envoyerSMS(rtel,
-        'Bonjour ' + rnom + ' ! Un kolis vous est envoyé via KolisGo. Votre code : ' + codeLvr + '. Suivez-le ici : https://kouletiokevin.github.io/livreo-app/?suivi=' + codeLvr + (colis.qr_secret ? '&k=' + encodeURIComponent(colis.qr_secret) : '')
+        'Bonjour ' + rnom + ' ! Un kolis vous est envoyé via Transcolisgo. Votre code : ' + codeLvr + '. Suivez-le ici : https://kouletiokevin.github.io/livreo-app/?suivi=' + codeLvr + (colis.qr_secret ? '&k=' + encodeURIComponent(colis.qr_secret) : '')
       );
     }
 

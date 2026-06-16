@@ -223,7 +223,7 @@ function scanFrame(ref, dest, prix) {
 
   if (code) {
     stopCamera();
-    // Format QR KolisGo : "KOLISGO|LVR-XXXX|secret|timestamp"
+    // Format QR Transcolisgo : "KOLISGO|LVR-XXXX|secret|timestamp"
     const parts        = code.data.split('|');
     const detectedCode = (parts[1] || code.data).trim().toUpperCase();
     _lastScannedQrSecret = parts[2] || null;
@@ -308,7 +308,7 @@ async function doScan(ref, dest, prix) {
     if (destSuc) destSuc.style.display = 'block';
 
     if (Notification.permission === 'granted') {
-      new Notification('KolisGo — Passage confirmé ✅', {
+      new Notification('Transcolisgo — Passage confirmé ✅', {
         body: `Colis ${ref} remis à ${dest}. Paiement déclenché automatiquement.`
       });
     }

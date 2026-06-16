@@ -1,6 +1,6 @@
 {
-  "name": "KolisGo",
-  "short_name": "KolisGo",
+  "name": "Transcolisgo",
+  "short_name": "Transcolisgo",
   "description": "Quelqu'un prend le train. Votre kolis aussi.",
   "start_url": "./",
   "scope": "./",

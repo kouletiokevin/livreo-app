@@ -1,7 +1,7 @@
 {
   "name": "kolisgo-app",
   "version": "1.0.0",
-  "description": "KolisGo — Livraison collaborative par train",
+  "description": "Transcolisgo — Livraison collaborative par train",
   "main": "index.html",
   "scripts": {
     "build": "echo 'Static SPA - no build step'",
