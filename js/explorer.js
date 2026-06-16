@@ -259,11 +259,11 @@ function accepterC(id) {
     </div>
 
     <div style="font-size:.76rem;color:var(--muted);margin-bottom:18px;line-height:1.5;background:var(--cream);padding:10px 12px;border-radius:var(--r);">
-      Renseignez votre gare de départ et uploadez votre billet SNCF/Eurostar pour confirmer ce passage.
+      Confirmez votre passage. Les informations ci-dessous sont optionnelles — elles aident au suivi.
     </div>
 
     <div style="margin-bottom:14px;">
-      <div style="font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Votre gare de départ <span style="color:var(--danger)">*</span></div>
+      <div style="font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Votre gare de départ <span style="color:var(--muted2);font-weight:400;">(optionnel)</span></div>
       <div class="tj-card" style="box-shadow:none;margin:0;">
         <div class="tj-row">
           <div class="tj-ico">🚉</div>
@@ -281,7 +281,7 @@ function accepterC(id) {
     </div>
 
     <div style="margin-bottom:14px;">
-      <div style="font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Date de départ <span style="color:var(--danger)">*</span></div>
+      <div style="font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Date de départ <span style="color:var(--muted2);font-weight:400;">(optionnel)</span></div>
       <input type="date" id="acc-date" min="${today}"
         onchange="document.getElementById('err-acc-date').style.display='none';"
         style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:.88rem;font-weight:600;color:var(--ink);background:#fff;box-sizing:border-box;">
@@ -289,7 +289,7 @@ function accepterC(id) {
     </div>
 
     <div style="margin-bottom:20px;">
-      <div style="font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Billet de train <span style="color:var(--danger)">*</span></div>
+      <div style="font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Billet de train <span style="color:var(--muted2);font-weight:400;">(optionnel)</span></div>
       <div id="acc-billet-zone" onclick="document.getElementById('acc-billet-input').click()"
         style="border:2px dashed var(--border);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;background:var(--cream);transition:border-color .15s;">
         <div style="font-size:1.6rem;margin-bottom:4px;">📄</div>
@@ -329,41 +329,33 @@ function previewBillet(input) {
 async function confirmerPassage(colisId) {
   const dep  = document.getElementById('acc-dep')?.value.trim();
   const date = document.getElementById('acc-date')?.value;
-  let valid  = true;
-
-  const errDep    = document.getElementById('err-acc-dep');
-  const errDate   = document.getElementById('err-acc-date');
-  const errBillet = document.getElementById('err-acc-billet');
-  if (!dep)            { if (errDep)    errDep.style.display    = 'block'; valid = false; }
-  if (!date)           { if (errDate)   errDate.style.display   = 'block'; valid = false; }
-  if (!_accBilletFile) { if (errBillet) errBillet.style.display = 'block'; valid = false; }
-  if (!valid) return;
+  // Mode test : aucun champ obligatoire. L'acceptation n'est plus bloquée par le billet.
 
   const btn = document.getElementById('acc-confirm-btn');
   if (btn) { btn.textContent = 'Confirmation en cours...'; btn.disabled = true; }
 
   try {
-    // 1. Upload PDF dans le bucket privé "billets"
-    const path = `${user.id}/${colisId}/${Date.now()}.pdf`;
-    const { error: uploadErr } = await db.storage
-      .from('billets')
-      .upload(path, _accBilletFile, { contentType: 'application/pdf', upsert: false });
-    if (uploadErr) throw new Error('Upload billet : ' + uploadErr.message);
-
-    // 1bis. Vérification automatique du billet (SNCF + date + nom + gares)
-    if (btn) btn.textContent = 'Vérification du billet...';
-    const verifRes = await fetchWithTimeout(`${SUPA_URL}/functions/v1/verify-billet`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (await db.auth.getSession()).data.session.access_token },
-      body: JSON.stringify({ billet_path: path, code_lvr: colisId, date_depart: date, gare_depart: dep })
-    }, 20000);
-    const verif = await verifRes.json();
-    if (!verif.valid) {
-      throw new Error('Billet refusé : ' + ((verif.reasons || []).join(' · ') || 'vérification impossible'));
+    // 1. Billet OPTIONNEL : uploadé + vérifié seulement s'il est fourni (jamais bloquant)
+    let billetPath = null;
+    if (_accBilletFile) {
+      billetPath = `${user.id}/${colisId}/${Date.now()}.pdf`;
+      const { error: uploadErr } = await db.storage
+        .from('billets')
+        .upload(billetPath, _accBilletFile, { contentType: 'application/pdf', upsert: false });
+      if (uploadErr) throw new Error('Upload billet : ' + uploadErr.message);
+      try {
+        if (btn) btn.textContent = 'Vérification du billet...';
+        const verifRes = await fetchWithTimeout(`${SUPA_URL}/functions/v1/verify-billet`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (await db.auth.getSession()).data.session.access_token },
+          body: JSON.stringify({ billet_path: billetPath, code_lvr: colisId, date_depart: date || new Date().toISOString().slice(0, 10), gare_depart: dep || '' })
+        }, 20000);
+        await verifRes.json();
+      } catch (e) { console.log('verify-billet (non bloquant) :', e.message); }
+      if (btn) btn.textContent = 'Confirmation en cours...';
     }
-    if (btn) btn.textContent = 'Confirmation en cours...';
 
-    // 2. Appel edge function pour accepter le colis
+    // 2. Accepter le colis (edge function)
     const { data: { session } } = await db.auth.getSession();
     if (!session) throw new Error('Session expirée, reconnectez-vous');
     const res = await fetchWithTimeout(`${SUPA_URL}/functions/v1/accepter-colis`, {
@@ -374,16 +366,17 @@ async function confirmerPassage(colisId) {
     const result = await res.json();
     if (!result.success) throw new Error(result.error || 'Réessayez dans quelques instants');
 
-    // 3. Enregistrer gare_depart + date + chemin billet sur le colis
-    await db.from('colis').update({
-      gare_depart:         dep,
-      date_depart_passeur: date,
-      billet_url:          path,
-    }).eq('code_lvr', colisId);
+    // 3. Enregistrer les infos fournies (toutes optionnelles)
+    const upd = {};
+    if (dep)        upd.gare_depart = dep;
+    if (date)       upd.date_depart_passeur = date;
+    if (billetPath) upd.billet_url = billetPath;
+    if (Object.keys(upd).length) await db.from('colis').update(upd).eq('code_lvr', colisId);
 
     _accBilletFile = null;
     closeSheet();
-    t('Passage confirmé ✅ Billet envoyé !', 's');
+    t('Passage confirmé ✅', 's');
+    if (typeof celebrate === 'function') celebrate();
     setTimeout(() => goNav('dashboard'), 800);
 
   } catch (e) {
