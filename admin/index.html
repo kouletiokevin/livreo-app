@@ -848,6 +848,7 @@ async function openColisDetail(id){
       </div>
     </div>
     <div style="font-size:.74rem;color:#71717a;margin-bottom:14px;">Photos contenu privées : ${nbContenu} · Billet : ${c.billet_verifie===true?'✅ vérifié':c.billet_verifie===false?'❌ refusé':'—'}</div>
+    <button class="btn" style="width:100%;margin-bottom:8px;background:#2563eb;border-color:#2563eb;" onclick="analyserColisIA('${c.id}')">🤖 Analyser les photos avec l'IA</button>
     <button class="btn btn-danger" style="width:100%;" onclick="deleteColis('${c.id}','${escHtml(c.code_lvr||'')}')">🗑 Supprimer ce colis (modération)</button>
   `;
 }
@@ -858,6 +859,14 @@ async function deleteColis(id,code){
   toast('Colis supprimé ✅');
   closeColisModal();
   loadKolis();
+}
+
+async function analyserColisIA(id){
+  toast('🤖 Analyse IA en cours…',8000);
+  const {data,error}=await db.functions.invoke('analyser-colis',{body:{colis_id:id}});
+  if(error||(data&&data.error)){toast('Erreur IA : '+((error&&error.message)||(data&&data.error)||'echec'),6000);return;}
+  toast(data&&data.suspect?'⚠️ Colis jugé suspect par l\'IA':'✅ Colis jugé OK par l\'IA',5000);
+  openColisDetail(id);
 }
 
 // ── TRANSACTIONS ───────────────────────────────────────
