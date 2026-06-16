@@ -591,6 +591,17 @@ select.role-sel:focus{border-color:var(--border2);}
   </div>
 </div>
 
+<!-- MODAL DÉTAIL COLIS -->
+<div class="modal-bg" id="modal-colis" onclick="if(event.target===this)closeColisModal()">
+  <div class="modal" style="width:560px;max-height:88vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div class="modal-title">Détail du colis</div>
+      <button class="btn-ghost" onclick="closeColisModal()">✕</button>
+    </div>
+    <div id="mc-body"></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -780,7 +791,7 @@ async function setRole(userId, role){
 // ── KOLIS ──────────────────────────────────────────────
 async function loadKolis(){
   const {data}=await db.from('colis').select('*').order('created_at',{ascending:false}).limit(150);
-  document.getElementById('t-kolis').innerHTML=(data||[]).length?(data||[]).map(c=>`<tr>
+  document.getElementById('t-kolis').innerHTML=(data||[]).length?(data||[]).map(c=>`<tr style="cursor:pointer" onclick="openColisDetail('${c.id}')">
     <td class="td-mono">${c.code_lvr||c.id?.substring(0,8)||'—'}</td>
     <td class="td-primary">${c.gare_arrivee||'—'}</td>
     <td style="color:var(--muted2)">${c.expediteur_id?.substring(0,8)||'—'}…</td>
@@ -790,6 +801,63 @@ async function loadKolis(){
     <td>${c.billet_verifie===true?'<span class="bdg bdg-green" title="'+escHtml(c.billet_verif_detail||'')+'">✅ Vérifié</span>':c.billet_verifie===false?'<span class="bdg bdg-red" title="'+escHtml(c.billet_verif_detail||'')+'">❌ Refusé</span>':'<span class="bdg bdg-muted">—</span>'}</td>
     <td style="color:var(--muted2)">${fmt(c.created_at)}</td>
   </tr>`).join(''):empty(8,'Aucun kolis');
+}
+
+// ── DÉTAIL COLIS (clic) + modération ───────────────────
+function closeColisModal(){document.getElementById('modal-colis').classList.remove('open');}
+function fmtDT(d){return d?new Date(d).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';}
+async function openColisDetail(id){
+  const m=document.getElementById('modal-colis');
+  const body=document.getElementById('mc-body');
+  body.innerHTML='<div style="text-align:center;padding:24px;color:#71717a">Chargement…</div>';
+  m.classList.add('open');
+  const {data:c,error}=await db.from('colis').select('*').eq('id',id).single();
+  if(error||!c){body.innerHTML='<div style="color:#ef4444;padding:16px">Colis introuvable</div>';return;}
+  let exp={},liv={};
+  if(c.expediteur_id){const r=await db.from('users').select('prenom,nom,email,telephone').eq('id',c.expediteur_id).single();exp=r.data||{};}
+  if(c.livreur_id){const r=await db.from('users').select('prenom,nom,email,telephone').eq('id',c.livreur_id).single();liv=r.data||{};}
+  const photoEmb=c.photo_emballee_url?`<img src="${escHtml(c.photo_emballee_url)}" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:12px;">`:'';
+  const nbContenu=(c.photos_contenu_urls&&c.photos_contenu_urls.length)||0;
+  const accepteTxt=c.accepted_at?fmtDT(c.accepted_at):(['livreur_accepte','en_transit','livre'].includes(c.statut)?'oui (heure non enregistrée)':'—');
+  const livreTxt=c.delivered_at?fmtDT(c.delivered_at):(c.statut==='livre'?'oui (heure non enregistrée)':'—');
+  const verdict=c.ia_verdict?`<div style="margin:0 0 12px;padding:10px 12px;border-radius:10px;background:${c.ia_suspect?'rgba(239,68,68,.12)':'rgba(34,197,94,.12)'};border:1px solid ${c.ia_suspect?'#ef4444':'#22c55e'};font-size:.82rem;"><strong>${c.ia_suspect?'⚠️ Signalé suspect par l\'IA':'✅ Jugé OK par l\'IA'}</strong><br><span style="color:#a1a1aa">${escHtml(c.ia_verdict)}</span></div>`:'';
+  body.innerHTML=`
+    ${photoEmb}
+    <div style="font-size:1.05rem;font-weight:800;margin-bottom:2px;">${escHtml(c.titre||'Colis')} <span style="color:#71717a;font-weight:600;font-size:.8rem;">(${escHtml(c.code_lvr||'')})</span></div>
+    <div style="color:#a1a1aa;font-size:.84rem;margin-bottom:12px;">${escHtml(c.gare_depart||'À définir')} → ${escHtml(c.gare_arrivee||'—')} · ${money(c.prix)} · ${bdg(c.statut)}</div>
+    ${verdict}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div style="background:#18181b;border:1px solid #27272a;border-radius:10px;padding:10px;">
+        <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:#71717a;margin-bottom:4px;">Expéditeur</div>
+        <div style="font-weight:700;font-size:.84rem;">${escHtml(((exp.prenom||'')+' '+(exp.nom||'')).trim()||'—')}</div>
+        <div style="color:#a1a1aa;font-size:.74rem;">${escHtml(exp.email||'')}</div>
+        <div style="color:#a1a1aa;font-size:.74rem;">${escHtml(exp.telephone||'')}</div>
+      </div>
+      <div style="background:#18181b;border:1px solid #27272a;border-radius:10px;padding:10px;">
+        <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:#71717a;margin-bottom:4px;">Destinataire</div>
+        <div style="font-weight:700;font-size:.84rem;">${escHtml(c.destinataire_nom||'—')}</div>
+        <div style="color:#a1a1aa;font-size:.74rem;">${escHtml(c.destinataire_tel||'')}</div>
+      </div>
+    </div>
+    <div style="background:#18181b;border:1px solid #27272a;border-radius:10px;padding:12px;margin-bottom:12px;">
+      <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:#71717a;margin-bottom:8px;">Timeline</div>
+      <div style="font-size:.82rem;line-height:1.9;">
+        📦 Publié : <strong>${fmtDT(c.created_at)}</strong><br>
+        🤝 Accepté${liv.prenom?' par '+escHtml(liv.prenom+' '+(liv.nom||'')):''} : <strong>${accepteTxt}</strong><br>
+        ✅ Livré : <strong>${livreTxt}</strong>
+      </div>
+    </div>
+    <div style="font-size:.74rem;color:#71717a;margin-bottom:14px;">Photos contenu privées : ${nbContenu} · Billet : ${c.billet_verifie===true?'✅ vérifié':c.billet_verifie===false?'❌ refusé':'—'}</div>
+    <button class="btn btn-danger" style="width:100%;" onclick="deleteColis('${c.id}','${escHtml(c.code_lvr||'')}')">🗑 Supprimer ce colis (modération)</button>
+  `;
+}
+async function deleteColis(id,code){
+  if(!confirm('Supprimer définitivement le colis '+code+' ?\nIrréversible — retire aussi ses messages, avis et transactions.'))return;
+  const {data,error}=await db.rpc('admin_delete_colis',{p_colis_id:id});
+  if(error||!(data&&data.success)){toast('Erreur : '+((error&&error.message)||(data&&data.error)||'suppression impossible'));return;}
+  toast('Colis supprimé ✅');
+  closeColisModal();
+  loadKolis();
 }
 
 // ── TRANSACTIONS ───────────────────────────────────────
