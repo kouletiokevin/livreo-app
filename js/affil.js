@@ -33,7 +33,7 @@ async function loadAffiliateCard() {
       <div style="text-align:center;padding:18px;background:rgba(239,68,68,.06);border-radius:12px;border:1px dashed rgba(239,68,68,.3);">
         <div style="font-size:1.5rem;margin-bottom:8px;">🚫</div>
         <div style="font-size:.82rem;font-weight:800;color:#dc2626;margin-bottom:4px;">Programme suspendu</div>
-        <div style="font-size:.72rem;color:var(--muted);">Votre accès au programme d'affiliation a été suspendu. Contactez <a href="mailto:support@dinvmic.fr" style="color:var(--g500);">support@dinvmic.fr</a>.</div>
+        <div style="font-size:.72rem;color:var(--muted);">Votre accès au programme d'affiliation a été suspendu. Contactez <a href="mailto:kevinaddict.fr@gmail.com" style="color:var(--g500);">kevinaddict.fr@gmail.com</a>.</div>
       </div>`;
     return;
   }

@@ -6,4 +6,4 @@ Disallow: /admin/
 Sitemap: https://kouletiokevin.github.io/livreo-app/sitemap.xml
 
 # DINVMIC — Envoi de colis entre particuliers par train
-# contact: seo@dinvmic.fr
+# contact: kevinaddict.fr@gmail.com

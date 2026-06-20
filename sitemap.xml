@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://kouletiokevin.github.io/livreo-app/</loc>
-    <lastmod>2026-05-12</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://kouletiokevin.github.io/livreo-app/"/>
   </url>
-
+  <url>
+    <loc>https://kouletiokevin.github.io/livreo-app/cgu.html</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://kouletiokevin.github.io/livreo-app/politique-confidentialite.html</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://kouletiokevin.github.io/livreo-app/registre-traitements-rgpd.html</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
 </urlset>

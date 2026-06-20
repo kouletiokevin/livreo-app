@@ -104,8 +104,8 @@ function ouvrirRetrait() {
         Les virements automatiques vers votre compte bancaire seront disponibles prochainement via Stripe Connect.<br><br>
         Pour retirer vos fonds dès maintenant, contactez-nous :
       </div>
-      <a href="mailto:support@dinvmic.fr" style="display:block;padding:12px;background:var(--g500);color:#fff;border-radius:50px;font-weight:700;font-size:.86rem;text-decoration:none;margin-bottom:8px;">
-        📧 support@dinvmic.fr
+      <a href="mailto:kevinaddict.fr@gmail.com" style="display:block;padding:12px;background:var(--g500);color:#fff;border-radius:50px;font-weight:700;font-size:.86rem;text-decoration:none;margin-bottom:8px;">
+        📧 kevinaddict.fr@gmail.com
       </a>
       <button onclick="closeSheet()" class="btn s full">Fermer</button>
     </div>
@@ -537,8 +537,8 @@ function telechargerRecu(txId) {
       </div>
       <div style="font-size:.78rem;color:#555;line-height:1.6;">
         Ce reçu atteste d'une transaction réalisée sur la plateforme DINVMIC.<br>
-        DINVMIC — SASU en cours d'immatriculation · 12 Rue de la Paix, 75002 Paris<br>
-        contact@dinvmic.fr
+        DINVMIC — service édité par KOULETIO AFANOU KEVIN (entreprise individuelle « KEVIN ADDICT »), micro-entrepreneur · SIREN 983 973 447 · SIRET 983 973 447 00011 · RCS Paris · TVA FR57983973447 · adresse postale communiquée sur demande à kevinaddict.fr@gmail.com<br>
+        kevinaddict.fr@gmail.com
       </div>
       <div class="footer">Document généré le ${new Date().toLocaleDateString('fr-FR')} · DINVMIC v1.0</div>
       </body></html>`);
