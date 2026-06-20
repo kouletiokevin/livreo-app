@@ -537,7 +537,7 @@ function telechargerRecu(txId) {
       </div>
       <div style="font-size:.78rem;color:#555;line-height:1.6;">
         Ce reçu atteste d'une transaction réalisée sur la plateforme DINVMIC.<br>
-        DINVMIC — service édité par KOULETIO AFANOU KEVIN (entreprise individuelle « KEVIN ADDICT »), micro-entrepreneur · SIREN 983 973 447 · SIRET 983 973 447 00011 · RCS Paris · TVA FR57983973447 · adresse postale communiquée sur demande à kevinaddict.fr@gmail.com<br>
+        DINVMIC — service édité par KOULETIO AFANOU KEVIN (entreprise individuelle « KEVIN ADDICT »), micro-entrepreneur · SIREN 983 973 447 · SIRET 983 973 447 00011 · RCS Paris · TVA FR57983973447 · 36 rue de l'Ouest, 75014 Paris, France<br>
         kevinaddict.fr@gmail.com
       </div>
       <div class="footer">Document généré le ${new Date().toLocaleDateString('fr-FR')} · DINVMIC v1.0</div>
