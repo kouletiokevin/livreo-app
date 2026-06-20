@@ -322,7 +322,7 @@ async function onLoginSuccess(profil) {
   chargerPortefeuille(profil.id);
   chargerLivraisonsEnCours(profil.id);
   chargerKPIs(profil.id, profil);
-  chargerActiviteRecente(profil.id);
+  chargerColisProches(profil.id, profil.ville);
   if (typeof chargerNotifsCount === 'function') chargerNotifsCount();
   if (!window._notifRealtimeStarted && typeof initNotifRealtime === 'function') {
     initNotifRealtime();

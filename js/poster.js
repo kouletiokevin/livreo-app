@@ -178,6 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Publication colis ────────────────────
+function setRemise(btn){
+  var inp=document.getElementById('remise-val'); if(inp) inp.value=btn.dataset.val;
+  document.querySelectorAll('.remise-opt').forEach(function(b){
+    var on=(b===btn);
+    b.style.border='1.5px solid '+(on?'var(--g500)':'var(--border)');
+    b.style.background=on?'var(--g50)':'#fff';
+    b.style.color=on?'var(--g600)':'var(--ink)';
+  });
+}
 async function publishColis() {
   if (!user) { t('Connectez-vous d\'abord', 'e'); goNav('auth'); return; }
 
@@ -253,6 +262,7 @@ async function publishColis() {
       destinataire_nom: rnom,
       destinataire_tel: rtel,
       statut:           'en_verification',
+      remise_mode:      (document.getElementById('remise-val') ? document.getElementById('remise-val').value : 'les_deux'),
     };
 
     const { data: colis, error: colisErr } = await db

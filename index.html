@@ -397,13 +397,16 @@
       </div>
     </div>
 
-    <!-- ACTIVITÉ RÉCENTE -->
-    <div class="tc-table">
-      <div class="tc-top"><h3>Activité récente</h3><button style="font-size:.7rem;color:var(--g500);background:none;border:none;cursor:pointer;font-weight:700;">Tout voir →</button></div>
-      <table><thead><tr><th>Réf.</th><th>Trajet</th><th>€</th><th>Statut</th></tr></thead>
-      <tbody id="activity-tbody">
-        <tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Chargement...</td></tr>
-      </tbody></table>
+    <!-- COLIS À RÉCUPÉRER PRÈS DE VOUS -->
+    <div style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:16px;margin-bottom:4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+        <div style="font-size:.82rem;font-weight:900;">📦 À récupérer près de vous</div>
+        <button onclick="goNav('explorer')" style="font-size:.68rem;font-weight:700;color:var(--g500);background:none;border:none;cursor:pointer;">Tout voir →</button>
+      </div>
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:10px;">Colis récents à prendre chez l'expéditeur ou en gare.</div>
+      <div id="proches-list">
+        <div style="text-align:center;padding:16px 0;font-size:.78rem;color:var(--muted);">Chargement…</div>
+      </div>
     </div>
   </div>
 
@@ -487,6 +490,17 @@
             style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;background:#aaa;border:none;cursor:pointer;color:#fff;font-size:.6rem;line-height:1;padding:0;align-items:center;justify-content:center;">✕</button>
         </div>
       </div>
+    </div>
+
+    <div class="fcard">
+      <div class="fc-lbl">🤝 Remise au passeur</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px;">Où le passeur récupère le colis (la vérification se fait à ce moment-là).</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+        <button type="button" class="remise-opt" data-val="les_deux" onclick="setRemise(this)" style="padding:10px 6px;border:1.5px solid var(--g500);background:var(--g50);border-radius:var(--r);font-family:var(--sans);font-size:.72rem;font-weight:800;color:var(--g600);cursor:pointer;">Les deux</button>
+        <button type="button" class="remise-opt" data-val="domicile" onclick="setRemise(this)" style="padding:10px 6px;border:1.5px solid var(--border);background:#fff;border-radius:var(--r);font-family:var(--sans);font-size:.72rem;font-weight:800;color:var(--ink);cursor:pointer;">🏠 Chez moi</button>
+        <button type="button" class="remise-opt" data-val="gare" onclick="setRemise(this)" style="padding:10px 6px;border:1.5px solid var(--border);background:#fff;border-radius:var(--r);font-family:var(--sans);font-size:.72rem;font-weight:800;color:var(--ink);cursor:pointer;">🚉 En gare</button>
+      </div>
+      <input type="hidden" id="remise-val" value="les_deux">
     </div>
 
     <div class="fcard">

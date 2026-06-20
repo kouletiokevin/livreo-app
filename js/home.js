@@ -112,36 +112,49 @@ function ouvrirRetrait() {
   `);
 }
 
-// ── Activité récente ─────────────────────
-async function chargerActiviteRecente(userId) {
-  if (!isValidUUID(userId)) return;
+// ── Colis à récupérer près de vous ───────
+async function chargerColisProches(userId, ville) {
+  const box = document.getElementById('proches-list');
+  if (!box) return;
   try {
-    const { data } = await db
-      .from('transactions')
-      .select('montant, statut, created_at, colis(code_lvr, gare_depart, gare_arrivee)')
-      .or(`expediteur_id.eq.${userId},livreur_id.eq.${userId}`)
+    const { data } = await db.from('colis_public')
+      .select('code_lvr, gare_depart, gare_arrivee, prix, remise_mode, expediteur_ville, created_at, expediteur_id')
+      .eq('statut', 'en_attente')
       .order('created_at', { ascending: false })
-      .limit(5);
-
-    const tbody = document.getElementById('activity-tbody');
-    if (!tbody) return;
-
-    if (!data || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">Aucune activité pour le moment</td></tr>`;
+      .limit(20);
+    let list = (data || []).filter(c => c.expediteur_id !== userId);
+    const v = (ville || '').trim().toLowerCase();
+    if (v) {
+      const near = c => ((c.gare_depart||'').toLowerCase().includes(v) || (c.expediteur_ville||'').toLowerCase().includes(v));
+      list.sort((a,b) => (near(b)?1:0) - (near(a)?1:0));
+    }
+    list = list.slice(0, 6);
+    if (!list.length) {
+      box.innerHTML = `<div style="text-align:center;padding:16px 0;font-size:.78rem;color:var(--muted);">Aucun colis disponible pour l'instant. Reviens bientôt !</div>`;
       return;
     }
-
-    tbody.innerHTML = data.map(tx => `
-      <tr>
-        <td><strong>${escapeHtml(tx.colis?.code_lvr || '—')}</strong></td>
-        <td style="font-size:.76rem;text-transform:capitalize;">${escapeHtml(tx.colis?.gare_depart || 'À définir')} → ${escapeHtml(tx.colis?.gare_arrivee || 'À définir')}</td>
-        <td style="color:var(--g500);font-weight:800;">${parseFloat(tx.montant || 0).toFixed(2)}€</td>
-        <td>${escapeHtml(tx.statut || '—')}</td>
-      </tr>
-    `).join('');
-  } catch (e) {
-    console.log('Activité:', e.message);
-  }
+    box.innerHTML = list.map(c => {
+      const code = String(c.code_lvr).replace(/[^A-Za-z0-9_-]/g,'');
+      const prix = parseFloat(c.prix||0).toFixed(2).replace('.',',');
+      const gare = (c.gare_depart||'').split(' ')[0];
+      const villeDep = (c.expediteur_ville || gare || '').trim();
+      const rm = c.remise_mode || 'les_deux';
+      const remiseTxt = rm === 'domicile' ? ('🏠 Chez l\'expéditeur'+( villeDep?' ('+escapeHtml( villeDep)+')':''))
+        : rm === 'gare' ? ('🚉 En gare'+(gare?' ('+escapeHtml(gare)+')':''))
+        : ('🏠 domicile ou 🚉 gare'+(gare?' ('+escapeHtml(gare)+')':''));
+      return `<div onclick="openDetail('${code}')" style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;">
+        <div style="font-size:1.4rem;flex-shrink:0;">📦</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.8rem;font-weight:800;">${_trajet(c.gare_depart, c.gare_arrivee)}</div>
+          <div style="font-size:.68rem;color:var(--muted);margin-top:3px;">${remiseTxt}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:.86rem;font-weight:900;color:var(--g500);">${prix}€</div>
+          <div style="font-size:.6rem;color:var(--g600);font-weight:800;">Me proposer →</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) { box.innerHTML = `<div style="text-align:center;padding:16px 0;font-size:.78rem;color:var(--muted);">Impossible de charger les colis proches.</div>`; }
 }
 
 // ── Helpers panels ───────────────────────
