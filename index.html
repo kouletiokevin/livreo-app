@@ -83,7 +83,11 @@
       "mainEntity": [
         { "@type": "Question", "name": "Comment fonctionne DINVMIC ?", "acceptedAnswer": { "@type": "Answer", "text": "Vous postez votre colis avec la gare de départ et d'arrivée. Un passeur qui fait le même trajet en train accepte de le transporter. À la livraison, il photographie la remise et scanne le QR Code du destinataire. Le paiement est libéré automatiquement." } },
         { "@type": "Question", "name": "Est-ce sécurisé ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. Chaque passage est confirmé par QR Code unique, photo de remise obligatoire, et paiement sécurisé par escrow." } },
-        { "@type": "Question", "name": "Combien ça coûte ?", "acceptedAnswer": { "@type": "Answer", "text": "Les prix varient de 2,50€ pour une lettre à 24€+ pour un grand colis. C'est en moyenne 45% moins cher que La Poste." } }
+        { "@type": "Question", "name": "Combien ça coûte ?", "acceptedAnswer": { "@type": "Answer", "text": "Les prix varient de 2,50€ pour une lettre à 24€+ pour un grand colis. C'est en moyenne 45% moins cher que La Poste." } },
+        { "@type": "Question", "name": "Comment envoyer un colis pas cher ?", "acceptedAnswer": { "@type": "Answer", "text": "Avec DINVMIC, vous confiez votre colis a un voyageur qui prend deja le train sur votre trajet. Vous fixez librement le prix, souvent jusqu'a 45% moins cher que les transporteurs classiques." } },
+        { "@type": "Question", "name": "DINVMIC est-il une alternative a La Poste, Mondial Relay ou Colissimo ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. DINVMIC est une alternative collaborative pour envoyer un colis entre particuliers par train, generalement moins chere et plus rapide, avec remise chez l'expediteur ou en gare." } },
+        { "@type": "Question", "name": "Peut-on envoyer un colis le jour meme ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui, sur les grands axes desservis en TGV (Paris-Lyon, Paris-Marseille, Paris-Bordeaux, etc.), un passeur peut transporter votre colis le jour meme de son trajet." } },
+        { "@type": "Question", "name": "Comment devenir passeur et gagner de l'argent ?", "acceptedAnswer": { "@type": "Answer", "text": "Inscrivez-vous, verifiez votre identite, puis acceptez des colis sur les trajets que vous faites deja en train. Vous etes remunere a chaque livraison confirmee par QR Code." } }
       ]
     }
   ]
@@ -333,6 +337,25 @@
         </div>
         <div style="margin-top:10px;font-size:.68rem;color:rgba(255,255,255,.3);text-align:center;">Prix moyens constatés sur DINVMIC · La Poste Colissimo au tarif guichet</div>
       </div>
+      <!-- SEO CONTENT -->
+      <div style="background:var(--white);border-radius:var(--rl);padding:20px;border:1.5px solid var(--border);">
+        <h2 style="font-size:1.05rem;font-weight:900;letter-spacing:-.4px;margin:0 0 8px;">Envoyer un colis pas cher entre particuliers</h2>
+        <p style="font-size:.82rem;color:var(--muted);line-height:1.65;margin:0 0 14px;">DINVMIC est une alternative a La Poste, Mondial Relay et Colissimo : vos colis voyagent en train grace a des voyageurs (les passeurs) qui font deja le trajet. Resultat : une livraison souvent le jour meme et jusqu'a 45% moins chere. Vous fixez votre prix, l'expediteur choisit son passeur, et le paiement n'est debloque qu'a la remise, scan du QR Code a l'appui.</p>
+        <h3 style="font-size:.9rem;font-weight:800;margin:0 0 6px;">Pourquoi choisir DINVMIC ?</h3>
+        <ul style="font-size:.8rem;color:var(--muted);line-height:1.7;margin:0 0 14px;padding-left:18px;">
+          <li><strong>Moins cher</strong> que les transporteurs classiques : prix libres fixes par la communaute.</li>
+          <li><strong>Rapide</strong> : livraison le jour meme sur les grands axes en TGV.</li>
+          <li><strong>Securise</strong> : paiement bloque en sequestre, remise confirmee par QR Code, passeurs notes.</li>
+          <li><strong>Ecologique</strong> : on profite d'un trajet deja existant, aucun camion en plus.</li>
+        </ul>
+        <h3 style="font-size:.9rem;font-weight:800;margin:0 0 6px;">Sur quels trajets envoyer un colis ?</h3>
+        <p style="font-size:.82rem;color:var(--muted);line-height:1.65;margin:0 0 14px;">Tous les trajets en train entre particuliers : Paris-Lyon, Paris-Marseille, Paris-Bordeaux, Lille-Paris, Lyon-Marseille et des centaines d'autres gares en France. Recuperation au choix : chez l'expediteur ou directement en gare.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn p" onclick="goNav('auth')">Envoyer un colis</button>
+          <button class="btn s" onclick="goNav('auth')">Devenir passeur</button>
+        </div>
+      </div>
+
       <div style="background:var(--white);border-radius:var(--rl);padding:18px;border:1.5px solid var(--border);text-align:center;">
         <div style="font-size:.82rem;font-weight:800;margin-bottom:4px;">Rejoignez DINVMIC gratuitement</div>
         <div style="font-size:.74rem;color:var(--muted);font-style:italic;margin-bottom:4px;">"Quelqu'un prend le train. Votre colis aussi."</div>
