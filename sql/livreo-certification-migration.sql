@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════
--- KolisGo — Migration : badge de certification utilisateur
+-- DINVMIC — Migration : badge de certification utilisateur
 -- À exécuter dans Supabase Dashboard → SQL Editor
 -- ═══════════════════════════════════════════════════════════════
 

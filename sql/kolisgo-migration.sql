@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════
--- KolisGo — Migration complète
+-- DINVMIC — Migration complète
 -- Supabase Dashboard → SQL Editor → Exécuter
 -- ═══════════════════════════════════════════════════════════════
 

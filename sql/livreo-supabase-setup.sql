@@ -1,5 +1,5 @@
 -- ============================================================
---  LIVREO — Setup complet base de données Supabase
+--  DINVMIC — Setup complet base de données Supabase
 --  Colle tout ce code dans SQL Editor > Run
 -- ============================================================
 

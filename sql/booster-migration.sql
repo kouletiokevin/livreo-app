@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════
--- KolisGo — Migration Booster de visibilité
+-- DINVMIC — Migration Booster de visibilité
 -- À exécuter dans Supabase > SQL Editor
 -- ═══════════════════════════════════════════════
 

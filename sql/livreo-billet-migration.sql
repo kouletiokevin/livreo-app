@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════
--- KolisGo — Migration : billet passeur
+-- DINVMIC — Migration : billet passeur
 -- À exécuter dans Supabase Dashboard → SQL Editor
 -- ═══════════════════════════════════════════════════════════════
 

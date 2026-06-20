@@ -1,15 +1,15 @@
-﻿# KOLISGO — Documentation complète pour Claude Code
+﻿# DINVMIC — Documentation complète pour Claude Code
 
-> **Mission :** Finir et solidifier l'application KolisGo — livraison de colis entre particuliers par train.
+> **Mission :** Finir et solidifier l'application DINVMIC — livraison de colis entre particuliers par train.
 > **Slogan :** *"Quelqu'un prend le train. Votre colis aussi."*
-> **URL en ligne 7  :** https://kolisgo-app.netlify.app
+> **URL en ligne 7  :** https://kouletiokevin.github.io/livreo-app
 > **Stack actuelle :** HTML/CSS/JS mono-fichier → à migrer vers une structure propre
 
 ---
 
 ## 1. CONCEPT MÉTIER
 
-KolisGo met en relation :
+DINVMIC met en relation :
 - **L'expéditeur** — a un colis à envoyer d'une gare A à une gare B
 - **Le livreur** — un voyageur qui prend le train et transporte le colis
 - **Le destinataire** — reçoit le colis, confirme par QR Code unique
@@ -25,7 +25,7 @@ KolisGo met en relation :
 | Couche | Technologie | Détails |
 |---|---|---|
 | Frontend | HTML/CSS/JS pur | Mono-fichier index.html — **à séparer** |
-| Hébergement | Netlify | kolisgo-app.netlify.app — Site ID: `77ed7afd-afba-4963-9d0d-19336ba46d77` |
+| Hébergement | Netlify | kouletiokevin.github.io/livreo-app — Site ID: `77ed7afd-afba-4963-9d0d-19336ba46d77` |
 | Base de données | Supabase (PostgreSQL) | Project ID: `wqhuaylfytdmhzjauvmv` |
 | Auth | Supabase Auth | Email + Google OAuth |
 | Paiements | Stripe LIVE | Account: `acct_1QLFSSFQ0erFJFSm` |
@@ -427,7 +427,7 @@ Le livreur **doit** compléter ces 3 étapes dans l'ordre avant que le paiement 
 ### PWA
 - Manifest (installable sur Android et iOS)
 - Service Worker (fonctionne partiellement hors ligne)
-- Bouton "Installer KolisGo" (beforeinstallprompt)
+- Bouton "Installer DINVMIC" (beforeinstallprompt)
 - Favicon SVG
 
 ---
@@ -507,7 +507,7 @@ Le livreur **doit** compléter ces 3 étapes dans l'ordre avant que le paiement 
 | Supabase | Project ID: `wqhuaylfytdmhzjauvmv` | supabase.com |
 | Stripe | Account: `acct_1QLFSSFQ0erFJFSm` | dashboard.stripe.com |
 | Twilio | SID: `ACd847d9617a93d9d2a5ee4bc4ef2ecbc4` | console.twilio.com |
-| Admin app | `kouletiokevinfr@gmail.com` | kolisgo-app.netlify.app |
+| Admin app | `kouletiokevinfr@gmail.com` | kouletiokevin.github.io/livreo-app |
 | GitHub | `kouletiokevin/kolisgo-app` | github.com |
 
 ---

@@ -3,7 +3,7 @@ Allow: /
 Disallow: /api/
 Disallow: /admin/
 
-Sitemap: https://livreo-app.netlify.app/sitemap.xml
+Sitemap: https://kouletiokevin.github.io/livreo-app/sitemap.xml
 
 # DINVMIC — Envoi de colis entre particuliers par train
 # contact: seo@dinvmic.fr
