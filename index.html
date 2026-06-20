@@ -338,7 +338,6 @@
         <span id="nav-av-txt">K</span>
       </div>
       <svg id="nav-av-badge" width="15" height="15" viewBox="0 0 24 24" title="Certification" style="position:absolute;bottom:-3px;right:-3px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));">
-        <circle cx="12" cy="12" r="11" fill="#ffffff"/>
         <path id="nav-av-badge-fill" fill="#cccccc" d="M12 2.2L9.9 4.3 7 3.9l-.8 2.9L3.3 8 4.5 10.7 3.3 13.4l2.9 1.2.8 2.9 2.9-.4 2.1 2.1 2.1-2.1 2.9.4.8-2.9 2.9-1.2-1.2-2.7 1.2-2.7-2.9-1.2-.8-2.9-2.9.4z"/>
         <path fill="#ffffff" d="M10.6 15.4l-2.8-2.8 1.3-1.3 1.5 1.5 3.6-3.6 1.3 1.3z"/>
       </svg>
@@ -597,7 +596,7 @@
     <div class="fcard">
       <div class="fc-lbl">📞 Destinataire</div>
 
-      <button type="button" onclick="importerContact()" class="btn s" style="width:100%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:7px;">📇 Importer depuis mes contacts</button>
+      <button type="button" onclick="importerContact()" class="btn s" style="width:100%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:7px;">📇 Choisir le destinataire</button>
 
       <!-- Nom + suggestions contacts -->
       <div class="field" style="position:relative;margin-bottom:10px;">
@@ -1277,57 +1276,20 @@
 <script>
 /* ══ GARES FRANCE ══ */
 const GARES_FR = [
-  'Paris Gare de Lyon','Paris Montparnasse','Paris Nord','Paris Est','Paris Saint-Lazare',
-  'Paris Bercy','Versailles Chantiers','Massy TGV','Marne-la-Vallée Chessy','Aéroport CDG 2',
-  'Lyon Part-Dieu','Lyon Perrache',
-  'Marseille Saint-Charles',
-  'Bordeaux Saint-Jean',
-  'Lille Flandres','Lille Europe',
-  'Toulouse Matabiau',
-  'Nice Ville','Nice Saint-Augustin',
-  'Nantes',
-  'Strasbourg',
-  'Rennes',
-  'Montpellier Saint-Roch',
-  'Grenoble',
-  'Toulon',
-  'Angers Saint-Laud',
-  'Le Mans',
-  'Tours',
-  'Dijon Ville',
-  'Reims',
-  'Metz Ville','Metz',
-  'Nancy',
-  'Rouen Rive Droite',
-  'Caen',
-  'Brest',
-  'Clermont-Ferrand',
-  'Limoges Bénédictins',
-  'Poitiers',
-  'La Rochelle Ville',
-  'Perpignan',
-  'Avignon TGV','Avignon Centre',
-  'Aix-en-Provence TGV',
-  'Cannes','Antibes',
-  'Valence TGV',
-  'Chambéry','Annecy',
-  'Besançon Franche-Comté TGV',
-  'Mulhouse Ville','Colmar',
-  'Amiens',
-  'Calais Ville',
-  'Dunkerque','Arras','Lens','Douai','Valenciennes',
-  'Pau','Bayonne','Biarritz','Tarbes',
-  'Agen','Périgueux','Angoulême',
-  'Niort','La Roche-sur-Yon',
-  'Lorient','Vannes','Saint-Brieuc','Quimper',
-  'Cherbourg','Saint-Malo',
-  'Laval',
-  'Le Havre','Évreux','Chartres','Orléans','Blois',
-  'Auxerre','Troyes','Châlons-en-Champagne',
-  'Saint-Étienne Châteaucreux',
-  'Bourg-en-Bresse','Mâcon Loché TGV','Chalon-sur-Saône',
-  'Belfort-Montbéliard TGV',
-  'Épinal','Thionville','Forbach',
+  'Paris Gare de Lyon','Paris Montparnasse','Paris Gare du Nord','Paris Est','Paris Saint-Lazare','Paris Bercy','Paris Austerlitz',
+  'Versailles Chantiers','Versailles Rive Droite','Massy TGV','Massy-Palaiseau','Marne-la-Vallée Chessy','Aéroport CDG 2 TGV','Juvisy','Melun','Meaux','Mantes-la-Jolie','Pontoise','Cergy','Saint-Quentin-en-Yvelines','Rambouillet','Étampes','Corbeil-Essonnes','Provins','Coulommiers','Montereau','Poissy','Saint-Germain-en-Laye','Chelles-Gournay','Dourdan',
+  'Lyon Part-Dieu','Lyon Perrache','Lyon Saint-Exupéry TGV','Grenoble','Saint-Étienne Châteaucreux','Valence Ville','Valence TGV','Chambéry-Challes-les-Eaux','Annecy','Annemasse','Bourg-en-Bresse','Clermont-Ferrand','Vichy','Roanne','Aix-les-Bains-Le Revard','Bourgoin-Jallieu','Vienne','Romans-Bourg-de-Péage','Montélimar','Aurillac','Le Puy-en-Velay','Moûtiers-Salins','Bourg-Saint-Maurice','Albertville','Cluses','Sallanches','Saint-Gervais-les-Bains','Oyonnax','Voiron','Thonon-les-Bains','Évian-les-Bains','Ambérieu','Villefranche-sur-Saône','Saint-Chamond','Issoire','Moulins-sur-Allier','Montluçon',
+  'Marseille Saint-Charles','Nice Ville','Nice Saint-Augustin','Toulon','Aix-en-Provence TGV','Aix-en-Provence Centre','Avignon TGV','Avignon Centre','Cannes','Antibes','Saint-Raphaël-Valescure','Hyères','Gap','Briançon','Menton','Grasse','Manosque-Gréoux','Arles','Orange','Cavaillon','Miramas','Aubagne','La Ciotat','Cagnes-sur-Mer','Les Arcs-Draguignan','Sisteron','Embrun',
+  'Toulouse Matabiau','Montpellier Saint-Roch','Montpellier Sud de France','Nîmes Centre','Nîmes Pont du Gard','Perpignan','Béziers','Narbonne','Sète','Carcassonne','Albi Ville','Castres','Montauban Ville-Bourbon','Tarbes','Lourdes','Auch','Cahors','Rodez','Millau','Agde','Foix','Pamiers','Mende','Alès','Figeac','Lunel','Castelnaudary','Bagnères-de-Bigorre','Saint-Gaudens',
+  'Bordeaux Saint-Jean','Bayonne','Biarritz','Pau','Limoges Bénédictins','Poitiers','La Rochelle Ville','Niort','Angoulême','Périgueux','Agen','Brive-la-Gaillarde','Dax','Saint-Jean-de-Luz-Ciboure','Hendaye','Mont-de-Marsan','Bergerac','Libourne','Arcachon','Royan','Saintes','Cognac','Guéret','Tulle','Ussel','Marmande','Villeneuve-sur-Lot','Châtellerault','Rochefort','Thouars','Bressuire','Parthenay',
+  'Nantes','Angers Saint-Laud','Le Mans','Saint-Nazaire','La Roche-sur-Yon','Laval','Cholet','Saumur','Les Sables-d\'Olonne','Ancenis','Châteaubriant','Pornic','Clisson','La Baule-Escoublac','Le Croisic','Sablé-sur-Sarthe',
+  'Rennes','Brest','Quimper','Lorient','Vannes','Saint-Brieuc','Saint-Malo','Lannion','Morlaix','Auray','Redon','Guingamp','Dinan','Quimperlé','Dol-de-Bretagne','Landerneau','Châteaulin',
+  'Rouen Rive Droite','Le Havre','Caen','Cherbourg','Évreux-Normandie','Dieppe','Lisieux','Bayeux','Granville','Alençon','Argentan','Vernon-Giverny','Deauville-Trouville','Saint-Lô','Coutances','Flers','Vire','Yvetot','Bernay','Carentan',
+  'Orléans','Tours','Saint-Pierre-des-Corps','Bourges','Blois-Chambord','Chartres','Châteauroux','Vierzon','Montargis','Vendôme TGV','Issoudun','Gien','Dreux','Nogent-le-Rotrou','Amboise','Salbris','La Souterraine',
+  'Strasbourg','Reims','Metz Ville','Nancy','Mulhouse Ville','Colmar','Troyes','Châlons-en-Champagne','Épernay','Charleville-Mézières','Saint-Dizier','Chaumont','Épinal','Thionville','Forbach','Sarrebourg','Sélestat','Haguenau','Saverne','Bar-le-Duc','Verdun','Sedan','Vitry-le-François','Lunéville','Saint-Dié-des-Vosges','Remiremont','Sarreguemines','Longwy','Toul','Commercy','Champagne-Ardenne TGV','Lorraine TGV','Meuse TGV',
+  'Lille Flandres','Lille Europe','Amiens','Calais Ville','Calais-Fréthun','Dunkerque','Arras','Lens','Douai','Valenciennes','Roubaix','Tourcoing','Boulogne-sur-Mer','Saint-Quentin','Compiègne','Beauvais','Soissons','Cambrai Ville','Maubeuge','Hazebrouck','Béthune','Creil','Abbeville','Laon','Armentières','Aulnoye-Aymeries','Tergnier','Noyon','Étaples-Le Touquet','Rang-du-Fliers-Berck',
+  'Dijon Ville','Besançon Viotte','Besançon Franche-Comté TGV','Belfort Ville','Belfort-Montbéliard TGV','Auxerre Saint-Gervais','Chalon-sur-Saône','Mâcon Ville','Mâcon Loché TGV','Nevers','Sens','Le Creusot Montchanin TGV','Montbéliard','Dole Ville','Lons-le-Saunier','Vesoul','Pontarlier','Autun','Beaune','Louhans','Montbard','Paray-le-Monial','Tonnerre','Laroche-Migennes',
+  'Ajaccio','Bastia','Calvi','Corte','L\'Île-Rousse',
 ];
 
 const SUGGESTIONS_TITRE = [

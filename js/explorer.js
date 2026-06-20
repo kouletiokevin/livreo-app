@@ -201,8 +201,8 @@ async function openDetail(id) {
       <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${prix.toFixed(2).replace('.',',')}€</div><div style="font-size:.6rem;color:var(--muted);margin-top:3px;">Vous recevez ${(prix*0.85).toFixed(2).replace('.',',')} € net (après commission Transcolisgo 15 %)</div></div>
     </div>
     ${logged ? `
-      <div style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px;margin-bottom:11px;">
-        <div style="font-size:.66rem;font-weight:800;color:var(--g600);margin-bottom:6px;">👤 Expéditeur</div>
+      <div onclick="closeSheet();voirProfilPublic('${col.expediteur_id}')" style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px;margin-bottom:11px;cursor:pointer;">
+        <div style="font-size:.66rem;font-weight:800;color:var(--g600);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">👤 Expéditeur <span style="color:var(--g500);font-weight:700;">Voir le profil →</span></div>
         <div style="font-size:.82rem;font-weight:700;">${prenom}${badge === 'certifie' ? badgeBleuSVG() : ''}${note && note > 0 ? ' ⭐' + parseFloat(note).toFixed(1) : ''}</div>
         <div style="font-size:.7rem;color:var(--muted);margin-top:2px;">Contenu détaillé visible après acceptation · Messagerie intégrée</div>
       </div>
@@ -384,4 +384,34 @@ async function confirmerPassage(colisId) {
     t('Erreur : ' + e.message, 'e');
     if (btn) { btn.textContent = 'CONFIRMER LE PASSAGE →'; btn.disabled = false; }
   }
+}
+
+// ── Profil public (confidentialité : aucune info perso) ──
+async function voirProfilPublic(id) {
+  if (!id) return;
+  openSheet('<div style="text-align:center;padding:28px;color:var(--muted);">Chargement…</div>');
+  try {
+    const { data, error } = await db.rpc('get_public_profile', { p_user_id: id });
+    if (error || !data || data.error) throw new Error('indispo');
+    const certif = data.is_certified ? badgeBleuSVG(18) : '';
+    const note = data.note_moyenne > 0 ? '⭐' + parseFloat(data.note_moyenne).toFixed(1) : '—';
+    const avis = (data.avis || []);
+    const avisHtml = avis.length
+      ? avis.map(a => `<div style="border-top:1px solid var(--border);padding:9px 0;"><div style="font-size:.82rem;">${'⭐'.repeat(Math.max(1, Math.min(5, a.note || 0)))}</div>${a.commentaire ? `<div style="font-size:.78rem;color:var(--muted);margin-top:3px;line-height:1.5;">${escapeHtml(a.commentaire)}</div>` : ''}</div>`).join('')
+      : '<div style="font-size:.8rem;color:var(--muted);padding:9px 0;">Aucun avis pour le moment.</div>';
+    openSheet(`
+      <div style="text-align:center;padding:4px 0 14px;">
+        <div style="width:66px;height:66px;border-radius:18px;background:linear-gradient(135deg,var(--g300),var(--g500));display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:900;color:#fff;margin:0 auto 10px;">${escapeHtml((data.prenom || '?')[0].toUpperCase())}</div>
+        <div style="font-size:1.15rem;font-weight:900;">${escapeHtml(data.prenom || 'Utilisateur')} ${certif}</div>
+        <div style="font-size:.82rem;color:var(--muted);margin-top:3px;">${data.ville ? '📍 ' + escapeHtml(data.ville) : 'Ville non précisée'}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+        <div style="background:var(--cream);border-radius:10px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:var(--g600);">${data.nb_livraisons}</div><div style="font-size:.64rem;color:var(--muted);margin-top:2px;">livraisons</div></div>
+        <div style="background:var(--cream);border-radius:10px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:var(--g600);">${note}</div><div style="font-size:.64rem;color:var(--muted);margin-top:2px;">${data.nb_avis} avis</div></div>
+      </div>
+      <div style="font-size:.82rem;font-weight:800;margin-bottom:2px;">Avis reçus</div>
+      ${avisHtml}
+      <button onclick="closeSheet()" class="btn s full" style="margin-top:14px;">Fermer</button>
+    `);
+  } catch (e) { t('Profil indisponible', 'e'); closeSheet(); }
 }

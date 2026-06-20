@@ -59,6 +59,7 @@ async function chargerLivraisonsEnCours(userId) {
           <div style="margin-top:3px;"><span class="prt">🚆 ${c.statut === 'en_transit' ? 'En transit' : 'En attente départ'}</span></div>
         </div>
         <div class="li-price">+${parseFloat(c.prix).toFixed(0)}€</div>
+        <button onclick="event.stopPropagation();annulerPassageUI('${String(c.code_lvr).replace(/[^A-Za-z0-9_-]/g,'')}')" title="Annuler ce passage" style="background:none;border:none;color:var(--danger);font-size:.64rem;font-weight:800;cursor:pointer;padding:4px;flex-shrink:0;">Annuler</button>
         <div class="li-arrow">›</div>`;
       container.appendChild(div);
     });
@@ -67,6 +68,30 @@ async function chargerLivraisonsEnCours(userId) {
     const empty = document.getElementById('livraisons-empty');
     if (empty) empty.textContent = 'Impossible de charger vos passages.';
   }
+}
+
+// ── Annulation par le passeur ────────────
+async function annulerPassageUI(code) {
+  if (!confirm('Annuler ce passage ?\nLe colis ' + code + ' redeviendra disponible pour un autre passeur.')) return;
+  try {
+    const { data, error } = await db.rpc('annuler_passage', { p_code_lvr: code });
+    if (error || !data?.success) throw new Error(error?.message || data?.error || 'Echec');
+    t('Passage annulé. Le colis est de nouveau disponible.', 's');
+    const c = document.getElementById('livraisons-list');
+    if (c) c.innerHTML = '<div id="livraisons-empty" style="text-align:center;padding:16px 0;font-size:.8rem;color:var(--muted);">Aucun passage en cours.</div>';
+    if (user) chargerLivraisonsEnCours(user.id);
+  } catch (e) { t('Erreur : ' + e.message, 'e'); }
+}
+
+// ── Annulation par l'expéditeur (grille de pénalité) ──
+async function annulerColisUI(code) {
+  if (!confirm('Annuler le colis ' + code + ' ?\nSelon l\'avancement, des frais peuvent être retenus (0% / 15% / 50%).')) return;
+  try {
+    const { data, error } = await db.rpc('annuler_colis', { p_code_lvr: code });
+    if (error || !data?.success) throw new Error(error?.message || data?.error || 'Echec');
+    t(data.message || 'Colis annulé', data.penalite > 0 ? '' : 's');
+    if (typeof voirKolisEnvoyes === 'function') voirKolisEnvoyes();
+  } catch (e) { t('Erreur : ' + e.message, 'e'); }
 }
 
 // ── Retrait de fonds ─────────────────────
@@ -184,6 +209,7 @@ async function voirKolisEnvoyes() {
             <div style="font-size:.78rem;font-weight:800;color:var(--g500);">${parseFloat(c.prix).toFixed(2).replace('.',',')}€</div>
             <div style="font-size:.68rem;color:var(--muted);margin-bottom:3px;">${_dtFr(c.date_souhaitee || c.created_at)}</div>
             ${_statutLabel(c.statut)}
+            ${['en_attente','livreur_accepte','en_transit'].includes(c.statut) ? `<div style="margin-top:5px;"><button onclick="annulerColisUI('${String(c.code_lvr).replace(/[^A-Za-z0-9_-]/g,'')}')" style="background:none;border:1px solid var(--danger);color:var(--danger);font-size:.62rem;font-weight:800;cursor:pointer;padding:3px 10px;border-radius:50px;">Annuler</button></div>` : ''}
           </div>
         </div>`).join('');
     }
