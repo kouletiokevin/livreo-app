@@ -415,3 +415,15 @@ async function voirProfilPublic(id) {
     `);
   } catch (e) { t('Profil indisponible', 'e'); closeSheet(); }
 }
+
+// ── Recherche par gare (barre de la marketplace) ──
+let _rechercheTimer = null;
+function rechercheGare(q) {
+  q = (q || '').trim();
+  clearTimeout(_rechercheTimer);
+  _rechercheTimer = setTimeout(() => {
+    currentFilters = q ? [q] : [];
+    if (typeof _updateFilterBtn === 'function') _updateFilterBtn();
+    loadCards();
+  }, 350);
+}

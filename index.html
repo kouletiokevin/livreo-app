@@ -314,6 +314,7 @@
     <span style="font-family:var(--sans);font-size:1.1rem;font-weight:900;color:var(--ink);letter-spacing:-.5px;">Transcolis</span>
   </div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+    <button onclick="goNav('explorer')" title="Rechercher des colis" aria-label="Rechercher des colis" style="width:36px;height:36px;border-radius:10px;background:var(--cream2);border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.05rem;padding:0;">🔍</button>
     <div id="nav-login" style="display:flex;gap:6px;">
       <button class="btn s" style="padding:7px 14px;font-size:.76rem;" onclick="goNav('auth')">Connexion</button>
     </div>
@@ -529,6 +530,7 @@
     </button>
   </div>
   <div class="s-sub" style="margin-bottom:10px;">Acceptez un kolis sur votre trajet et gagnez de l'argent.</div>
+  <div class="srch-bar" style="margin-bottom:12px;"><input type="text" id="explore-search" placeholder="Rechercher une gare d'arrivée (ex : Lyon)" oninput="rechercheGare(this.value)" autocomplete="off"></div>
   <div class="cgrid" id="cgrid"></div>
 </div>
 
@@ -687,7 +689,8 @@
 <div class="screen" id="s-suivi">
   <div class="s-lbl">Suivi</div>
   <div class="s-h">Suivre <em>mon kolis</em></div>
-  <div class="s-sub">Expéditeur ou destinataire : entrez le code reçu par SMS.</div>
+  <div class="s-sub">Suivez vos colis en temps réel. Destinataire : entrez le code reçu par SMS.</div>
+  <div id="sv-mescolis"></div>
   <div class="srch-bar">
     <input type="text" id="sv-input" placeholder="Ex: LVR-452">
     <button onclick="loadSuivi()">Suivre →</button>
@@ -1111,7 +1114,7 @@
 <div class="bot-nav">
   <div class="bn-row">
     <div class="bni on" id="bn-home" onclick="goNav('home')"><div class="bni-icon">🏠</div><div class="bni-lbl">Accueil</div></div>
-    <div class="bni" id="bn-explorer" onclick="goNav('explorer')"><div class="bni-icon">🔍</div><div class="bni-lbl">Explorer</div></div>
+    <div class="bni" id="bn-suivi" onclick="goNav('suivi');if(typeof chargerMesSuivis==='function')chargerMesSuivis()"><div class="bni-icon">🚆</div><div class="bni-lbl">Suivi</div></div>
     <div class="bni" id="bn-poster" onclick="goPost()"><div class="bni-icon">➕</div><div class="bni-lbl">Publier</div></div>
     <div class="bni" id="bn-messages" onclick="goMessages()"><div class="bni-icon">💬</div><div class="bni-lbl">Messages</div><div class="bni-pip" id="msg-pip"></div></div>
     <div class="bni" id="bn-dashboard" onclick="navDash()"><div class="bni-icon">👤</div><div class="bni-lbl">Profil</div></div>

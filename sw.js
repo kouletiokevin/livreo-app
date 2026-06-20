@@ -1,5 +1,5 @@
-/* Transcolisgo — Service Worker v40 */
-const CACHE = 'kolisgo-v40';
+/* Transcolisgo — Service Worker v41 */
+const CACHE = 'kolisgo-v41';
 const ASSETS = [
   './',
   './css/style.css',

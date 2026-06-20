@@ -104,3 +104,33 @@ function switchToDestView() {
   const contentEl2 = document.getElementById('content');
   if (contentEl2) contentEl2.scrollTop = 0;
 }
+
+// ── Liste de mes colis à suivre (onglet Suivi) ──
+async function chargerMesSuivis() {
+  const box = document.getElementById('sv-mescolis');
+  if (!box) return;
+  if (!user) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div style="color:var(--muted);font-size:.8rem;padding:8px 0;">Chargement…</div>';
+  try {
+    const { data } = await db.from('colis_public')
+      .select('code_lvr,gare_depart,gare_arrivee,statut,titre')
+      .or(`expediteur_id.eq.${user.id},livreur_id.eq.${user.id}`)
+      .in('statut', ['en_attente', 'livreur_accepte', 'en_transit'])
+      .order('created_at', { ascending: false })
+      .limit(20);
+    if (!data || !data.length) {
+      box.innerHTML = '<div style="color:var(--muted);font-size:.8rem;padding:8px 0 14px;">Aucun colis en cours à suivre. Entrez un code ci-dessous.</div>';
+      return;
+    }
+    const lbl = { en_attente: 'En attente de passeur', livreur_accepte: 'Passeur trouvé', en_transit: 'En transit' };
+    box.innerHTML = '<div style="font-size:.82rem;font-weight:800;margin:4px 0 8px;">📍 Mes colis en cours</div>' + data.map(c => {
+      const code = String(c.code_lvr).replace(/[^A-Za-z0-9_-]/g, '');
+      const st = lbl[c.statut] || c.statut;
+      return `<div onclick="document.getElementById('sv-input').value='${code}';loadSuivi()" style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;background:var(--white);">
+        <div style="font-size:1.2rem;flex-shrink:0;">📦</div>
+        <div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(c.titre || 'Colis')} <span style="color:var(--muted);font-weight:600;">${code}</span></div>
+        <div style="font-size:.72rem;color:var(--muted);">${escapeHtml((c.gare_depart || '—') + ' → ' + (c.gare_arrivee || '—'))}</div></div>
+        <div style="font-size:.64rem;font-weight:800;color:var(--g600);flex-shrink:0;text-align:right;">${st}</div></div>`;
+    }).join('');
+  } catch (e) { box.innerHTML = ''; }
+}
