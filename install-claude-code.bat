@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo  Installation Claude Code pour KolisGo
+echo  Installation Claude Code pour DINVMIC
 echo ========================================
 echo.
 

@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   KOLISGO — Module Accueil / Dashboard
+   DINVMIC — Module Accueil / Dashboard
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -104,8 +104,8 @@ function ouvrirRetrait() {
         Les virements automatiques vers votre compte bancaire seront disponibles prochainement via Stripe Connect.<br><br>
         Pour retirer vos fonds dès maintenant, contactez-nous :
       </div>
-      <a href="mailto:support@kolisgo.fr" style="display:block;padding:12px;background:var(--g500);color:#fff;border-radius:50px;font-weight:700;font-size:.86rem;text-decoration:none;margin-bottom:8px;">
-        📧 support@kolisgo.fr
+      <a href="mailto:support@dinvmic.fr" style="display:block;padding:12px;background:var(--g500);color:#fff;border-radius:50px;font-weight:700;font-size:.86rem;text-decoration:none;margin-bottom:8px;">
+        📧 support@dinvmic.fr
       </a>
       <button onclick="closeSheet()" class="btn s full">Fermer</button>
     </div>
@@ -396,7 +396,7 @@ async function chargerRecus(userId) {
 
 async function voirTousRecus() {
   if (!user) return;
-  openSheet(_shHdr('🧾 Mes reçus Transcolisgo') + `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">Chargement…</div>`);
+  openSheet(_shHdr('🧾 Mes reçus DINVMIC') + `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">Chargement…</div>`);
   try {
     const { data } = await db.from('transactions')
       .select('id, montant, statut, created_at, type, colis(code_lvr, gare_depart, gare_arrivee)')
@@ -404,7 +404,7 @@ async function voirTousRecus() {
       .order('created_at', { ascending: false })
       .limit(50);
 
-    let html = _shHdr('🧾 Mes reçus Transcolisgo');
+    let html = _shHdr('🧾 Mes reçus DINVMIC');
     if (!data || !data.length) {
       html += _emptyMsg('Aucune transaction pour le moment');
     } else {
@@ -430,7 +430,7 @@ async function voirTousRecus() {
     }
     openSheet(html);
   } catch(e) {
-    openSheet(_shHdr('🧾 Mes reçus Transcolisgo') + _emptyMsg('Impossible de charger'));
+    openSheet(_shHdr('🧾 Mes reçus DINVMIC') + _emptyMsg('Impossible de charger'));
   }
 }
 
@@ -449,7 +449,7 @@ function telechargerRecu(txId) {
       const ref = tx?.colis?.code_lvr || '—';
       const montant = parseFloat(tx?.montant || 0).toFixed(2);
       const trajet = tx?.colis ? `${escapeHtml(tx.colis.gare_depart || 'À définir')} → ${escapeHtml(tx.colis.gare_arrivee || 'À définir')}` : '—';
-      win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reçu Transcolisgo — ${ref}</title>
+      win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reçu DINVMIC — ${ref}</title>
       <style>body{font-family:Georgia,serif;max-width:600px;margin:40px auto;padding:0 20px;color:#111;}
       h1{font-size:1.4rem;color:#1a3320;}.lbl{font-size:.8rem;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-top:16px;}
       .val{font-size:1rem;font-weight:700;margin-top:2px;}.total{font-size:1.6rem;font-weight:900;color:#1a8044;margin-top:8px;}
@@ -458,7 +458,7 @@ function telechargerRecu(txId) {
       <body>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
         <div style="width:40px;height:40px;background:#0e1a10;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:#2ecc71;">K</div>
-        <div><div style="font-size:1.1rem;font-weight:900;">Transcolisgo</div><div style="font-size:.72rem;color:#666;">Reçu de transaction</div></div>
+        <div><div style="font-size:1.1rem;font-weight:900;">DINVMIC</div><div style="font-size:.72rem;color:#666;">Reçu de transaction</div></div>
         <button onclick="window.print()" style="margin-left:auto;padding:8px 16px;background:#1a8044;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.82rem;">🖨 Imprimer</button>
       </div>
       <div style="background:#f7faf7;border:1.5px solid #d1fae5;border-radius:12px;padding:20px;margin-bottom:20px;">
@@ -468,11 +468,11 @@ function telechargerRecu(txId) {
         <div class="lbl">Montant total</div><div class="total">${montant}€</div>
       </div>
       <div style="font-size:.78rem;color:#555;line-height:1.6;">
-        Ce reçu atteste d'une transaction réalisée sur la plateforme Transcolisgo.<br>
-        Transcolisgo — SASU en cours d'immatriculation · 12 Rue de la Paix, 75002 Paris<br>
-        contact@kolisgo.fr
+        Ce reçu atteste d'une transaction réalisée sur la plateforme DINVMIC.<br>
+        DINVMIC — SASU en cours d'immatriculation · 12 Rue de la Paix, 75002 Paris<br>
+        contact@dinvmic.fr
       </div>
-      <div class="footer">Document généré le ${new Date().toLocaleDateString('fr-FR')} · Transcolisgo v1.0</div>
+      <div class="footer">Document généré le ${new Date().toLocaleDateString('fr-FR')} · DINVMIC v1.0</div>
       </body></html>`);
       win.document.close();
     }).catch(() => {

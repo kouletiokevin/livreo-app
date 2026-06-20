@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Transcolisgo Admin</title>
+<title>DINVMIC Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -162,10 +162,10 @@ select.role-sel:focus{border-color:var(--border2);}
 
 <!-- AUTH WALL -->
 <div id="auth-wall">
-  <div class="auth-logo">Transcolis<span>go</span></div>
+  <div class="auth-logo">DIN<span>V</span>MIC</div>
   <div id="auth-msg">Vérification de l'accès…</div>
   <div id="auth-error" style="display:none;"></div>
-  <a href="/" id="back-link" style="display:none;">← Retour à Transcolisgo</a>
+  <a href="/" id="back-link" style="display:none;">← Retour à DINVMIC</a>
 </div>
 
 <!-- APP -->
@@ -173,7 +173,7 @@ select.role-sel:focus{border-color:var(--border2);}
 
   <!-- TOPBAR -->
   <header class="topbar">
-    <div class="topbar-brand">Transcolis<span>go</span><sub>ADMIN</sub></div>
+    <div class="topbar-brand">DIN<span>V</span>MIC<sub>ADMIN</sub></div>
     <div class="topbar-right">
       <span class="topbar-email" id="admin-email"></span>
       <button class="btn-ghost" onclick="location.href='../'">← App</button>
@@ -433,7 +433,7 @@ select.role-sel:focus{border-color:var(--border2);}
 
       <!-- SETTINGS -->
       <div class="page" id="page-settings">
-        <div class="page-title">Paramètres<div class="page-desc">Configuration de la plateforme Transcolisgo</div></div>
+        <div class="page-title">Paramètres<div class="page-desc">Configuration de la plateforme DINVMIC</div></div>
         <div class="card" style="margin-bottom:14px;">
           <div class="card-header"><span class="card-header-title">💰 Financier</span></div>
           <div class="setting-row">
@@ -461,7 +461,7 @@ select.role-sel:focus{border-color:var(--border2);}
             <div class="setting-action"><span class="bdg bdg-green">actif</span></div>
           </div>
           <div class="setting-row">
-            <div class="setting-info"><div class="setting-label">Validation documents identité</div><div class="setting-desc">Email de vérification : verification@kolisgo.fr</div></div>
+            <div class="setting-info"><div class="setting-label">Validation documents identité</div><div class="setting-desc">Email de vérification : verification@dinvmic.fr</div></div>
             <div class="setting-action"><span class="bdg bdg-green">actif</span></div>
           </div>
         </div>
@@ -469,13 +469,13 @@ select.role-sel:focus{border-color:var(--border2);}
         <div class="card">
           <div class="card-header"><span class="card-header-title">📬 Contacts légaux</span></div>
           <div class="setting-row">
-            <div class="setting-info"><div class="setting-label">Support client</div><div class="setting-desc">support@kolisgo.fr</div></div>
+            <div class="setting-info"><div class="setting-label">Support client</div><div class="setting-desc">support@dinvmic.fr</div></div>
           </div>
           <div class="setting-row">
-            <div class="setting-info"><div class="setting-label">RGPD / DPO</div><div class="setting-desc">privacy@kolisgo.fr</div></div>
+            <div class="setting-info"><div class="setting-label">RGPD / DPO</div><div class="setting-desc">privacy@dinvmic.fr</div></div>
           </div>
           <div class="setting-row">
-            <div class="setting-info"><div class="setting-label">Vérification identité</div><div class="setting-desc">verification@kolisgo.fr</div></div>
+            <div class="setting-info"><div class="setting-label">Vérification identité</div><div class="setting-desc">verification@dinvmic.fr</div></div>
           </div>
         </div>
       </div>
@@ -957,7 +957,7 @@ function buildDays(n){
 }
 
 // ── ACQUISITION ────────────────────────────────────────
-const BASE_URL='https://kolisgo.fr';
+const BASE_URL='https://dinvmic.fr';
 const QUICK_SOURCES=[
   {src:'instagram',ico:'📸',label:'Instagram'},
   {src:'tiktok',ico:'🎵',label:'TikTok'},
@@ -1496,7 +1496,7 @@ async function doLogout(){await db.auth.signOut();location.href='../';}
     const {data:{session}}=await db.auth.getSession();
     if(!session){
       document.getElementById('auth-msg').style.display='none';
-      document.getElementById('auth-error').textContent='Non connecté — connectez-vous sur Transcolisgo puis revenez ici.';
+      document.getElementById('auth-error').textContent='Non connecté — connectez-vous sur DINVMIC puis revenez ici.';
       document.getElementById('auth-error').style.display='block';
       document.getElementById('back-link').style.display='block';
       return;

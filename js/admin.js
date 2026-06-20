@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   KOLISGO — Module Admin (intégré)
+   DINVMIC — Module Admin (intégré)
    Stats rapides pour le dashboard Moi
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */

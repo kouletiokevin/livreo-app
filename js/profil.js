@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   KOLISGO — Module Profil utilisateur
+   DINVMIC — Module Profil utilisateur
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -136,7 +136,7 @@ async function ouvrirSetupMFA() {
   try {
     const { data, error } = await db.auth.mfa.enroll({
       factorType: 'totp',
-      friendlyName: 'Transcolisgo'
+      friendlyName: 'DINVMIC'
     });
     if (error) throw new Error(error.message);
 

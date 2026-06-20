@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   KOLISGO — Configuration Supabase
+   DINVMIC — Configuration Supabase
    Sécurité et authentification
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -17,7 +17,7 @@ const db = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
   },
   global: {
     headers: {
-      'X-App-Name': 'Transcolisgo',
+      'X-App-Name': 'DINVMIC',
       'X-App-Version': '1.0.0',
     }
   }

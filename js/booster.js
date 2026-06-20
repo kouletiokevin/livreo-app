@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   KOLISGO — Booster de visibilité
+   DINVMIC — Booster de visibilité
    Version 1.0 — Juin 2026
 
    Fonctionnement :

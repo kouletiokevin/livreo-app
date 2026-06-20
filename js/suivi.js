@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   KOLISGO — Module Suivi colis
+   DINVMIC — Module Suivi colis
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 

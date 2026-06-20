@@ -1,5 +1,5 @@
-/* Transcolisgo — Service Worker v42 */
-const CACHE = 'kolisgo-v42';
+/* DINVMIC — Service Worker v43 */
+const CACHE = 'dinvmic-v43';
 const ASSETS = [
   './',
   './css/style.css',
@@ -69,11 +69,11 @@ self.addEventListener('fetch', e => {
 self.addEventListener('push', e => {
   if (!e.data) return;
   const data = e.data.json();
-  self.registration.showNotification(data.title || 'Transcolisgo', {
+  self.registration.showNotification(data.title || 'DINVMIC', {
     body: data.body || '',
     icon: './favicon.svg',
     badge: './favicon.svg',
-    tag: data.tag || 'kolisgo-notif',
+    tag: data.tag || 'dinvmic-notif',
     data: data.url || './'
   });
 });

@@ -2,7 +2,7 @@
 cd /d "C:\Users\koule\Downloads\livreo-app"
 
 echo ========================================
-echo   NETTOYAGE KOLISGO - FICHIERS INUTILES
+echo   NETTOYAGE DINVMIC - FICHIERS INUTILES
 echo ========================================
 echo.
 

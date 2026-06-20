@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Registre des activités de traitement — Transcolisgo</title>
+<title>Registre des activités de traitement — DINVMIC</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%23141c14'/%3E%3Ctext x='60' y='82' text-anchor='middle' font-size='68' font-weight='900' fill='%232ecc71' font-family='Arial Black'%3EK%3C/text%3E%3C/svg%3E">
 <style>
   :root { --g: #2ecc71; --ink: #0e1a10; --muted: #6b7280; --border: #e5e7eb; }
@@ -58,7 +58,7 @@
 <body>
 
 <div class="header">
-  <a href="/">← Retour à Transcolisgo</a>
+  <a href="/">← Retour à DINVMIC</a>
   <h1>Registre des activités de traitement — Article 30 RGPD</h1>
 </div>
 
@@ -67,14 +67,14 @@
   <div class="meta">
     <strong>📋 Registre des activités de traitement (Article 30 du RGPD — UE 2016/679)</strong>
     Dernière mise à jour : 7 juin 2026 · Version 1.0<br>
-    Ce registre est tenu par le responsable du traitement conformément à l'article 30 du Règlement (UE) 2016/679 (RGPD). Il recense l'ensemble des activités de traitement de données personnelles réalisées par Transcolisgo.
+    Ce registre est tenu par le responsable du traitement conformément à l'article 30 du Règlement (UE) 2016/679 (RGPD). Il recense l'ensemble des activités de traitement de données personnelles réalisées par DINVMIC.
   </div>
 
   <!-- Identité du responsable du traitement -->
   <div class="identity-box">
     <div>
       <div class="label">Responsable du traitement</div>
-      <div class="val">Transcolisgo — SASU en cours d'immatriculation</div>
+      <div class="val">DINVMIC — SASU en cours d'immatriculation</div>
     </div>
     <div>
       <div class="label">SIRET (provisoire)</div>
@@ -90,11 +90,11 @@
     </div>
     <div>
       <div class="label">Contact DPO / Protection des données</div>
-      <div class="val"><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></div>
+      <div class="val"><a href="mailto:privacy@dinvmic.fr">privacy@dinvmic.fr</a></div>
     </div>
     <div>
       <div class="label">Contact général</div>
-      <div class="val"><a href="mailto:contact@kolisgo.fr">contact@kolisgo.fr</a></div>
+      <div class="val"><a href="mailto:contact@dinvmic.fr">contact@dinvmic.fr</a></div>
     </div>
   </div>
 
@@ -152,13 +152,13 @@
         </tr>
         <tr>
           <th>Personnes concernées</th>
-          <td>Tout utilisateur inscrit sur Transcolisgo (Expéditeurs et Passeurs)</td>
+          <td>Tout utilisateur inscrit sur DINVMIC (Expéditeurs et Passeurs)</td>
         </tr>
         <tr>
           <th>Destinataires</th>
           <td>
             <span class="tag blue">Supabase Auth (sous-traitant)</span>
-            <span class="tag blue">Transcolisgo (accès interne — admin)</span>
+            <span class="tag blue">DINVMIC (accès interne — admin)</span>
           </td>
         </tr>
         <tr>
@@ -222,7 +222,7 @@
           <td>
             <span class="tag blue">Supabase Storage (photos)</span>
             <span class="tag blue">Autres utilisateurs (prénom + initiale uniquement)</span>
-            <span class="tag blue">Transcolisgo (supervision litiges)</span>
+            <span class="tag blue">DINVMIC (supervision litiges)</span>
           </td>
         </tr>
         <tr>
@@ -255,7 +255,7 @@
       <table>
         <tr>
           <th>Finalité</th>
-          <td>Permettre le paiement sécurisé entre Expéditeurs et Passeurs via un système de séquestre (escrow). Prélever la commission Transcolisgo de 15%. Gérer les remboursements en cas de litige.</td>
+          <td>Permettre le paiement sécurisé entre Expéditeurs et Passeurs via un système de séquestre (escrow). Prélever la commission DINVMIC de 15%. Gérer les remboursements en cas de litige.</td>
         </tr>
         <tr>
           <th>Base légale (Art. 6)</th>
@@ -268,12 +268,12 @@
           <th>Catégories de données</th>
           <td>
             <ul>
-              <li>Montant de la transaction (total Expéditeur, part Passeur, commission Transcolisgo)</li>
+              <li>Montant de la transaction (total Expéditeur, part Passeur, commission DINVMIC)</li>
               <li>Référence de transaction Stripe (PaymentIntent ID)</li>
               <li>Statut du paiement (en attente, capturé, remboursé)</li>
               <li>Date et heure de la transaction</li>
               <li>Identifiant utilisateur (Expéditeur et Passeur)</li>
-              <li>Données de paiement (carte, IBAN) : gérées exclusivement par Stripe — Transcolisgo ne stocke aucune donnée bancaire brute</li>
+              <li>Données de paiement (carte, IBAN) : gérées exclusivement par Stripe — DINVMIC ne stocke aucune donnée bancaire brute</li>
             </ul>
           </td>
         </tr>
@@ -285,7 +285,7 @@
           <th>Destinataires</th>
           <td>
             <span class="tag blue">Stripe, Inc. (sous-traitant principal)</span>
-            <span class="tag blue">Supabase (table transactions — Transcolisgo)</span>
+            <span class="tag blue">Supabase (table transactions — DINVMIC)</span>
             <span class="tag yellow">Administration fiscale (sur demande légale)</span>
           </td>
         </tr>
@@ -299,7 +299,7 @@
         </tr>
         <tr>
           <th>Mesures de sécurité</th>
-          <td>Aucune coordonnée bancaire stockée par Transcolisgo. Stripe tokenise les données de paiement. Communications HTTPS. RLS Supabase sur la table transactions.</td>
+          <td>Aucune coordonnée bancaire stockée par DINVMIC. Stripe tokenise les données de paiement. Communications HTTPS. RLS Supabase sur la table transactions.</td>
         </tr>
       </table>
     </div>
@@ -456,7 +456,7 @@
               <li>Description du litige (texte libre)</li>
               <li>Photos et preuves partagées</li>
               <li>Historique de la transaction concernée</li>
-              <li>Décision prise par Transcolisgo (remboursement, suspension, etc.)</li>
+              <li>Décision prise par DINVMIC (remboursement, suspension, etc.)</li>
               <li>Échanges email avec le support (conservés pour traçabilité)</li>
             </ul>
           </td>
@@ -468,7 +468,7 @@
         <tr>
           <th>Destinataires</th>
           <td>
-            <span class="tag blue">Transcolisgo (équipe support interne)</span>
+            <span class="tag blue">DINVMIC (équipe support interne)</span>
             <span class="tag yellow">Autorités (en cas d'infraction pénale)</span>
           </td>
         </tr>
@@ -527,7 +527,7 @@
         <tr>
           <th>Destinataires</th>
           <td>
-            <span class="tag blue">Transcolisgo (sécurité interne)</span>
+            <span class="tag blue">DINVMIC (sécurité interne)</span>
             <span class="tag blue">Netlify (logs hébergement)</span>
             <span class="tag blue">Supabase (logs Auth)</span>
           </td>
@@ -583,7 +583,7 @@
         </tr>
         <tr>
           <th>Personnes concernées</th>
-          <td>Tous les visiteurs de la plateforme Transcolisgo</td>
+          <td>Tous les visiteurs de la plateforme DINVMIC</td>
         </tr>
         <tr>
           <th>Destinataires</th>
@@ -641,7 +641,7 @@
         </tr>
         <tr>
           <th>Destinataires</th>
-          <td><span class="tag blue">Transcolisgo (équipe produit)</span></td>
+          <td><span class="tag blue">DINVMIC (équipe produit)</span></td>
         </tr>
         <tr>
           <th>Transferts hors UE</th>
@@ -694,12 +694,12 @@
         </tr>
         <tr>
           <th>Personnes concernées</th>
-          <td>Passeurs ayant perçu des revenus via Transcolisgo</td>
+          <td>Passeurs ayant perçu des revenus via DINVMIC</td>
         </tr>
         <tr>
           <th>Destinataires</th>
           <td>
-            <span class="tag blue">Transcolisgo (comptabilité)</span>
+            <span class="tag blue">DINVMIC (comptabilité)</span>
             <span class="tag yellow">Direction Générale des Finances Publiques (DGFiP) — si applicable</span>
             <span class="tag red">Autorités judiciaires (sur réquisition)</span>
           </td>
@@ -775,37 +775,37 @@
         <tr>
           <td>Accès aux données</td>
           <td>Art. 15</td>
-          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td><a href="mailto:privacy@dinvmic.fr">privacy@dinvmic.fr</a></td>
           <td>30 jours</td>
         </tr>
         <tr>
           <td>Rectification</td>
           <td>Art. 16</td>
-          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a> ou app</td>
+          <td><a href="mailto:privacy@dinvmic.fr">privacy@dinvmic.fr</a> ou app</td>
           <td>30 jours</td>
         </tr>
         <tr>
           <td>Effacement</td>
           <td>Art. 17</td>
-          <td>Paramètres de l'app ou <a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td>Paramètres de l'app ou <a href="mailto:privacy@dinvmic.fr">privacy@dinvmic.fr</a></td>
           <td>30 jours</td>
         </tr>
         <tr>
           <td>Limitation du traitement</td>
           <td>Art. 18</td>
-          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td><a href="mailto:privacy@dinvmic.fr">privacy@dinvmic.fr</a></td>
           <td>30 jours</td>
         </tr>
         <tr>
           <td>Portabilité</td>
           <td>Art. 20</td>
-          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td><a href="mailto:privacy@dinvmic.fr">privacy@dinvmic.fr</a></td>
           <td>30 jours</td>
         </tr>
         <tr>
           <td>Opposition</td>
           <td>Art. 21</td>
-          <td><a href="mailto:privacy@kolisgo.fr">privacy@kolisgo.fr</a></td>
+          <td><a href="mailto:privacy@dinvmic.fr">privacy@dinvmic.fr</a></td>
           <td>30 jours</td>
         </tr>
         <tr>
@@ -826,7 +826,7 @@
 </div>
 
 <footer>
-  © 2026 Transcolisgo · <a href="/politique-confidentialite.html">Politique de confidentialité</a> · <a href="/cgu.html">CGU</a> · Registre RGPD Art. 30
+  © 2026 DINVMIC · <a href="/politique-confidentialite.html">Politique de confidentialité</a> · <a href="/cgu.html">CGU</a> · Registre RGPD Art. 30
 </footer>
 
 </body>

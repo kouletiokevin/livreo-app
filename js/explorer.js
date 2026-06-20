@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   KOLISGO — Module Explorer
+   DINVMIC — Module Explorer
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -198,7 +198,7 @@ async function openDetail(id) {
       <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Format</div><div style="font-weight:800;font-size:.84rem;">${fmt}</div></div>
       <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Poids</div><div style="font-weight:800;font-size:.84rem;">${poids}</div></div>
       <div style="background:var(--cream);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Date</div><div style="font-weight:800;font-size:.84rem;">${dt}</div></div>
-      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${prix.toFixed(2).replace('.',',')}€</div><div style="font-size:.6rem;color:var(--muted);margin-top:3px;">Vous recevez ${(prix*0.85).toFixed(2).replace('.',',')} € net (après commission Transcolisgo 15 %)</div></div>
+      <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px;"><div style="font-size:.6rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Rémunération</div><div style="font-weight:900;font-size:1.05rem;color:var(--g500);">${prix.toFixed(2).replace('.',',')}€</div><div style="font-size:.6rem;color:var(--muted);margin-top:3px;">Vous recevez ${(prix*0.85).toFixed(2).replace('.',',')} € net (après commission DINVMIC 15 %)</div></div>
     </div>
     ${logged ? `
       <div onclick="closeSheet();voirProfilPublic('${col.expediteur_id}')" style="background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r);padding:12px;margin-bottom:11px;cursor:pointer;">

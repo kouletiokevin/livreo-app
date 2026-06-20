@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   KOLISGO — Module Messagerie
+   DINVMIC — Module Messagerie
    Version 1.0 — Juin 2026
 ═══════════════════════════════════════ */
 
