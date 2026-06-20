@@ -252,7 +252,7 @@ async function publishColis() {
       prix:             prix,
       destinataire_nom: rnom,
       destinataire_tel: rtel,
-      statut:           'en_attente',
+      statut:           'en_verification',
     };
 
     const { data: colis, error: colisErr } = await db
@@ -282,6 +282,15 @@ async function publishColis() {
       }
       if (urls.length) await db.from('colis').update({ photos_contenu_urls: urls }).eq('id', colis.id);
     }
+
+    // 3.5 Analyse IA automatique (moderation) avant publication
+    let _statutFinal = 'en_attente';
+    try {
+      const { data: _ia } = await db.functions.invoke('analyser-colis', { body: { colis_id: colis.id } });
+      if (_ia && _ia.suspect === true) _statutFinal = 'en_verification';
+    } catch (_e) { /* IA indisponible : on publie quand meme */ }
+    await db.from('colis').update({ statut: _statutFinal }).eq('id', colis.id);
+    const _enVerif = (_statutFinal === 'en_verification');
 
     // 4. Paiement selon le moyen choisi
     if (moyen_paiement === 'carte') {
@@ -319,7 +328,7 @@ async function publishColis() {
     const cont = document.getElementById('content');
     if (cont) cont.scrollTop = 0;
 
-    t('Kolis publié ! Code : ' + codeLvr + ' 🎉', 's');
+    t(_enVerif ? 'Annonce reçue ! Vérification rapide en cours avant publication.' : ('Kolis publié ! Code : ' + codeLvr + ' 🎉'), 's');
     if (typeof celebrate === 'function') celebrate();
 
     // 7. Proposer boost après 1.5s

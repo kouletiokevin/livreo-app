@@ -839,6 +839,7 @@ async function openColisDetail(id){
         <div style="color:#a1a1aa;font-size:.74rem;">${escHtml(c.destinataire_tel||'')}</div>
       </div>
     </div>
+    ${c.livreur_id?`<div style="background:#18181b;border:1px solid #27272a;border-radius:10px;padding:10px;margin-bottom:12px;"><div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:#71717a;margin-bottom:4px;">Passeur</div><div style="font-weight:700;font-size:.84rem;">${escHtml(((liv.prenom||'')+' '+(liv.nom||'')).trim()||'—')}</div><div style="color:#a1a1aa;font-size:.74rem;">${escHtml(liv.email||'')}</div><div style="color:#a1a1aa;font-size:.74rem;">${escHtml(liv.telephone||'')}</div></div>`:''}
     <div style="background:#18181b;border:1px solid #27272a;border-radius:10px;padding:12px;margin-bottom:12px;">
       <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:#71717a;margin-bottom:8px;">Timeline</div>
       <div style="font-size:.82rem;line-height:1.9;">
@@ -848,6 +849,7 @@ async function openColisDetail(id){
       </div>
     </div>
     <div style="font-size:.74rem;color:#71717a;margin-bottom:14px;">Photos contenu privées : ${nbContenu} · Billet : ${c.billet_verifie===true?'✅ vérifié':c.billet_verifie===false?'❌ refusé':'—'}</div>
+    ${(c.statut==='en_verification'||c.ia_suspect)?`<button class="btn" style="width:100%;margin-bottom:8px;background:#16a34a;border-color:#16a34a;" onclick="publierColisAdmin('${c.id}')">✅ Approuver et publier</button>`:''}
     <button class="btn" style="width:100%;margin-bottom:8px;background:#2563eb;border-color:#2563eb;" onclick="analyserColisIA('${c.id}')">🤖 Analyser les photos avec l'IA</button>
     <button class="btn btn-danger" style="width:100%;" onclick="deleteColis('${c.id}','${escHtml(c.code_lvr||'')}')">🗑 Supprimer ce colis (modération)</button>
   `;
@@ -867,6 +869,12 @@ async function analyserColisIA(id){
   if(error||(data&&data.error)){toast('Erreur IA : '+((error&&error.message)||(data&&data.error)||'echec'),6000);return;}
   toast(data&&data.suspect?'⚠️ Colis jugé suspect par l\'IA':'✅ Colis jugé OK par l\'IA',5000);
   openColisDetail(id);
+}
+
+async function publierColisAdmin(id){
+  const {data,error}=await db.rpc('admin_publier_colis',{p_colis_id:id});
+  if(error||!(data&&data.success)){toast('Erreur : '+((error&&error.message)||(data&&data.error)||'echec'));return;}
+  toast('Colis publié ✅');openColisDetail(id);if(typeof loadKolis==='function')loadKolis();
 }
 
 // ── TRANSACTIONS ───────────────────────────────────────
