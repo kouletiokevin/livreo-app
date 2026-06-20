@@ -207,7 +207,7 @@ async function openDetail(id) {
         <div style="font-size:.7rem;color:var(--muted);margin-top:2px;">Contenu détaillé visible après acceptation · Messagerie intégrée</div>
       </div>
       ${col.statut === 'en_attente'
-        ? `<button class="btn p full" onclick="accepterC(${codeLvrJs})">🤝 Accepter de livrer ce colis</button>`
+        ? `<button class="btn p full" onclick="seProposer(${codeLvrJs})">🤝 Me proposer pour livrer</button>`
         : `<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:var(--r);padding:14px;text-align:center;font-size:.84rem;font-weight:700;color:#166534;">✅ Ce colis a déjà un passeur assigné</div>`
       }
     ` : `
@@ -384,6 +384,32 @@ async function confirmerPassage(colisId) {
     t('Erreur : ' + e.message, 'e');
     if (btn) { btn.textContent = 'CONFIRMER LE PASSAGE →'; btn.disabled = false; }
   }
+}
+
+// ── Candidature : se proposer pour livrer un colis ──
+function seProposer(id){
+  if(!user){ t('Connectez-vous pour vous proposer','e'); return; }
+  openSheet(`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-size:1rem;font-weight:900;">🤝 Me proposer</div>
+      <button onclick="closeSheet()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);padding:4px 8px;">✕</button>
+    </div>
+    <div style="font-size:.84rem;color:var(--muted);line-height:1.55;margin-bottom:18px;background:var(--cream);padding:12px 14px;border-radius:var(--r);">
+      Tu proposes de transporter ce colis. <strong>L'expéditeur recevra ta proposition</strong> et choisira son passeur parmi les personnes intéressées. Tu seras notifié si tu es choisi.
+    </div>
+    <button id="cand-btn" onclick="envoyerCandidature('${String(id).replace(/[^A-Za-z0-9_-]/g,'')}')" class="btn p full" style="font-size:.88rem;font-weight:900;">Envoyer ma proposition →</button>
+  `);
+}
+async function envoyerCandidature(id){
+  const btn=document.getElementById('cand-btn'); if(btn){btn.textContent='Envoi…';btn.disabled=true;}
+  try{
+    const { data, error } = await db.rpc('proposer_candidature', { p_code_lvr: id });
+    if(error) throw new Error(error.message);
+    if(data && data.success===false) throw new Error(data.error||'Impossible');
+    closeSheet();
+    t(data&&data.already ? 'Tu t\'étais déjà proposé ✓' : 'Proposition envoyée ✅ — l\'expéditeur va choisir','s');
+    if(typeof celebrate==='function' && !(data&&data.already)) celebrate();
+  }catch(e){ t('Erreur : '+e.message,'e'); if(btn){btn.textContent='Envoyer ma proposition →';btn.disabled=false;} }
 }
 
 // ── Profil public (confidentialité : aucune info perso) ──

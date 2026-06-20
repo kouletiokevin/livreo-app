@@ -482,25 +482,6 @@
       </div>
     </div>
 
-    <!-- KPIs -->
-    <div class="krow" style="margin-top:12px;">
-      <div class="kpi" style="cursor:pointer;" onclick="voirColisEnvoyes()"><div class="kl">Colis envoyés</div><div class="kv g" id="kpi-envoyes">0</div></div>
-      <div class="kpi" style="cursor:pointer;" onclick="voirPassages()"><div class="kl">Passages</div><div class="kv g" id="kpi-livraisons">0</div></div>
-      <div class="kpi" style="cursor:pointer;" onclick="voirGains()"><div class="kl">Gains totaux</div><div class="kv g" id="kpi-gains">0€</div></div>
-      <div class="kpi" style="cursor:pointer;" onclick="voirAvis()"><div class="kl">Ma note</div><div class="kv" id="kpi-note">—</div></div>
-    </div>
-
-    <!-- REÇUS & TICKETS -->
-    <div style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:16px;margin-top:14px;margin-bottom:4px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div style="font-size:.82rem;font-weight:900;">🧾 Mes reçus de paiement</div>
-        <button onclick="voirTousRecus()" style="font-size:.68rem;font-weight:700;color:var(--g500);background:none;border:none;cursor:pointer;">Tout voir →</button>
-      </div>
-      <div id="recus-list" style="display:flex;flex-direction:column;gap:8px;">
-        <div style="text-align:center;padding:16px 0;font-size:.78rem;color:var(--muted);">Chargement des reçus…</div>
-      </div>
-    </div>
-
     <!-- ACTIVITÉ RÉCENTE -->
     <div class="tc-table">
       <div class="tc-top"><h3>Activité récente</h3><button style="font-size:.7rem;color:var(--g500);background:none;border:none;cursor:pointer;font-weight:700;">Tout voir →</button></div>
@@ -855,6 +836,28 @@
         <span id="badge-certifie" style="display:none;background:rgba(37,99,235,.2);border:1px solid rgba(37,99,235,.4);color:#93c5fd;font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;">🏅 Certifié</span>
         <span style="background:rgba(34,168,87,.2);border:1px solid rgba(34,168,87,.3);color:var(--g200);font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:50px;" id="badge-livr">⭐ — · — passage</span>
       </div>
+    </div>
+  </div>
+
+  <!-- MON ACTIVITÉ (déplacé depuis l'accueil) -->
+  <div class="fcard" style="margin-bottom:10px;">
+    <div class="fc-lbl">📊 Mon activité</div>
+    <div class="krow">
+      <div class="kpi" style="cursor:pointer;" onclick="voirColisEnvoyes()"><div class="kl">Colis envoyés</div><div class="kv g" id="kpi-envoyes">0</div></div>
+      <div class="kpi" style="cursor:pointer;" onclick="voirPassages()"><div class="kl">Passages</div><div class="kv g" id="kpi-livraisons">0</div></div>
+      <div class="kpi" style="cursor:pointer;" onclick="voirGains()"><div class="kl">Gagné</div><div class="kv g" id="kpi-gains">0€</div></div>
+      <div class="kpi" style="cursor:pointer;" onclick="voirAvis()"><div class="kl">Ma note</div><div class="kv" id="kpi-note">—</div></div>
+    </div>
+    <div class="kpi" style="margin-top:8px;"><div class="kl">Total dépensé (vos envois)</div><div class="kv" id="kpi-depense">0€</div></div>
+  </div>
+
+  <div class="fcard" style="margin-bottom:10px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="fc-lbl" style="margin:0;">🧾 Mes reçus de paiement</div>
+      <button onclick="voirTousRecus()" style="font-size:.68rem;font-weight:700;color:var(--g500);background:none;border:none;cursor:pointer;">Tout voir →</button>
+    </div>
+    <div id="recus-list" style="display:flex;flex-direction:column;gap:8px;">
+      <div style="text-align:center;padding:16px 0;font-size:.78rem;color:var(--muted);">Chargement des reçus…</div>
     </div>
   </div>
 

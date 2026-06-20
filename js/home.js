@@ -209,6 +209,7 @@ async function voirColisEnvoyes() {
             <div style="font-size:.78rem;font-weight:800;color:var(--g500);">${parseFloat(c.prix).toFixed(2).replace('.',',')}€</div>
             <div style="font-size:.68rem;color:var(--muted);margin-bottom:3px;">${_dtFr(c.date_souhaitee || c.created_at)}</div>
             ${_statutLabel(c.statut)}
+            ${c.statut==='en_attente' ? `<div style="margin-top:5px;"><button onclick="choisirPasseur('${String(c.code_lvr).replace(/[^A-Za-z0-9_-]/g,'')}')" style="background:var(--g500);border:none;color:#fff;font-size:.62rem;font-weight:800;cursor:pointer;padding:3px 10px;border-radius:50px;">👥 Choisir le passeur</button></div>` : ''}
             ${['en_attente','livreur_accepte','en_transit'].includes(c.statut) ? `<div style="margin-top:5px;"><button onclick="annulerColisUI('${String(c.code_lvr).replace(/[^A-Za-z0-9_-]/g,'')}')" style="background:none;border:1px solid var(--danger);color:var(--danger);font-size:.62rem;font-weight:800;cursor:pointer;padding:3px 10px;border-radius:50px;">Annuler</button></div>` : ''}
           </div>
         </div>`).join('');
@@ -217,6 +218,54 @@ async function voirColisEnvoyes() {
   } catch(e) {
     openSheet(_shHdr('📦 Colis envoyés') + _emptyMsg('Impossible de charger les données'));
   }
+}
+
+// ── Choisir le passeur (expéditeur) ──────
+async function choisirPasseur(codeLvr){
+  if(!user) return;
+  openSheet(_shHdr('👥 Choisir le passeur') + `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">Chargement…</div>`);
+  try{
+    const { data, error } = await db.rpc('lister_candidatures', { p_code_lvr: codeLvr });
+    if(error || !data || data.error) throw new Error((data&&data.error)||'indisponible');
+    const list = data.candidats || [];
+    let html = _shHdr('👥 Choisir le passeur');
+    if(!list.length){
+      html += _emptyMsg('Aucun passeur ne s\'est encore proposé. Reviens un peu plus tard !');
+    } else {
+      html += `<div style="font-size:.74rem;color:var(--muted);margin-bottom:10px;">${list.length} passeur(s) intéressé(s) · choisis-en un seul.</div>`;
+      html += list.map(c=>{
+        const note = c.note_moyenne>0 ? '⭐'+parseFloat(c.note_moyenne).toFixed(1) : 'Nouveau';
+        const certif = c.is_certified ? badgeBleuSVG(15) : '';
+        return `<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);">
+          <div style="width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--g300),var(--g500));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;flex-shrink:0;">${escapeHtml((c.prenom||'?')[0].toUpperCase())}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:.84rem;font-weight:800;">${escapeHtml(c.prenom||'Passeur')} ${certif}</div>
+            <div style="font-size:.7rem;color:var(--muted);">${c.ville?escapeHtml(c.ville)+' · ':''}${c.nb_livraisons||0} livraison(s) · ${note}</div>
+          </div>
+          <button onclick="validerPasseur('${codeLvr}','${String(c.passeur_id)}')" class="btn p" style="padding:6px 14px;font-size:.74rem;flex-shrink:0;">Choisir</button>
+        </div>`;
+      }).join('');
+    }
+    openSheet(html);
+  }catch(e){ openSheet(_shHdr('👥 Choisir le passeur') + _emptyMsg('Impossible de charger les passeurs')); }
+}
+async function validerPasseur(codeLvr, passeurId){
+  if(!confirm('Choisir ce passeur pour livrer le colis ?\nLes autres passeurs seront informés que le colis est attribué.')) return;
+  try{
+    const { data:{session} } = await db.auth.getSession();
+    if(!session) throw new Error('Session expirée, reconnectez-vous');
+    const res = await fetchWithTimeout(`${SUPA_URL}/functions/v1/accepter-colis`, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+session.access_token },
+      body: JSON.stringify({ code_lvr: codeLvr, livreur_id: passeurId })
+    }, 15000);
+    const r = await res.json();
+    if(!r.success) throw new Error(r.error||'Réessayez dans un instant');
+    closeSheet();
+    t('Passeur choisi ✅ — il a été notifié','s');
+    if(typeof celebrate==='function') celebrate();
+    if(typeof voirColisEnvoyes==='function') voirColisEnvoyes();
+  }catch(e){ t('Erreur : '+e.message,'e'); }
 }
 
 // ── Card "Passages" ──────────────────────
@@ -340,6 +389,12 @@ async function chargerKPIs(userId, profil) {
   set('kpi-livraisons', nbLivraisons);
   set('kpi-gains',      gains.toFixed(0) + '€');
   set('kpi-note',       note > 0 ? note.toFixed(1) + '⭐' : 'Pas encore de note ⭐');
+
+  try {
+    const { data: depData } = await db.from('transactions').select('montant').eq('expediteur_id', userId).in('statut', ['escrow', 'libere']);
+    const depense = (depData || []).reduce((sum, tx) => sum + parseFloat(tx.montant || 0), 0);
+    set('kpi-depense', depense.toFixed(0) + '€');
+  } catch (_e) { set('kpi-depense', '0€'); }
 
   // ── Impact : économies vs La Poste + CO₂ évité (estimations) ──
   const nEnv = nbEnvoyes || 0;
