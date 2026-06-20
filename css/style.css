@@ -605,3 +605,4 @@ body:not(.no-botnav) #partners-sticky { display: none !important; }
 @media (min-width: 900px) {
   .screen { max-width: 760px; margin-left: auto; margin-right: auto; }
 }
+@keyframes introOut{to{opacity:0;visibility:hidden;pointer-events:none}}

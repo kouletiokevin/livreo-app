@@ -452,3 +452,10 @@ if ('serviceWorker' in navigator) {
     } catch (e) { console.log('SW:', e.message); }
   });
 }
+
+
+// -- Animation d'ouverture : disparition auto --
+setTimeout(function(){
+  var intro=document.getElementById('intro-anim');
+  if(intro){ intro.style.transition='opacity .45s ease'; intro.style.opacity='0'; setTimeout(function(){ if(intro&&intro.parentNode) intro.remove(); },460); }
+}, 1300);

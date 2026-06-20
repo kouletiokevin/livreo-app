@@ -110,6 +110,16 @@
 <div id="toasts"></div>
 
 <!-- ════ SPLASH SCREEN ════ -->
+<div id="intro-anim" style="position:fixed;inset:0;z-index:99999;background:#0e1a10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:introOut .6s ease 1.5s forwards;">
+  <svg width="90" height="90" viewBox="0 0 46 46" style="animation:kgIconIn .45s cubic-bezier(.34,1.56,.64,1) both;">
+    <rect width="46" height="46" rx="12" fill="#1f9d57"/>
+    <path d="M8 17H27V11L40 23 27 35V29H8Z" fill="#ffffff"/>
+    <text x="16.5" y="27" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="11" fill="#e63329">go</text>
+  </svg>
+  <div style="font-family:Arial,sans-serif;font-size:1.7rem;font-weight:900;color:#fff;letter-spacing:-.5px;animation:kgLetterIn .5s ease .25s both;">Transcolisgo</div>
+  <div style="font-size:.78rem;color:rgba(255,255,255,.55);animation:kgLetterIn .5s ease .42s both;">Vos colis voyagent en train 🚆</div>
+</div>
+
 <div id="splash" style="display:none">
   <div class="rail-wrap">
     <div style="position:relative;height:26px;">
