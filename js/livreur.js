@@ -53,7 +53,7 @@ function openLivrFlow(ref, trajet, train, dest, prix, colisId = null, expediteur
           <div class="check-list">
             <div class="ci"><input type="checkbox" id="c1" onchange="checkAll()"><label for="c1">Le destinataire est bien ${eDest}</label></div>
             <div class="ci"><input type="checkbox" id="c2" onchange="checkAll()"><label for="c2">L'emballage est intact, aucun dommage visible</label></div>
-            <div class="ci"><input type="checkbox" id="c3" onchange="checkAll()"><label for="c3">Le kolis correspond bien à la référence ${eRef}</label></div>
+            <div class="ci"><input type="checkbox" id="c3" onchange="checkAll()"><label for="c3">Le colis correspond bien à la référence ${eRef}</label></div>
           </div>
         </div>
       </div>

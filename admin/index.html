@@ -191,7 +191,7 @@ select.role-sel:focus{border-color:var(--border2);}
 
       <div class="nav-section">Gestion</div>
       <div class="nav-item" onclick="nav('users',this)"><span class="icon">👥</span>Utilisateurs<span class="nav-badge" id="nb-users" style="display:none;">!</span></div>
-      <div class="nav-item" onclick="nav('kolis',this)"><span class="icon">📦</span>Kolis</div>
+      <div class="nav-item" onclick="nav('colis',this)"><span class="icon">📦</span>Colis</div>
       <div class="nav-item" onclick="nav('transactions',this)"><span class="icon">💳</span>Transactions</div>
       <div class="nav-item" onclick="nav('litiges',this)"><span class="icon">⚖️</span>Litiges<span class="nav-badge" id="nb-litiges" style="display:none;"></span></div>
       <div class="nav-item" onclick="nav('verifications',this)"><span class="icon">🪪</span>Vérifications<span class="nav-badge" id="nb-verifs" style="display:none;"></span></div>
@@ -214,16 +214,16 @@ select.role-sel:focus{border-color:var(--border2);}
         <div class="page-title">Vue d'ensemble <span style="font-size:.75rem;font-weight:400;color:var(--muted);margin-left:6px;">Aujourd'hui · <span id="today-date"></span></span></div>
         <div class="kpi-grid">
           <div class="kpi" onclick="goKpi('users')"><span class="kpi-ico">👥</span><div class="kpi-val" id="k-users"><span class="skel" style="width:36px"></span></div><div class="kpi-label">Utilisateurs</div><div class="kpi-sub" id="k-users-sub"></div></div>
-          <div class="kpi" onclick="goKpi('kolis')"><span class="kpi-ico">📦</span><div class="kpi-val amber" id="k-pending"><span class="skel" style="width:28px"></span></div><div class="kpi-label">En attente</div></div>
-          <div class="kpi" onclick="goKpi('kolis')"><span class="kpi-ico">✅</span><div class="kpi-val" id="k-done"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Livrés</div></div>
+          <div class="kpi" onclick="goKpi('colis')"><span class="kpi-ico">📦</span><div class="kpi-val amber" id="k-pending"><span class="skel" style="width:28px"></span></div><div class="kpi-label">En attente</div></div>
+          <div class="kpi" onclick="goKpi('colis')"><span class="kpi-ico">✅</span><div class="kpi-val" id="k-done"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Livrés</div></div>
           <div class="kpi" onclick="goKpi('transactions')"><span class="kpi-ico">💳</span><div class="kpi-val" id="k-tx"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Transactions</div></div>
           <div class="kpi green" onclick="goKpi('transactions')"><span class="kpi-ico">💰</span><div class="kpi-val green" id="k-rev"><span class="skel" style="width:52px"></span></div><div class="kpi-label">Revenus (15%)</div></div>
         </div>
 
         <div class="charts-row">
           <div class="chart-card">
-            <div class="chart-title">Kolis publiés — 14 derniers jours</div>
-            <div class="chart-wrap"><canvas id="chart-kolis" height="140"></canvas></div>
+            <div class="chart-title">Colis publiés — 14 derniers jours</div>
+            <div class="chart-wrap"><canvas id="chart-colis" height="140"></canvas></div>
           </div>
           <div class="chart-card">
             <div class="chart-title">Répartition paiements</div>
@@ -238,9 +238,9 @@ select.role-sel:focus{border-color:var(--border2);}
             <tbody id="t-recent-users"></tbody></table>
           </div>
           <div class="card">
-            <div class="card-header"><span class="card-header-title">Derniers kolis</span></div>
+            <div class="card-header"><span class="card-header-title">Derniers colis</span></div>
             <table><thead><tr><th>Destination</th><th>Prix</th><th>Statut</th></tr></thead>
-            <tbody id="t-recent-kolis"></tbody></table>
+            <tbody id="t-recent-colis"></tbody></table>
           </div>
         </div>
       </div>
@@ -253,7 +253,7 @@ select.role-sel:focus{border-color:var(--border2);}
         </div>
         <div class="charts-row">
           <div class="chart-card"><div class="chart-title">Revenus quotidiens (€)</div><canvas id="chart-revenue" height="160"></canvas></div>
-          <div class="chart-card"><div class="chart-title">Kolis par statut</div><canvas id="chart-statuts" height="160"></canvas></div>
+          <div class="chart-card"><div class="chart-title">Colis par statut</div><canvas id="chart-statuts" height="160"></canvas></div>
         </div>
       </div>
 
@@ -270,12 +270,12 @@ select.role-sel:focus{border-color:var(--border2);}
         </div>
       </div>
 
-      <!-- KOLIS -->
-      <div class="page" id="page-kolis">
-        <div class="page-title">Kolis</div>
+      <!-- COLIS -->
+      <div class="page" id="page-colis">
+        <div class="page-title">Colis</div>
         <div class="card">
           <table><thead><tr><th>Réf</th><th>Destination</th><th>Expéditeur</th><th>Prix</th><th>Paiement</th><th>Statut</th><th>Billet</th><th>Date</th></tr></thead>
-          <tbody id="t-kolis"></tbody></table>
+          <tbody id="t-colis"></tbody></table>
         </div>
       </div>
 
@@ -307,11 +307,11 @@ select.role-sel:focus{border-color:var(--border2);}
               <span class="bdg bdg-violet">admin</span>
             </div>
             <div class="setting-row">
-              <div class="setting-info"><div class="setting-label">🛡️ Modérateur</div><div class="setting-desc">Peut gérer les kolis et utilisateurs, suspendre des comptes, valider des annonces</div></div>
+              <div class="setting-info"><div class="setting-label">🛡️ Modérateur</div><div class="setting-desc">Peut gérer les colis et utilisateurs, suspendre des comptes, valider des annonces</div></div>
               <span class="bdg bdg-blue">moderateur</span>
             </div>
             <div class="setting-row">
-              <div class="setting-info"><div class="setting-label">👤 Utilisateur</div><div class="setting-desc">Accès standard — poster et suivre des kolis, être passeur</div></div>
+              <div class="setting-info"><div class="setting-label">👤 Utilisateur</div><div class="setting-desc">Accès standard — poster et suivre des colis, être passeur</div></div>
               <span class="bdg bdg-muted">user</span>
             </div>
           </div>
@@ -441,7 +441,7 @@ select.role-sel:focus{border-color:var(--border2);}
             <div class="setting-action" style="display:flex;align-items:center;gap:8px;"><strong style="font-size:1.1rem;color:var(--green);">15%</strong><span class="bdg bdg-green">actif</span></div>
           </div>
           <div class="setting-row">
-            <div class="setting-info"><div class="setting-label">Prix minimum d'un kolis</div><div class="setting-desc">Prix plancher conseillé affiché lors de la publication</div></div>
+            <div class="setting-info"><div class="setting-label">Prix minimum d'un colis</div><div class="setting-desc">Prix plancher conseillé affiché lors de la publication</div></div>
             <div class="setting-action"><strong style="font-size:1rem;color:var(--text);">7 €</strong></div>
           </div>
           <div class="setting-row">
@@ -662,13 +662,13 @@ async function loadDashboard(){
   const rev = (allK.data||[]).reduce((s,k)=>s+(parseFloat(k.prix||0)*.15),0);
   document.getElementById('k-rev').textContent = rev.toFixed(2)+'€';
 
-  // Chart kolis 14 jours
+  // Chart colis 14 jours
   const days14 = buildDays(14);
   const colisMap = {};
   (allK.data||[]).forEach(k=>{
     const d=k.created_at?.substring(0,10); if(d)colisMap[d]=(colisMap[d]||0)+1;
   });
-  renderLine('chart-kolis', days14.labels, days14.keys.map(k=>colisMap[k]||0), '#22c55e', 'Kolis');
+  renderLine('chart-colis', days14.labels, days14.keys.map(k=>colisMap[k]||0), '#22c55e', 'Colis');
 
   // Chart paiements
   const payMap={carte:0,crypto:0,especes:0,autre:0};
@@ -686,13 +686,13 @@ async function loadDashboard(){
     <td>${bdg(u.statut||'actif')}</td><td style="color:var(--muted2)">${fmt(u.created_at)}</td>
   </tr>`).join(''):empty(3,'Aucun inscrit');
 
-  // Derniers kolis
+  // Derniers colis
   const {data:rk}=await db.from('colis').select('gare_arrivee,prix,statut,created_at').order('created_at',{ascending:false}).limit(6);
-  document.getElementById('t-recent-kolis').innerHTML=(rk||[]).length?(rk||[]).map(c=>`<tr>
+  document.getElementById('t-recent-colis').innerHTML=(rk||[]).length?(rk||[]).map(c=>`<tr>
     <td class="td-primary">${c.gare_arrivee||'—'}</td>
     <td style="color:var(--green);font-weight:800">${money(c.prix)}</td>
     <td>${bdg(c.statut)}</td>
-  </tr>`).join(''):empty(3,'Aucun kolis');
+  </tr>`).join(''):empty(3,'Aucun colis');
 }
 
 // ── ANALYTICS ──────────────────────────────────────────
@@ -710,14 +710,14 @@ async function loadAnalytics(){
   renderLine('chart-users',days30.labels,days30.keys.map(k=>uMap[k]||0),'#3b82f6','Inscriptions');
 
   // Revenus 30j
-  const {data:kolisRaw}=await db.from('colis').select('created_at,prix').order('created_at',{ascending:false}).limit(500);
+  const {data:colisRaw}=await db.from('colis').select('created_at,prix').order('created_at',{ascending:false}).limit(500);
   const rMap={};
-  (kolisRaw||[]).forEach(k=>{const d=k.created_at?.substring(0,10);if(d)rMap[d]=(rMap[d]||0)+(parseFloat(k.prix||0)*.15);});
+  (colisRaw||[]).forEach(k=>{const d=k.created_at?.substring(0,10);if(d)rMap[d]=(rMap[d]||0)+(parseFloat(k.prix||0)*.15);});
   renderBar('chart-revenue',days30.labels,days30.keys.map(k=>parseFloat((rMap[k]||0).toFixed(2))),'#22c55e');
 
-  // Kolis par statut
+  // Colis par statut
   const statusMap={en_attente:0,accepte:0,livre:0,annule:0};
-  (kolisRaw||[]).forEach(k=>{const s=k.statut||'autre';if(statusMap[s]!==undefined)statusMap[s]++;});
+  (colisRaw||[]).forEach(k=>{const s=k.statut||'autre';if(statusMap[s]!==undefined)statusMap[s]++;});
   renderDoughnut('chart-statuts',
     ['En attente','Accepté','Livré','Annulé'],
     [statusMap.en_attente,statusMap.accepte,statusMap.livre,statusMap.annule],
@@ -788,10 +788,10 @@ async function setRole(userId, role){
   toast('Rôle mis à jour ✅');
 }
 
-// ── KOLIS ──────────────────────────────────────────────
-async function loadKolis(){
+// ── COLIS ──────────────────────────────────────────────
+async function loadColis(){
   const {data}=await db.from('colis').select('*').order('created_at',{ascending:false}).limit(150);
-  document.getElementById('t-kolis').innerHTML=(data||[]).length?(data||[]).map(c=>`<tr style="cursor:pointer" onclick="openColisDetail('${c.id}')">
+  document.getElementById('t-colis').innerHTML=(data||[]).length?(data||[]).map(c=>`<tr style="cursor:pointer" onclick="openColisDetail('${c.id}')">
     <td class="td-mono">${c.code_lvr||c.id?.substring(0,8)||'—'}</td>
     <td class="td-primary">${c.gare_arrivee||'—'}</td>
     <td style="color:var(--muted2)">${c.expediteur_id?.substring(0,8)||'—'}…</td>
@@ -800,7 +800,7 @@ async function loadKolis(){
     <td>${bdg(c.statut)}</td>
     <td>${c.billet_verifie===true?'<span class="bdg bdg-green" title="'+escHtml(c.billet_verif_detail||'')+'">✅ Vérifié</span>':c.billet_verifie===false?'<span class="bdg bdg-red" title="'+escHtml(c.billet_verif_detail||'')+'">❌ Refusé</span>':'<span class="bdg bdg-muted">—</span>'}</td>
     <td style="color:var(--muted2)">${fmt(c.created_at)}</td>
-  </tr>`).join(''):empty(8,'Aucun kolis');
+  </tr>`).join(''):empty(8,'Aucun colis');
 }
 
 // ── DÉTAIL COLIS (clic) + modération ───────────────────
@@ -860,7 +860,7 @@ async function deleteColis(id,code){
   if(error||!(data&&data.success)){toast('Erreur : '+((error&&error.message)||(data&&data.error)||'suppression impossible'));return;}
   toast('Colis supprimé ✅');
   closeColisModal();
-  loadKolis();
+  loadColis();
 }
 
 async function analyserColisIA(id){
@@ -874,7 +874,7 @@ async function analyserColisIA(id){
 async function publierColisAdmin(id){
   const {data,error}=await db.rpc('admin_publier_colis',{p_colis_id:id});
   if(error||!(data&&data.success)){toast('Erreur : '+((error&&error.message)||(data&&data.error)||'echec'));return;}
-  toast('Colis publié ✅');openColisDetail(id);if(typeof loadKolis==='function')loadKolis();
+  toast('Colis publié ✅');openColisDetail(id);if(typeof loadColis==='function')loadColis();
 }
 
 // ── TRANSACTIONS ───────────────────────────────────────
@@ -1263,7 +1263,7 @@ function nav(id,el){
   if(el)el.classList.add('on');
   const loaders={
     analytics:loadAnalytics,
-    kolis:loadKolis,
+    colis:loadColis,
     transactions:loadTx,
     moderators:loadMods,
     acquisition:loadAcquisition,

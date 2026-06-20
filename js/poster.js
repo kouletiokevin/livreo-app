@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   DINVMIC — Module Poster un kolis
+   DINVMIC — Module Poster un colis
    Version 2.0 — Juin 2026
 ═══════════════════════════════════════ */
 
@@ -241,7 +241,7 @@ async function publishColis() {
       villeDepart = geoData.address?.city || geoData.address?.town || geoData.address?.village || null;
     } catch(e) { /* refus ou timeout — on publie quand même */ }
 
-    // 1. Insérer le kolis en base
+    // 1. Insérer le colis en base
     const colisData = {
       expediteur_id:    user.id,
       gare_arrivee:     arr,
@@ -304,7 +304,7 @@ async function publishColis() {
     }
 
     if (moyen_paiement === 'crypto') {
-      t('Kolis publié ✅ — Envoyez le paiement crypto. Votre kolis sera activé dès réception.', 's');
+      t('Colis publié ✅ — Envoyez le paiement crypto. Votre colis sera activé dès réception.', 's');
     }
 
     // 5. Reset état
@@ -328,7 +328,7 @@ async function publishColis() {
     const cont = document.getElementById('content');
     if (cont) cont.scrollTop = 0;
 
-    t(_enVerif ? 'Annonce reçue ! Vérification rapide en cours avant publication.' : ('Kolis publié ! Code : ' + codeLvr + ' 🎉'), 's');
+    t(_enVerif ? 'Annonce reçue ! Vérification rapide en cours avant publication.' : ('Colis publié ! Code : ' + codeLvr + ' 🎉'), 's');
     if (typeof celebrate === 'function') celebrate();
 
     // 7. Proposer boost après 1.5s
@@ -339,7 +339,7 @@ async function publishColis() {
     // 8. SMS destinataire
     if (typeof envoyerSMS === 'function') {
       envoyerSMS(rtel,
-        'Bonjour ' + rnom + ' ! Un kolis vous est envoyé via DINVMIC. Votre code : ' + codeLvr + '. Suivez-le ici : https://kouletiokevin.github.io/livreo-app/?suivi=' + codeLvr + (colis.qr_secret ? '&k=' + encodeURIComponent(colis.qr_secret) : '')
+        'Bonjour ' + rnom + ' ! Un colis vous est envoyé via DINVMIC. Votre code : ' + codeLvr + '. Suivez-le ici : https://kouletiokevin.github.io/livreo-app/?suivi=' + codeLvr + (colis.qr_secret ? '&k=' + encodeURIComponent(colis.qr_secret) : '')
       );
     }
 
@@ -347,6 +347,6 @@ async function publishColis() {
     t('Erreur : ' + (e.message || 'Erreur inconnue'), 'e');
     console.error('publishColis:', e);
   } finally {
-    if (btn) { btn.textContent = 'Publier le kolis'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Publier le colis'; btn.disabled = false; }
   }
 }

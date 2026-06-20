@@ -57,8 +57,8 @@ async function loadCards(reset = true) {
       if (reset) g.innerHTML = `
         <div style="text-align:center;padding:40px 20px;">
           <div style="font-size:2.5rem;">📭</div>
-          <div style="font-weight:800;font-size:.95rem;margin-top:12px;">Aucun kolis disponible</div>
-          <div style="color:var(--muted);font-size:.8rem;margin-top:6px;">Soyez le premier à poster un kolis !</div>
+          <div style="font-weight:800;font-size:.95rem;margin-top:12px;">Aucun colis disponible</div>
+          <div style="color:var(--muted);font-size:.8rem;margin-top:6px;">Soyez le premier à poster un colis !</div>
         </div>`;
       return;
     }
@@ -121,7 +121,7 @@ async function loadCards(reset = true) {
     if (data.length === PAGE_SIZE) {
       g.insertAdjacentHTML('afterend',
         '<div id="load-more-wrap" style="text-align:center;padding:16px 0 24px;">'
-        + '<button id="load-more-btn" onclick="loadMore()" class="btn s" style="padding:10px 28px;">Voir plus de kolis</button>'
+        + '<button id="load-more-btn" onclick="loadMore()" class="btn s" style="padding:10px 28px;">Voir plus de colis</button>'
         + '</div>'
       );
     }
@@ -174,7 +174,7 @@ async function openDetail(id) {
   const badge      = col.expediteur_badge;
   const fmt        = escapeHtml(col.format || 'Colis');
   const poids      = escapeHtml(col.poids || '—');
-  const titre      = escapeHtml(col.titre || 'Kolis');
+  const titre      = escapeHtml(col.titre || 'Colis');
   const dep        = col.gare_depart ? escapeHtml(col.gare_depart) : 'À définir';
   const arr        = escapeHtml(col.gare_arrivee || '');
   const prix       = parseFloat(col.prix) || 0;
@@ -207,8 +207,8 @@ async function openDetail(id) {
         <div style="font-size:.7rem;color:var(--muted);margin-top:2px;">Contenu détaillé visible après acceptation · Messagerie intégrée</div>
       </div>
       ${col.statut === 'en_attente'
-        ? `<button class="btn p full" onclick="accepterC(${codeLvrJs})">🤝 Accepter de livrer ce kolis</button>`
-        : `<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:var(--r);padding:14px;text-align:center;font-size:.84rem;font-weight:700;color:#166534;">✅ Ce kolis a déjà un passeur assigné</div>`
+        ? `<button class="btn p full" onclick="accepterC(${codeLvrJs})">🤝 Accepter de livrer ce colis</button>`
+        : `<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:var(--r);padding:14px;text-align:center;font-size:.84rem;font-weight:700;color:#166534;">✅ Ce colis a déjà un passeur assigné</div>`
       }
     ` : `
       <div style="background:var(--ink);border-radius:var(--r);padding:16px;text-align:center;margin-bottom:11px;">
@@ -247,7 +247,7 @@ if (document.readyState === 'loading') {
   initRealtimeExplorer();
 }
 
-// ── Accepter un kolis — formulaire billet ─
+// ── Accepter un colis — formulaire billet ─
 let _accBilletFile = null;
 
 function accepterC(id) {

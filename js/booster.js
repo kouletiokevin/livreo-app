@@ -43,7 +43,7 @@ function afficherModalBoost(colisId, codeRef) {
     ">
       <div style="text-align:center;margin-bottom:4px;font-size:1.4rem;">⚡</div>
       <h2 style="text-align:center;font-size:1.05rem;font-weight:900;color:#0e1a10;margin-bottom:6px;">
-        Boostez votre kolis !
+        Boostez votre colis !
       </h2>
       <p style="text-align:center;font-size:.8rem;color:#6b7280;margin-bottom:20px;line-height:1.5;">
         Votre annonce <strong>${escapeHtml(codeRef)}</strong> sera mise en avant en tête de la liste,
@@ -87,7 +87,7 @@ function afficherModalBoost(colisId, codeRef) {
           color:#fff; border:none; border-radius:50px; font-family:var(--sans);
           font-size:.9rem; font-weight:900; cursor:pointer;
         ">
-        Booster mon kolis ⚡
+        Booster mon colis ⚡
       </button>
 
       <!-- Ignorer -->
@@ -277,7 +277,7 @@ async function confirmerBoost(colisId) {
 function _afficherSuccessBoost(price, until) {
   // Toast simple
   if (typeof t === 'function') {
-    t(`⚡ Boost activé ${price.label} ! Votre kolis est maintenant mis en avant${until ? ' jusqu\'au ' + until : ''}.`, 's');
+    t(`⚡ Boost activé ${price.label} ! Votre colis est maintenant mis en avant${until ? ' jusqu\'au ' + until : ''}.`, 's');
   }
 }
 
@@ -304,7 +304,7 @@ function fermerModalBoost() {
     // Notifier l'utilisateur
     setTimeout(() => {
       if (typeof t === 'function') {
-        t('⚡ Boost activé avec succès ! Votre kolis est en tête de liste.', 's');
+        t('⚡ Boost activé avec succès ! Votre colis est en tête de liste.', 's');
       }
     }, 800);
   }

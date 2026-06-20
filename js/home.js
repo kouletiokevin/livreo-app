@@ -90,7 +90,7 @@ async function annulerColisUI(code) {
     const { data, error } = await db.rpc('annuler_colis', { p_code_lvr: code });
     if (error || !data?.success) throw new Error(error?.message || data?.error || 'Echec');
     t(data.message || 'Colis annulé', data.penalite > 0 ? '' : 's');
-    if (typeof voirKolisEnvoyes === 'function') voirKolisEnvoyes();
+    if (typeof voirColisEnvoyes === 'function') voirColisEnvoyes();
   } catch (e) { t('Erreur : ' + e.message, 'e'); }
 }
 
@@ -184,10 +184,10 @@ function _emptyMsg(msg) {
   return `<div style="text-align:center;padding:32px 16px;color:var(--muted);font-size:.84rem;">${msg}</div>`;
 }
 
-// ── Card "Kolis envoyés" ─────────────────
-async function voirKolisEnvoyes() {
+// ── Card "Colis envoyés" ─────────────────
+async function voirColisEnvoyes() {
   if (!user) return;
-  openSheet(_shHdr('📦 Kolis envoyés') + `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">Chargement…</div>`);
+  openSheet(_shHdr('📦 Colis envoyés') + `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">Chargement…</div>`);
   try {
     const { data } = await db.from('colis')
       .select('code_lvr, gare_depart, gare_arrivee, date_souhaitee, statut, prix, created_at')
@@ -195,7 +195,7 @@ async function voirKolisEnvoyes() {
       .order('created_at', { ascending: false })
       .limit(50);
 
-    let html = _shHdr('📦 Kolis envoyés');
+    let html = _shHdr('📦 Colis envoyés');
     if (!data || !data.length) {
       html += _emptyMsg('Vous n\'avez encore rien envoyé');
     } else {
@@ -215,7 +215,7 @@ async function voirKolisEnvoyes() {
     }
     openSheet(html);
   } catch(e) {
-    openSheet(_shHdr('📦 Kolis envoyés') + _emptyMsg('Impossible de charger les données'));
+    openSheet(_shHdr('📦 Colis envoyés') + _emptyMsg('Impossible de charger les données'));
   }
 }
 
@@ -350,7 +350,7 @@ async function chargerKPIs(userId, profil) {
   const noteEl = document.getElementById('impact-note');
   if (noteEl) noteEl.textContent = nEnv > 0
     ? `Sur ${nEnv} envoi${nEnv > 1 ? 's' : ''} — merci de rendre la livraison plus verte 🌱`
-    : `Envoie ton 1er kolis : moins cher que La Poste et plus écolo 🌱`;
+    : `Envoie ton 1er colis : moins cher que La Poste et plus écolo 🌱`;
 }
 
 // ── Reçus de paiement ─────────────────────

@@ -1,7 +1,7 @@
 {
   "name": "DINVMIC",
   "short_name": "DINVMIC",
-  "description": "Quelqu'un prend le train. Votre kolis aussi.",
+  "description": "Quelqu'un prend le train. Votre colis aussi.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
