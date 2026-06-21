@@ -251,6 +251,7 @@ async function doScan(ref, dest, prix) {
 
   const input = document.getElementById('qr-man');
   const code  = input ? input.value.trim().toUpperCase() : ref;
+  const scannedSecret = _lastScannedQrSecret;
 
   // Vérification serveur du secret QR (si scan caméra)
   if (_lastScannedQrSecret) {
@@ -282,7 +283,8 @@ async function doScan(ref, dest, prix) {
       body: JSON.stringify({
         code_lvr:   code,
         livreur_id: user?.id,
-        photo_url:  _remisePhotoUrl
+        photo_url:  _remisePhotoUrl,
+        qr_secret:  scannedSecret
       })
     });
     const data = await res.json();
