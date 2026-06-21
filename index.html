@@ -387,6 +387,30 @@
 
     <!-- raccourcis retires : Publier = bouton central, Explorer = icone en haut a droite -->
 
+    <!-- STATS COMPACTES -->
+    <div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;">
+      <div onclick="voirColisEnvoyes()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
+        <div style="font-size:1.05rem;font-weight:900;color:var(--g500);line-height:1;" id="kpi-envoyes">0</div>
+        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Envoyés</div>
+      </div>
+      <div onclick="voirPassages()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
+        <div style="font-size:1.05rem;font-weight:900;color:var(--g500);line-height:1;" id="kpi-livraisons">0</div>
+        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Passages</div>
+      </div>
+      <div onclick="voirGains()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
+        <div style="font-size:1.05rem;font-weight:900;color:var(--g500);line-height:1;" id="kpi-gains">0€</div>
+        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Gagné</div>
+      </div>
+      <div style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;">
+        <div style="font-size:1.05rem;font-weight:900;line-height:1;" id="kpi-depense">0€</div>
+        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Dépensé</div>
+      </div>
+      <div onclick="voirTousRecus()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
+        <div style="font-size:1.05rem;font-weight:900;line-height:1;">🧾</div>
+        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Reçus</div>
+      </div>
+    </div>
+
     <!-- PORTEFEUILLE -->
     <div style="background:linear-gradient(135deg,var(--ink2),var(--ink));border-radius:var(--rl);padding:18px;margin-bottom:12px;position:relative;overflow:hidden;">
       <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(34,168,87,.12);"></div>
@@ -413,30 +437,6 @@
     </div>
 
     <!-- LIVRAISONS EN COURS -->
-    <!-- STATS COMPACTES -->
-    <div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;">
-      <div onclick="voirColisEnvoyes()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
-        <div style="font-size:1.05rem;font-weight:900;color:var(--g500);line-height:1;" id="kpi-envoyes">0</div>
-        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Envoyés</div>
-      </div>
-      <div onclick="voirPassages()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
-        <div style="font-size:1.05rem;font-weight:900;color:var(--g500);line-height:1;" id="kpi-livraisons">0</div>
-        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Passages</div>
-      </div>
-      <div onclick="voirGains()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
-        <div style="font-size:1.05rem;font-weight:900;color:var(--g500);line-height:1;" id="kpi-gains">0€</div>
-        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Gagné</div>
-      </div>
-      <div style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;">
-        <div style="font-size:1.05rem;font-weight:900;line-height:1;" id="kpi-depense">0€</div>
-        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Dépensé</div>
-      </div>
-      <div onclick="voirTousRecus()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
-        <div style="font-size:1.05rem;font-weight:900;line-height:1;">🧾</div>
-        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Reçus</div>
-      </div>
-    </div>
-
     <div style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:16px;margin-bottom:14px;">
       <div style="font-size:.82rem;font-weight:900;margin-bottom:10px;">🚆 Mes passages en cours</div>
       <div id="livraisons-list">
