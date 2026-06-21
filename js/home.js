@@ -504,43 +504,62 @@ async function voirTousRecus() {
 
 function telechargerRecu(txId) {
   if (!user || !txId) return;
-  // Génère un reçu HTML simplifié et l'ouvre dans un nouvel onglet
   const win = window.open('', '_blank');
   if (!win) { t('Autorisez les popups pour télécharger le reçu', 'e'); return; }
 
   db.from('transactions')
-    .select('id, montant, statut, created_at, type, colis(code_lvr, gare_depart, gare_arrivee, prix)')
+    .select('*, colis(code_lvr, gare_depart, gare_arrivee, prix)')
     .eq('id', txId)
     .single()
     .then(({ data: tx }) => {
-      const dt = new Date(tx?.created_at || Date.now()).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-      const ref = tx?.colis?.code_lvr || '—';
-      const montant = parseFloat(tx?.montant || 0).toFixed(2);
-      const trajet = tx?.colis ? `${escapeHtml(tx.colis.gare_depart || 'À définir')} → ${escapeHtml(tx.colis.gare_arrivee || 'À définir')}` : '—';
-      win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reçu DINVMIC — ${ref}</title>
-      <style>body{font-family:Georgia,serif;max-width:600px;margin:40px auto;padding:0 20px;color:#111;}
-      h1{font-size:1.4rem;color:#1a3320;}.lbl{font-size:.8rem;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-top:16px;}
-      .val{font-size:1rem;font-weight:700;margin-top:2px;}.total{font-size:1.6rem;font-weight:900;color:#1a8044;margin-top:8px;}
-      .footer{margin-top:40px;font-size:.72rem;color:#999;border-top:1px solid #eee;padding-top:12px;}
-      @media print{button{display:none!important;}}</style></head>
-      <body>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
-        <div style="width:40px;height:40px;background:#0e1a10;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:#2ecc71;">K</div>
-        <div><div style="font-size:1.1rem;font-weight:900;">DINVMIC</div><div style="font-size:.72rem;color:#666;">Reçu de transaction</div></div>
-        <button onclick="window.print()" style="margin-left:auto;padding:8px 16px;background:#1a8044;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.82rem;">🖨 Imprimer</button>
+      if (!tx) { win.close(); t('Reçu introuvable', 'e'); return; }
+      const c = tx.colis || {};
+      const ref = c.code_lvr || String(tx.id || '').slice(0, 8).toUpperCase() || '—';
+      const d = new Date(tx.created_at || Date.now());
+      const dt = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      const num = 'DINV-' + (c.code_lvr || String(tx.id || '').slice(0, 8).toUpperCase());
+      const trajet = (c.gare_depart || c.gare_arrivee) ? `${escapeHtml(c.gare_depart || 'À définir')} → ${escapeHtml(c.gare_arrivee || 'À définir')}` : '—';
+      const prixPasseur = tx.montant_passeur_cts != null ? tx.montant_passeur_cts / 100 : (c.prix != null ? parseFloat(c.prix) : parseFloat(tx.montant || 0));
+      const commission = tx.commission_cts != null ? tx.commission_cts / 100 : Math.round(prixPasseur * 15) / 100;
+      const totalExped = tx.montant_exped_cts != null ? tx.montant_exped_cts / 100 : (prixPasseur + commission);
+      const isPasseur = user.id === tx.livreur_id;
+      const clientNom = (((user.prenom || '') + ' ' + (user.nom || '')).trim()) || user.email || 'Client';
+      const role = isPasseur ? 'Passeur (bénéficiaire)' : 'Expéditeur (payeur)';
+      const e2 = (n) => Number(n || 0).toFixed(2).replace('.', ',');
+      const statutLbl = tx.statut === 'libere' ? 'Payé / versé' : tx.statut === 'rembourse' ? 'Remboursé' : tx.statut === 'escrow' ? 'Sous séquestre' : (tx.statut || '—');
+      win.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Reçu ${num}</title>
+      <style>body{font-family:Arial,Helvetica,sans-serif;max-width:680px;margin:32px auto;padding:0 24px;color:#1a1a1a;font-size:13px;line-height:1.5;}
+      h1{font-size:1.3rem;margin:0;color:#0e1a10;}.muted{color:#666;}.sec{margin-top:22px;}.lbl{font-size:.62rem;color:#888;text-transform:uppercase;letter-spacing:.6px;}
+      table{width:100%;border-collapse:collapse;margin-top:10px;}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid #eee;font-size:.84rem;}th{font-size:.6rem;text-transform:uppercase;letter-spacing:.5px;color:#888;}
+      td.r,th.r{text-align:right;}.tot{font-size:1.15rem;font-weight:900;color:#1a8044;}.box{background:#f7faf7;border:1px solid #d1fae5;border-radius:10px;padding:14px 16px;}
+      .foot{margin-top:30px;font-size:.7rem;color:#999;border-top:1px solid #eee;padding-top:12px;line-height:1.6;}
+      @media print{button{display:none!important;}}</style></head><body>
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div style="flex:1;"><h1>Reçu de paiement</h1><div class="muted">N° ${num} · émis le ${dt}</div></div>
+        <button onclick="window.print()" style="padding:8px 16px;background:#1a8044;color:#fff;border:none;border-radius:8px;cursor:pointer;">🖨 Imprimer / PDF</button>
       </div>
-      <div style="background:#f7faf7;border:1.5px solid #d1fae5;border-radius:12px;padding:20px;margin-bottom:20px;">
-        <div class="lbl">Référence</div><div class="val">${ref}</div>
-        <div class="lbl">Trajet</div><div class="val">${trajet}</div>
-        <div class="lbl">Date</div><div class="val">${dt}</div>
-        <div class="lbl">Montant total</div><div class="total">${montant}€</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;" class="sec">
+        <div style="flex:1;min-width:240px;">
+          <div class="lbl">Émetteur</div>
+          <div><strong>KOULETIO AFANOU KEVIN</strong><br>Entreprise individuelle (micro-entreprise) « KEVIN ADDICT »<br>36 rue de l'Ouest, 75014 Paris, France<br>SIREN 983 973 447 · SIRET 983 973 447 00011<br>RCS Paris<br>TVA non applicable, art. 293 B du CGI<br>kevinaddict.fr@gmail.com</div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <div class="lbl">Client</div>
+          <div><strong>${escapeHtml(clientNom)}</strong><br>${escapeHtml(user.email || '')}<br><span class="muted">${role}</span></div>
+        </div>
       </div>
-      <div style="font-size:.78rem;color:#555;line-height:1.6;">
-        Ce reçu atteste d'une transaction réalisée sur la plateforme DINVMIC.<br>
-        DINVMIC — service édité par KOULETIO AFANOU KEVIN (entreprise individuelle « KEVIN ADDICT »), micro-entrepreneur · SIREN 983 973 447 · SIRET 983 973 447 00011 · RCS Paris · TVA FR57983973447 · 36 rue de l'Ouest, 75014 Paris, France<br>
-        kevinaddict.fr@gmail.com
+      <div class="sec">
+        <div class="lbl">Détail</div>
+        <table>
+          <tr><th>Description</th><th class="r">Montant</th></tr>
+          <tr><td>Transport collaboratif de colis — réf. ${escapeHtml(ref)}${trajet !== '—' ? ' (' + trajet + ')' : ''}</td><td class="r">${e2(prixPasseur)} €</td></tr>
+          <tr><td>Frais de service DINVMIC (15%)</td><td class="r">${e2(commission)} €</td></tr>
+          <tr><td class="r" style="font-weight:900;">Total payé TTC</td><td class="r tot">${e2(totalExped)} €</td></tr>
+        </table>
+        <div class="muted" style="margin-top:6px;">TVA non applicable, article 293 B du CGI — paiement via Stripe · statut : ${statutLbl}</div>
+        ${isPasseur ? `<div class="box" style="margin-top:12px;">En tant que <strong>passeur</strong>, vous avez perçu <strong>${e2(prixPasseur)} €</strong> pour cette livraison (revenu à déclarer). Commission DINVMIC prélevée : ${e2(commission)} €.</div>` : ''}
       </div>
-      <div class="footer">Document généré le ${new Date().toLocaleDateString('fr-FR')} · DINVMIC v1.0</div>
+      <div class="foot">DINVMIC est une plateforme d'intermédiation entre particuliers. Ce document atteste d'une transaction réalisée via la plateforme — à conserver pour votre comptabilité.<br>Document généré le ${new Date().toLocaleDateString('fr-FR')}.</div>
       </body></html>`);
       win.document.close();
     }).catch(() => {
