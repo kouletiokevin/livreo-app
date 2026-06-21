@@ -1058,10 +1058,12 @@ function filterLitiges(){
   const sb={ouvert:'bdg-red',en_cours:'bdg-amber',resolu:'bdg-green',ferme:'bdg-muted'};
   document.getElementById('t-litiges').innerHTML=list.length?list.map(l=>{
     const u=l._user;
+    const who=(u.prenom||u.nom)?((u.prenom||'')+' '+(u.nom||'')).trim():(l.auteur_role?('('+l.auteur_role+')'):'—');
+    const whoSub=u.email||(l.auteur_role==='destinataire'?'via lien SMS':(l.plaignant_id?l.plaignant_id.substring(0,12):'—'));
     return`<tr>
-      <td class="td-mono">${l.colis_id?.substring(0,8)||'—'}…</td>
-      <td class="td-primary" style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.motif||'—'}</td>
-      <td style="color:var(--muted)">${u.prenom||''} ${u.nom||''}<br><span style="color:var(--muted2);font-size:.67rem">${u.email||l.plaignant_id?.substring(0,12)||'—'}</span></td>
+      <td class="td-mono">${l.code_lvr||(l.colis_id?l.colis_id.substring(0,8)+'…':'—')}</td>
+      <td class="td-primary" style="max-width:220px;"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;">${l.motif||'—'}</div>${l.description?`<div style="color:var(--muted2);font-size:.67rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;">${(l.description||'').replace(/</g,'&lt;')}</div>`:''}</td>
+      <td style="color:var(--muted)">${who}<br><span style="color:var(--muted2);font-size:.67rem">${whoSub}</span></td>
       <td><span class="bdg ${sb[l.statut]||'bdg-muted'}">${l.statut}</span></td>
       <td style="color:var(--muted2)">${fmt(l.created_at)}</td>
       <td>

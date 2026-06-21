@@ -307,6 +307,32 @@
           <div class="step"><div class="sn">3</div><div class="si-icon">✅</div><div><div class="s-stitle">Votre destinataire reçoit et confirme</div><div class="s-stxt">Remise en main propre, scan QR Code, paiement libéré automatiquement.</div></div></div>
         </div>
       </div>
+      <div class="how-card" style="margin-top:12px;">
+        <div class="s-lbl">🛡️ Protection DINVMIC</div>
+        <div style="font-size:.82rem;color:var(--muted);line-height:1.5;margin:2px 0 12px;">Votre colis et votre argent sont protégés à chaque étape.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:12px;">
+            <div style="font-size:1.3rem;">🔒</div>
+            <div style="font-size:.78rem;font-weight:800;margin-top:3px;">Paiement bloqué</div>
+            <div style="font-size:.68rem;color:var(--muted);line-height:1.4;margin-top:2px;">Le passeur n'est payé qu'à la livraison confirmée par scan.</div>
+          </div>
+          <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:12px;">
+            <div style="font-size:1.3rem;">🪪</div>
+            <div style="font-size:.78rem;font-weight:800;margin-top:3px;">Identité vérifiée</div>
+            <div style="font-size:.68rem;color:var(--muted);line-height:1.4;margin-top:2px;">Chaque passeur vérifie son identité pour être payé.</div>
+          </div>
+          <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:12px;">
+            <div style="font-size:1.3rem;">📲</div>
+            <div style="font-size:.78rem;font-weight:800;margin-top:3px;">Remise par QR Code</div>
+            <div style="font-size:.68rem;color:var(--muted);line-height:1.4;margin-top:2px;">Scan du QR du destinataire = preuve horodatée.</div>
+          </div>
+          <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:12px;">
+            <div style="font-size:1.3rem;">🛟</div>
+            <div style="font-size:.78rem;font-weight:800;margin-top:3px;">Litige couvert</div>
+            <div style="font-size:.68rem;color:var(--muted);line-height:1.4;margin-top:2px;">Un souci ? Signalez-le, notre équipe intervient.</div>
+          </div>
+        </div>
+      </div>
       <div class="tarif-dark">
         <div class="s-lbl" style="color:var(--g300);">Comparaison de prix</div>
         <div style="font-size:1.2rem;font-weight:900;letter-spacing:-.8px;color:#fff;">Jusqu'à <span style="font-family:var(--serif);font-style:italic;color:var(--g300);">−45%</span> moins cher que La Poste</div>
@@ -573,6 +599,10 @@
     <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--rl);padding:12px 14px;margin-bottom:10px;font-size:.72rem;color:#92400e;line-height:1.55;">
       ⚠️ <strong>Objets interdits</strong> : armes, drogues, produits dangereux/inflammables, argent liquide, contrefaçons. Chaque colis est <strong>tracé</strong> (code unique, QR horodaté) et toute infraction peut être signalée aux autorités. En publiant, tu acceptes les <a href="cgu.html" target="_blank" style="color:#b45309;font-weight:700;">CGU</a>.
     </div>
+    <label id="certify-wrap" style="display:flex;gap:10px;align-items:flex-start;background:var(--white);border:1.5px solid var(--border);border-radius:var(--rl);padding:14px;margin-bottom:10px;cursor:pointer;">
+      <input type="checkbox" id="pf-certify" style="margin-top:1px;width:18px;height:18px;flex:0 0 auto;accent-color:var(--g500);cursor:pointer;">
+      <span style="font-size:.74rem;color:var(--ink);line-height:1.5;">Je certifie sur l'honneur que ce colis ne contient <strong>aucun objet interdit</strong> et que son contenu correspond à ma description. J'en assume l'entière responsabilité.</span>
+    </label>
     <div style="background:var(--white);border-radius:var(--rl);border:1.5px solid var(--border);padding:18px;margin-bottom:10px;">
       <div class="fc-lbl">💳 Moyen de paiement</div>
       <div class="payment-methods">
@@ -1670,6 +1700,10 @@ async function envoyerSignalement() {
       telephone: '+33600000000',
       message: `[SIGNALEMENT] ${email} — ${type} — ${ref || '—'} : ${desc.substring(0, 100)}`
     }).catch(() => {});
+    // Crée aussi un litige lié au colis (visible dans l'espace admin) si une référence est fournie
+    if (ref) {
+      await db.rpc('signaler_litige', { p_code_lvr: ref, p_motif: type, p_description: desc }).catch(() => {});
+    }
     // Log dans Supabase
     if (user) {
       await db.from('security_logs').insert({

@@ -165,6 +165,8 @@ function resetPoster() {
   coUp = false;
   window._photoEmballee = null;
   window._photosContenu = [];
+  const cert = document.getElementById('pf-certify'); if (cert) cert.checked = false;
+  const cw = document.getElementById('certify-wrap'); if (cw) { cw.style.borderColor = ''; cw.style.boxShadow = ''; }
 }
 
 // ── Toggle info crypto ───────────────────
@@ -226,6 +228,14 @@ async function publishColis() {
         telEl.style.boxShadow = '';
       }, { once: true });
     }
+    return;
+  }
+
+  const certEl = document.getElementById('pf-certify');
+  if (certEl && !certEl.checked) {
+    t('Veuillez certifier le contenu du colis avant de publier', 'e');
+    const cw = document.getElementById('certify-wrap');
+    if (cw) { cw.style.borderColor = 'var(--danger)'; cw.style.boxShadow = '0 0 0 3px rgba(220,38,38,.15)'; cw.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
     return;
   }
 

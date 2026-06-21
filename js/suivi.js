@@ -76,6 +76,7 @@ function renderSuivi(colis) {
     html += `</div>`;
   }
 
+  html += `<div style="text-align:center;margin-top:12px;"><button type="button" onclick="signalerProbleme('${String(colis.code_lvr).replace(/[^A-Za-z0-9_-]/g,'')}')" style="background:none;border:none;color:var(--muted);font-size:.74rem;text-decoration:underline;cursor:pointer;font-family:var(--sans);">⚠️ Signaler un problème</button></div>`;
   box.innerHTML = html;
   if (st !== 'livre' && !isExp && !isPasseur) { qrLoaded = false; loadQR(colis); }
   t('Colis trouvé ✅', 's');
@@ -183,4 +184,62 @@ async function chargerMesSuivis() {
         <div style="font-size:.64rem;font-weight:800;color:var(--g600);flex-shrink:0;text-align:right;">${st}</div></div>`;
     }).join('');
   } catch (e) { box.innerHTML = ''; }
+}
+
+// ── Signaler un problème (litige) ─────────
+function signalerProbleme(code) {
+  fermerLitige();
+  const ov = document.createElement('div');
+  ov.id = 'litige-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(14,26,16,.55);display:flex;align-items:flex-end;justify-content:center;';
+  ov.onclick = function (e) { if (e.target === ov) fermerLitige(); };
+  ov.innerHTML = '<div style="background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -8px 40px rgba(0,0,0,.25);">'
+    + '<div style="width:38px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 14px;"></div>'
+    + '<div style="font-size:1.02rem;font-weight:900;margin-bottom:2px;">⚠️ Signaler un problème</div>'
+    + '<div style="font-size:.74rem;color:var(--muted);margin-bottom:14px;">Colis ' + escapeHtml(code) + '. Notre équipe examine chaque signalement.</div>'
+    + '<label style="font-size:.7rem;font-weight:800;color:var(--g600);text-transform:uppercase;letter-spacing:.4px;">Motif</label>'
+    + '<select id="lit-motif" style="width:100%;margin:6px 0 12px;padding:11px;border:1.5px solid var(--border);border-radius:12px;font-family:var(--sans);font-size:.85rem;background:#fff;">'
+    + '<option value="Colis non reçu">Colis non reçu</option>'
+    + '<option value="Colis endommagé">Colis endommagé / cassé</option>'
+    + '<option value="Contenu non conforme">Contenu non conforme</option>'
+    + '<option value="Colis manquant ou volé">Colis manquant ou volé</option>'
+    + '<option value="Retard important">Retard important</option>'
+    + '<option value="Comportement d\'un utilisateur">Comportement d\'un utilisateur</option>'
+    + '<option value="Autre">Autre</option>'
+    + '</select>'
+    + '<label style="font-size:.7rem;font-weight:800;color:var(--g600);text-transform:uppercase;letter-spacing:.4px;">Détails</label>'
+    + '<textarea id="lit-desc" rows="4" placeholder="Décrivez ce qu\'il s\'est passé…" style="width:100%;margin:6px 0 14px;padding:11px;border:1.5px solid var(--border);border-radius:12px;font-family:var(--sans);font-size:.85rem;resize:vertical;box-sizing:border-box;"></textarea>'
+    + '<div style="display:flex;gap:8px;">'
+    + '<button type="button" onclick="fermerLitige()" class="btn s" style="flex:1;">Annuler</button>'
+    + '<button type="button" id="lit-send" onclick="envoyerLitige(\'' + code + '\')" class="btn p" style="flex:2;">Envoyer</button>'
+    + '</div></div>';
+  document.body.appendChild(ov);
+}
+
+function fermerLitige() {
+  const o = document.getElementById('litige-overlay');
+  if (o) o.remove();
+}
+
+async function envoyerLitige(code) {
+  const motif = (document.getElementById('lit-motif') || {}).value || 'Autre';
+  const descEl = document.getElementById('lit-desc');
+  const desc = descEl ? descEl.value.trim() : '';
+  if (!desc) { t('Décrivez le problème', 'e'); if (descEl) descEl.focus(); return; }
+  const btn = document.getElementById('lit-send');
+  if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
+  try {
+    const { data, error } = await db.rpc('signaler_litige', {
+      p_code_lvr: code,
+      p_motif: motif,
+      p_description: (typeof sanitize === 'function' ? sanitize(desc) : desc),
+    });
+    if (error) throw new Error(error.message);
+    if (data && data.success === false) throw new Error(data.error || 'Impossible');
+    fermerLitige();
+    t('Signalement envoyé ✅ Nous revenons vers vous rapidement.', 's');
+  } catch (e) {
+    t('Erreur : ' + e.message, 'e');
+    if (btn) { btn.disabled = false; btn.textContent = 'Envoyer'; }
+  }
 }
