@@ -9,49 +9,99 @@ let _currentColis = null;
 // ── Recherche suivi ──────────────────────
 async function loadSuivi() {
   const svInput = document.getElementById('sv-input');
-  if (!svInput) return;
+  const box = document.getElementById('sv-detail');
+  if (!svInput || !box) return;
   const val = svInput.value.trim().toUpperCase();
   if (!val) { t('Entrez votre numéro de suivi', 'e'); return; }
-
+  box.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);font-size:.84rem;">Chargement…</div>';
   const { data: colis, error } = await db.from('colis_public').select('*').eq('code_lvr', val).single();
-  if (error || !colis) { t('Code LVR introuvable. Vérifiez le code reçu par SMS.', 'e'); return; }
-
+  if (error || !colis) { box.innerHTML = ''; t('Code introuvable. Vérifiez le code reçu par SMS.', 'e'); return; }
   _currentColis = colis;
-  qrLoaded = false;
+  renderSuivi(colis);
+  const c = document.getElementById('content'); if (c) c.scrollTop = 140;
+}
 
-  const svRef = document.getElementById('sv-ref');
-  if (svRef) svRef.textContent = colis.code_lvr;
+function _svTime(x) {
+  return x ? new Date(x).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+}
 
-  const isExp = user && user.id === colis.expediteur_id;
+function renderSuivi(colis) {
+  const box = document.getElementById('sv-detail'); if (!box) return;
+  const isExp = !!(user && user.id === colis.expediteur_id);
+  const isPasseur = !!(user && colis.livreur_id && user.id === colis.livreur_id);
+  const st = colis.statut;
+  const steps = [
+    { ic: '📦', lbl: 'Colis publié', at: colis.created_at, done: true },
+    { ic: '🤝', lbl: 'Passeur choisi', at: colis.accepted_at, done: !!colis.accepted_at || ['livreur_accepte', 'en_transit', 'livre'].includes(st) },
+    { ic: '📥', lbl: 'Colis récupéré par le passeur', at: colis.collected_at, done: !!colis.collected_at },
+    { ic: '🚆', lbl: 'En route — train parti', at: colis.departed_at, done: !!colis.departed_at },
+    { ic: '🚉', lbl: 'Arrivé en gare de destination', at: colis.arrived_at, done: !!colis.arrived_at },
+    { ic: '✅', lbl: 'Colis remis & paiement libéré', at: colis.delivered_at, done: st === 'livre' || !!colis.delivered_at },
+  ];
+  const activeIdx = steps.findIndex(s => !s.done);
+  const tl = steps.map((s, i) => {
+    const cls = s.done ? 'done' : (i === activeIdx ? 'active' : '');
+    const time = s.at ? _svTime(s.at) : (i === activeIdx ? 'En cours' : '—');
+    const faded = (s.done || i === activeIdx) ? '' : ' faded';
+    return `<div class="tli"><div class="tld ${cls}"></div><div class="tl-time">${time}</div><div class="tl-txt${faded}">${s.ic} ${s.lbl}</div></div>`;
+  }).join('');
+  const pill = st === 'livre' ? '<span class="tpill pill-ok">✅ Livré</span>'
+    : st === 'en_transit' ? '<span class="tpill pill-tr">🚆 En transit</span>'
+    : st === 'livreur_accepte' ? '<span class="tpill pill-tr">🤝 Passeur trouvé</span>'
+    : '<span class="tpill">⏳ En attente</span>';
+  let html = `<div class="tcard">
+    <div class="thead"><div><div class="tref">${escapeHtml(colis.code_lvr)}</div><div class="troute">${escapeHtml((colis.gare_depart || '—') + ' → ' + (colis.gare_arrivee || '—'))}</div></div>${pill}</div>
+    <div class="tl-wrap"><div class="timeline">${tl}</div></div>
+  </div>`;
 
-  const svExp = document.getElementById('sv-exp');
-  const svDest = document.getElementById('sv-dest');
-
-  if (isExp) {
-    if (svExp) svExp.style.display = 'block';
-    if (svDest) svDest.style.display = 'none';
-
-    // Proposer de noter le passeur si la livraison est confirmée
-    const expEl = document.getElementById('sv-exp');
-    const existingBtn = document.getElementById('sv-noter-btn');
-    if (existingBtn) existingBtn.remove();
-    if (colis.statut === 'livre' && colis.livreur_id && svExp) {
-      const btn = document.createElement('button');
-      btn.id = 'sv-noter-btn';
-      btn.className = 'btn p full';
-      btn.style.marginTop = '16px';
-      btn.textContent = '⭐ Notez votre passeur';
-      btn.onclick = () => ouvrirNotation(colis.id, colis.livreur_id, 'le passeur');
-      svExp.appendChild(btn);
-    }
-  } else {
-    if (svExp) svExp.style.display = 'none';
-    if (svDest) svDest.style.display = 'block';
-    loadQR(colis);
+  if (st !== 'livre' && isPasseur) {
+    html += `<div class="tcard" style="margin-top:10px;"><div style="font-size:.82rem;font-weight:900;margin-bottom:8px;">🚆 Vous transportez ce colis</div>${_passeurActions(colis)}</div>`;
+  } else if (st !== 'livre' && !isExp) {
+    html += `<div class="tcard" style="margin-top:10px;text-align:center;">
+      <div style="font-size:.82rem;font-weight:900;margin-bottom:4px;">Votre QR Code de réception</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:12px;">À présenter au passeur lors de la remise. Ne le partagez avec personne.</div>
+      <div id="qr-canvas" style="display:inline-block;"></div>
+      <div style="font-size:.68rem;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:8px 10px;margin-top:12px;line-height:1.5;">⚠️ Vérifiez le colis (emballage + contenu) AVANT de montrer ce code : une fois scanné, le passage est confirmé et le paiement libéré.</div>
+    </div>`;
+  } else if (st !== 'livre' && isExp) {
+    html += `<div class="tcard" style="margin-top:10px;"><div style="font-size:.76rem;color:var(--muted);line-height:1.5;">📬 Le destinataire a reçu son code par SMS. Il affichera son QR Code au passeur à la remise pour confirmer la livraison.</div></div>`;
   }
+
+  if (st === 'livre') {
+    html += `<div class="tcard" style="margin-top:10px;text-align:center;">
+      <div style="font-size:1.8rem;">✅</div>
+      <div style="font-weight:900;margin:4px 0;">Colis livré</div>
+      <div style="font-size:.76rem;color:var(--muted);">Remis le ${_svTime(colis.delivered_at) || '—'} · paiement libéré.</div>`;
+    if (isExp && colis.livreur_id) html += `<button class="btn p full" style="margin-top:12px;" onclick="ouvrirNotation('${colis.id}','${colis.livreur_id}','le passeur')">⭐ Noter votre passeur</button>`;
+    html += `</div>`;
+  }
+
+  box.innerHTML = html;
+  if (st !== 'livre' && !isExp && !isPasseur) { qrLoaded = false; loadQR(colis); }
   t('Colis trouvé ✅', 's');
-  const contentEl = document.getElementById('content');
-  if (contentEl) contentEl.scrollTop = 100;
+}
+
+function _passeurActions(colis) {
+  const code = String(colis.code_lvr).replace(/[^A-Za-z0-9_-]/g, '');
+  if (!colis.collected_at) return `<button class="btn p full" onclick="majEtapeSuivi('${code}','collected')">📥 J'ai récupéré le colis</button>`;
+  if (!colis.departed_at)  return `<button class="btn p full" onclick="majEtapeSuivi('${code}','departed')">🚆 Le train est parti</button>`;
+  if (!colis.arrived_at)   return `<button class="btn p full" onclick="majEtapeSuivi('${code}','arrived')">🚉 Je suis arrivé en gare</button>`;
+  const route = escapeHtml((colis.gare_depart || '') + ' → ' + (colis.gare_arrivee || ''));
+  const train = escapeHtml(colis.num_train || 'Train');
+  return `<div style="font-size:.76rem;color:var(--muted);margin-bottom:8px;line-height:1.5;">Demandez au destinataire d'afficher son QR Code, puis scannez-le pour clôturer la livraison et libérer le paiement.</div>
+    <button class="btn p full" onclick="openLivrFlow('${code}','${route}','${train}','le destinataire','${colis.prix}','${colis.id}','${colis.expediteur_id}')">📷 Scanner le QR & confirmer la remise</button>`;
+}
+
+async function majEtapeSuivi(code, etape) {
+  try {
+    const { data, error } = await db.rpc('passeur_maj_etape', { p_code_lvr: code, p_etape: etape });
+    if (error) throw new Error(error.message);
+    if (data && data.success === false) throw new Error(data.error || 'Impossible');
+    t('Étape mise à jour ✅', 's');
+    if (typeof celebrate === 'function') celebrate();
+    const { data: colis } = await db.from('colis_public').select('*').eq('code_lvr', code).single();
+    if (colis) { _currentColis = colis; renderSuivi(colis); }
+  } catch (e) { t('Erreur : ' + e.message, 'e'); }
 }
 
 // ── Génération QR Code ───────────────────
