@@ -117,7 +117,7 @@
 <div id="intro-anim" style="position:fixed;inset:0;z-index:99999;background:#0e1a10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:introOut .6s ease 1.5s forwards;">
   <svg width="90" height="90" viewBox="0 0 46 46" style="animation:kgIconIn .45s cubic-bezier(.34,1.56,.64,1) both;">
     <rect width="46" height="46" rx="12" fill="#1f9d57"/>
-    <path d="M13 14 L27 23 L13 32" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 14 L33 23 L24 32" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/>
+    <path d="M13 14 L27 23 L13 32" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0"><animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.25s" fill="freeze"/><animateTransform attributeName="transform" attributeType="XML" type="translate" values="-13 0;0 0" dur="0.5s" begin="0.25s" fill="freeze" calcMode="spline" keySplines="0.2 0.75 0.25 1"/><animate attributeName="opacity" values="1;0.3;1" dur="1s" begin="0.95s" repeatCount="indefinite"/></path><path d="M24 14 L33 23 L24 32" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0"><animate attributeName="opacity" values="0;0.6" dur="0.4s" begin="0.42s" fill="freeze"/><animateTransform attributeName="transform" attributeType="XML" type="translate" values="-13 0;0 0" dur="0.5s" begin="0.42s" fill="freeze" calcMode="spline" keySplines="0.2 0.75 0.25 1"/><animate attributeName="opacity" values="0.3;1;0.3" dur="1s" begin="0.95s" repeatCount="indefinite"/></path>
     
   </svg>
   
