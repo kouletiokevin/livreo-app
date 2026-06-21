@@ -1,5 +1,5 @@
-/* DINVMIC — Service Worker v59 */
-const CACHE = 'dinvmic-v59';
+/* DINVMIC — Service Worker v60 */
+const CACHE = 'dinvmic-v60';
 const ASSETS = [
   './',
   './css/style.css',
