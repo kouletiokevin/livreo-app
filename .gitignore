@@ -8,3 +8,4 @@ android/
 *.keystore
 *.jks
 android-build.md
+prospecto/

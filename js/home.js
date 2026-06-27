@@ -541,7 +541,7 @@ function telechargerRecu(txId) {
       <div style="display:flex;gap:24px;flex-wrap:wrap;" class="sec">
         <div style="flex:1;min-width:240px;">
           <div class="lbl">Émetteur</div>
-          <div><strong>KOULETIO AFANOU KEVIN</strong><br>Entreprise individuelle (micro-entreprise) « KEVIN ADDICT »<br>36 rue de l'Ouest, 75014 Paris, France<br>SIREN 983 973 447 · SIRET 983 973 447 00011<br>RCS Paris<br>TVA non applicable, art. 293 B du CGI<br>kevinaddict.fr@gmail.com</div>
+          <div><strong>K Acquisition</strong><br>Entreprise individuelle (micro-entreprise)<br>36 rue de l'Ouest, 75014 Paris, France<br>SIREN 983 973 447 · SIRET 983 973 447 00011<br>RCS Paris<br>TVA non applicable, art. 293 B du CGI<br>kevinaddict.fr@gmail.com</div>
         </div>
         <div style="flex:1;min-width:200px;">
           <div class="lbl">Client</div>
