@@ -414,6 +414,15 @@
 
     <!-- raccourcis retires : Publier = bouton central, Explorer = icone en haut a droite -->
 
+    <!-- PORTEFEUILLE -->
+    <div style="background:linear-gradient(135deg,var(--ink2),var(--ink));border-radius:var(--rl);padding:18px;margin-bottom:12px;position:relative;overflow:hidden;">
+      <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(34,168,87,.12);"></div>
+      <div style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--g200);margin-bottom:6px;">Mon portefeuille</div>
+      <div style="font-size:2.2rem;font-weight:900;letter-spacing:-1.5px;color:#fff;position:relative;" id="wallet-amount">0,00€</div>
+      <div style="font-size:.68rem;color:rgba(255,255,255,.4);margin-top:3px;" id="wallet-pending">Chargement...</div>
+      <button onclick="ouvrirRetrait()" style="margin-top:14px;padding:8px 18px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:50px;font-family:var(--sans);font-size:.74rem;font-weight:700;cursor:pointer;">Retirer des fonds →</button>
+    </div>
+
     <!-- STATS COMPACTES -->
     <div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;">
       <div onclick="voirColisEnvoyes()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
@@ -432,15 +441,10 @@
         <div style="font-size:1.05rem;font-weight:900;line-height:1;" id="kpi-depense">0€</div>
         <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Dépensé</div>
       </div>
-    </div>
-
-    <!-- PORTEFEUILLE -->
-    <div style="background:linear-gradient(135deg,var(--ink2),var(--ink));border-radius:var(--rl);padding:18px;margin-bottom:12px;position:relative;overflow:hidden;">
-      <div style="position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(34,168,87,.12);"></div>
-      <div style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--g200);margin-bottom:6px;">Mon portefeuille</div>
-      <div style="font-size:2.2rem;font-weight:900;letter-spacing:-1.5px;color:#fff;position:relative;" id="wallet-amount">0,00€</div>
-      <div style="font-size:.68rem;color:rgba(255,255,255,.4);margin-top:3px;" id="wallet-pending">Chargement...</div>
-      <button onclick="ouvrirRetrait()" style="margin-top:14px;padding:8px 18px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:50px;font-family:var(--sans);font-size:.74rem;font-weight:700;cursor:pointer;">Retirer des fonds →</button>
+      <div onclick="voirTousRecus()" style="flex:1 1 0;min-width:62px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:9px 5px;text-align:center;cursor:pointer;">
+        <div style="font-size:1.05rem;font-weight:900;line-height:1;">🧾</div>
+        <div style="font-size:.55rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-top:3px;">Reçus</div>
+      </div>
     </div>
 
     <!-- IMPACT : economies + CO2 evite -->
