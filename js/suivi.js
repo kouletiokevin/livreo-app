@@ -76,8 +76,10 @@ function renderSuivi(colis) {
     html += `</div>`;
   }
 
+  html += '<div id="sv-contacts"></div>';
   html += `<div style="text-align:center;margin-top:12px;"><button type="button" onclick="signalerProbleme('${String(colis.code_lvr).replace(/[^A-Za-z0-9_-]/g,'')}')" style="background:none;border:none;color:var(--muted);font-size:.74rem;text-decoration:underline;cursor:pointer;font-family:var(--sans);">⚠️ Signaler un problème</button></div>`;
   box.innerHTML = html;
+  if (colis.livreur_id && st !== 'livre') loadContacts(colis);
   if (st !== 'livre' && !isExp && !isPasseur) { qrLoaded = false; loadQR(colis); }
   t('Colis trouvé ✅', 's');
 }
@@ -242,4 +244,42 @@ async function envoyerLitige(code) {
     t('Erreur : ' + e.message, 'e');
     if (btn) { btn.disabled = false; btn.textContent = 'Envoyer'; }
   }
+}
+
+// ── Contacts du colis (numéros révélés aux seules parties concernées) ──
+async function loadContacts(colis) {
+  const box = document.getElementById('sv-contacts');
+  if (!box) return;
+  let secret = null;
+  try { const k = new URLSearchParams(window.location.search).get('k'); if (k && k.length >= 16) secret = k; } catch (e) {}
+  let data = null;
+  try {
+    const r = await db.rpc('get_colis_contacts', { p_code_lvr: colis.code_lvr, p_qr_secret: secret });
+    data = r.data;
+  } catch (e) { return; }
+  if (!data || data.error) { box.innerHTML = ''; return; }
+
+  const ligne = (titre, c) => {
+    if (!c || !c.telephone) return '';
+    const tel = String(c.telephone).replace(/[^0-9+]/g, '');
+    const nom = escapeHtml(c.prenom || c.nom || '');
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--border);">
+      <div style="min-width:0;"><div style="font-size:.7rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px;">${titre}</div><div style="font-weight:800;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nom}</div></div>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        <a href="tel:${tel}" style="text-decoration:none;background:var(--g50);border:1px solid var(--g100);color:var(--g500);font-size:.74rem;font-weight:800;padding:7px 11px;border-radius:50px;">📞 Appeler</a>
+        <a href="sms:${tel}" style="text-decoration:none;background:var(--white);border:1px solid var(--border);color:var(--ink);font-size:.74rem;font-weight:800;padding:7px 11px;border-radius:50px;">💬 SMS</a>
+      </div>
+    </div>`;
+  };
+
+  let inner = '';
+  if (data.role === 'passeur') {
+    inner += ligne('Expéditeur', data.expediteur);
+    inner += ligne('Destinataire', data.destinataire);
+  } else {
+    inner += ligne('Votre passeur', data.passeur);
+  }
+  box.innerHTML = inner
+    ? `<div class="tcard" style="margin-top:10px;"><div style="font-size:.82rem;font-weight:900;margin-bottom:2px;">📇 Contacts</div><div style="font-size:.7rem;color:var(--muted);margin-bottom:4px;">Pour vous coordonner pendant la livraison.</div>${inner}</div>`
+    : '';
 }
