@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DINVMIC Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2/dist/globe.gl.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -155,7 +156,26 @@ select.role-sel:focus{border-color:var(--border2);}
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#333;border-radius:4px;}
 
-@media(max-width:800px){.sidebar{display:none;}.charts-row{grid-template-columns:1fr;}.kpi-grid{grid-template-columns:1fr 1fr;}}
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){ .charts-row{grid-template-columns:1fr !important;} }
+@media(max-width:760px){
+  .topbar{padding:0 12px;} .topbar-email{display:none;}
+  .layout{display:block;}
+  .sidebar{position:sticky;top:54px;width:auto;height:auto;flex-direction:row;display:flex;overflow-x:auto;overflow-y:hidden;border-right:none;border-bottom:1px solid var(--border);padding:8px 10px;gap:6px;-webkit-overflow-scrolling:touch;z-index:150;}
+  .sidebar::-webkit-scrollbar{height:0;}
+  .nav-section{display:none;}
+  .nav-item{margin:0;white-space:nowrap;flex-shrink:0;font-size:.8rem;padding:8px 12px;}
+  .main{padding:14px;}
+  .page-title{font-size:1rem;}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .kpi{padding:14px;} .kpi-val{font-size:1.5rem;} .kpi-ico{font-size:.85rem;}
+  .charts-row{grid-template-columns:1fr !important;}
+  table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;}
+  .search-row{flex-wrap:wrap;} .search-inp{width:100%;}
+  .setting-row{flex-direction:column;align-items:flex-start;gap:10px;} .setting-action{margin-left:0;}
+  #globe-box{height:300px !important;}
+}
+@media(max-width:400px){ .kpi-val{font-size:1.3rem;} .topbar-brand{font-size:.85rem;} }
 </style>
 </head>
 <body>
@@ -218,6 +238,11 @@ select.role-sel:focus{border-color:var(--border2);}
           <div class="kpi" onclick="goKpi('colis')"><span class="kpi-ico">✅</span><div class="kpi-val" id="k-done"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Livrés</div></div>
           <div class="kpi" onclick="goKpi('transactions')"><span class="kpi-ico">💳</span><div class="kpi-val" id="k-tx"><span class="skel" style="width:28px"></span></div><div class="kpi-label">Transactions</div></div>
           <div class="kpi green" onclick="goKpi('transactions')"><span class="kpi-ico">💰</span><div class="kpi-val green" id="k-rev"><span class="skel" style="width:52px"></span></div><div class="kpi-label">Revenus (15%)</div></div>
+        </div>
+
+        <div class="chart-card full" style="padding:0;overflow:hidden;position:relative;margin-bottom:16px;">
+          <div class="chart-title" style="padding:16px 18px 0;">🌍 Réseau DINVMIC — en direct</div>
+          <div id="globe-box" style="height:360px;width:100%;"></div>
         </div>
 
         <div class="charts-row">
@@ -644,8 +669,38 @@ async function toggleCertif(userId, current){
 function goKpi(id){ const item=document.querySelector(`.nav-item[onclick*="'${id}'"]`); if(item) nav(id,item); }
 
 // ── DASHBOARD ──────────────────────────────────────────
+let _globe=null;
+function initGlobe(){
+  try{
+    if(_globe || !window.Globe) return;
+    const el=document.getElementById('globe-box'); if(!el) return;
+    const cities=[
+      {name:'Paris',lat:48.8566,lng:2.3522},{name:'Lyon',lat:45.7640,lng:4.8357},
+      {name:'Marseille',lat:43.2965,lng:5.3698},{name:'Bordeaux',lat:44.8378,lng:-0.5792},
+      {name:'Lille',lat:50.6292,lng:3.0573},{name:'Nantes',lat:47.2184,lng:-1.5536},
+      {name:'Toulouse',lat:43.6047,lng:1.4442},{name:'Strasbourg',lat:48.5734,lng:7.7521},
+      {name:'Nice',lat:43.7102,lng:7.2620},{name:'Rennes',lat:48.1173,lng:-1.6778}
+    ];
+    const P=cities[0];
+    const arcs=cities.slice(1).map(c=>({startLat:P.lat,startLng:P.lng,endLat:c.lat,endLng:c.lng}));
+    arcs.push({startLat:45.764,startLng:4.8357,endLat:43.2965,endLng:5.3698});
+    _globe=Globe()(el)
+      .backgroundColor('rgba(0,0,0,0)')
+      .globeImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-dark.jpg')
+      .showAtmosphere(true).atmosphereColor('#22c55e').atmosphereAltitude(0.18)
+      .pointsData(cities).pointLat('lat').pointLng('lng').pointColor(()=>'#22e06a').pointAltitude(0.012).pointRadius(0.42)
+      .labelsData(cities).labelLat('lat').labelLng('lng').labelText('name').labelSize(0.85).labelColor(()=>'rgba(255,255,255,.65)').labelDotRadius(0.28).labelResolution(1)
+      .arcsData(arcs).arcColor(()=>['#22e06a','#16a34a']).arcStroke(0.5).arcDashLength(0.5).arcDashGap(0.25).arcDashAnimateTime(2200).arcAltitude(0.22);
+    _globe.width(el.clientWidth).height(el.clientHeight||360);
+    const c=_globe.controls(); c.autoRotate=true; c.autoRotateSpeed=0.7; c.enableZoom=false;
+    _globe.pointOfView({lat:46,lng:3,altitude:2.2},0);
+    window.addEventListener('resize',()=>{ const b=document.getElementById('globe-box'); if(_globe&&b) _globe.width(b.clientWidth).height(b.clientHeight||360); });
+  }catch(e){ console.warn('globe:',e); }
+}
+
 async function loadDashboard(){
   document.getElementById('today-date').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  initGlobe();
 
   const [u,cp,cl,allK] = await Promise.all([
     db.from('users').select('id,created_at',{count:'exact'}),
