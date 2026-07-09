@@ -1,8 +1,22 @@
-﻿/* ═══════════════════════════════════════
+/* ═══════════════════════════════════════
    DINVMIC — App Core
    Navigation, toast, sheet, PWA, Stripe
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
+
+// ── Migration localStorage (rebranding KolisGo → DINVMIC) ──
+(function migrateStorageKeys() {
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf('kolisgo_') === 0) {
+        const nk = 'dinvmic_' + k.slice(8);
+        if (localStorage.getItem(nk) === null) localStorage.setItem(nk, localStorage.getItem(k));
+        localStorage.removeItem(k);
+      }
+    }
+  } catch (e) {}
+})();
 
 // ── État global ─────────────────────────
 let user = null;
@@ -16,7 +30,7 @@ function closeSplash() {
   s.classList.add('hide');
   setTimeout(() => {
     s.style.display = 'none';
-    if (!localStorage.getItem('kolisgo_onboarding_done')) showOnboarding();
+    if (!localStorage.getItem('dinvmic_onboarding_done')) showOnboarding();
   }, 650);
 }
 
@@ -26,7 +40,7 @@ async function demanderCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     stream.getTracks().forEach(tr => tr.stop());
-    localStorage.setItem('kolisgo_perm_camera', '1');
+    localStorage.setItem('dinvmic_perm_camera', '1');
     return true;
   } catch(e) {
     t('Autorisez la caméra pour scanner le QR Code', 'e');
@@ -37,7 +51,7 @@ async function demanderCamera() {
 async function demanderLocalisation() {
   return new Promise(res => {
     navigator.geolocation.getCurrentPosition(
-      () => { localStorage.setItem('kolisgo_perm_loc', '1'); res(true); },
+      () => { localStorage.setItem('dinvmic_perm_loc', '1'); res(true); },
       () => { t('Activez la localisation pour trouver la gare la plus proche', ''); res(false); }
     );
   });
@@ -45,7 +59,7 @@ async function demanderLocalisation() {
 
 async function demanderNotifications() {
   const r = await Notification.requestPermission();
-  if (r === 'granted') localStorage.setItem('kolisgo_perm_notif', '1');
+  if (r === 'granted') localStorage.setItem('dinvmic_perm_notif', '1');
   return r === 'granted';
 }
 
@@ -80,7 +94,7 @@ function obGoTo(n) {
 }
 
 function finishOnboarding(action) {
-  localStorage.setItem('kolisgo_onboarding_done', '1');
+  localStorage.setItem('dinvmic_onboarding_done', '1');
   const ov = document.getElementById('onboarding-ov');
   if (ov) {
     ov.style.opacity = '0';
@@ -127,7 +141,7 @@ function showAppTour(userId) {
   ov.style.transition = '';
   atGoTo(0);
   _atInitSwipe();
-  if (userId) localStorage.setItem('kolisgo_app_tour_' + userId, '1');
+  if (userId) localStorage.setItem('dinvmic_app_tour_' + userId, '1');
 }
 
 function atGoTo(n) {
@@ -367,7 +381,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Affichage INSTANTANÉ : si le localStorage indique une session précédente,
   // on affiche le dashboard tout de suite sans attendre checkSession (~300ms)
-  const wasLoggedIn = localStorage.getItem('kolisgo_logged_in') === '1';
+  const wasLoggedIn = localStorage.getItem('dinvmic_logged_in') === '1';
   if (wasLoggedIn) {
     const landing = document.getElementById('home-landing');
     const dash    = document.getElementById('home-dash');
@@ -380,7 +394,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Vérifier session existante au démarrage (confirmation réseau)
   const profil = await checkSession();
   if (profil) {
-    localStorage.setItem('kolisgo_logged_in', '1');
+    localStorage.setItem('dinvmic_logged_in', '1');
     await onLoginSuccess(profil);
     // Force affichage dashboard — garanti même si onLoginSuccess a un bug
     const landing = document.getElementById('home-landing');
@@ -388,7 +402,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (landing) landing.style.display = 'none';
     if (dash)    dash.style.display    = 'block';
   } else {
-    localStorage.removeItem('kolisgo_logged_in');
+    localStorage.removeItem('dinvmic_logged_in');
     refreshHome(); // pas de session → landing
   }
 });

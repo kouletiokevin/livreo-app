@@ -35,7 +35,7 @@ async function doLogin() {
     if (!profil) { t('Profil introuvable. Contactez le support.', 'e'); return; }
 
     await onLoginSuccess(profil);
-    localStorage.setItem('kolisgo_logged_in', '1');
+    localStorage.setItem('dinvmic_logged_in', '1');
     t(`Bienvenue ${profil.prenom} ! 👋`, 's');
     goNav('home');
     // Force affichage dashboard — direct, sans passer par refreshHome
@@ -95,7 +95,7 @@ async function doReg() {
       const profil = await chargerProfil(data.user.id);
       if (profil) {
         await onLoginSuccess(profil);
-        localStorage.setItem('kolisgo_logged_in', '1');
+        localStorage.setItem('dinvmic_logged_in', '1');
         t(`Bienvenue ${pn} ! 🎉`, 's');
         goNav('home');
         const _l = document.getElementById('home-landing');
@@ -150,7 +150,7 @@ async function doLogout() {
   await db.auth.signOut();
   user = null;
   window._notifRealtimeStarted = false;
-  localStorage.removeItem('kolisgo_logged_in');
+  localStorage.removeItem('dinvmic_logged_in');
   const adminLink = document.getElementById('admin-link');
   if (adminLink) adminLink.style.display = 'none';
   const navLogin2 = document.getElementById('nav-login');
@@ -334,7 +334,7 @@ async function onLoginSuccess(profil) {
   if (typeof initMessagesRealtime === 'function') initMessagesRealtime();
 
   // App tour — première connexion uniquement
-  const tourKey = 'kolisgo_app_tour_' + profil.id;
+  const tourKey = 'dinvmic_app_tour_' + profil.id;
   if (!localStorage.getItem(tourKey) && typeof showAppTour === 'function') {
     setTimeout(() => showAppTour(profil.id), 900);
   }

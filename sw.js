@@ -1,5 +1,5 @@
-/* DINVMIC — Service Worker v67 */
-const CACHE = 'dinvmic-v67';
+/* DINVMIC — Service Worker v68 */
+const CACHE = 'dinvmic-v68';
 const ASSETS = [
   './',
   './css/style.css',
@@ -71,8 +71,8 @@ self.addEventListener('push', e => {
   const data = e.data.json();
   self.registration.showNotification(data.title || 'DINVMIC', {
     body: data.body || '',
-    icon: './favicon.svg',
-    badge: './favicon.svg',
+    icon: './assets/icon-192.png',
+    badge: './assets/icon-192.png',
     tag: data.tag || 'dinvmic-notif',
     data: data.url || './'
   });

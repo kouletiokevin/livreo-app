@@ -1,4 +1,4 @@
-﻿/* ═══════════════════════════════════════
+/* ═══════════════════════════════════════
    DINVMIC — Module Profil utilisateur
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -94,8 +94,8 @@ async function previewPhoto(input) {
       const badgeFill = document.getElementById('badge-certif-fill');
       if (badgeFill) badgeFill.setAttribute('fill', user.is_certified ? '#1D9BF0' : '#cccccc');
       const badgeCertifie = document.getElementById('badge-certifie');
-      if (badgeCertifie) badgeCertifie.style.display = 'inline';
-      t('Photo de profil mise à jour ✅ · Badge certifié activé', 's');
+      if (badgeCertifie) badgeCertifie.style.display = user.is_certified ? 'inline' : 'none';
+      t('Photo de profil mise à jour ✅', 's');
     } catch (e) {
       t('Erreur : ' + e.message, 'e');
     }

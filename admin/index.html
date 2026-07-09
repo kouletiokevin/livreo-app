@@ -1062,12 +1062,12 @@ function copyUtm(){const v=document.getElementById('utm-result')?.value;if(!v)re
 function downloadQR(){
   const src=document.getElementById('utm-source')?.value||'lien';
   const img=document.getElementById('qr-img');if(!img||!img.src)return;
-  const a=document.createElement('a');a.href=img.src;a.download='kolisgo-qr-'+src+'.png';a.click();
+  const a=document.createElement('a');a.href=img.src;a.download='dinvmic-qr-'+src+'.png';a.click();
 }
 function buildQuickLinks(){
   const tb=document.getElementById('t-quick-links');if(!tb)return;
   tb.innerHTML=QUICK_SOURCES.map(s=>{
-    const url=utmLink(s.src,'kolisgo2026','');
+    const url=utmLink(s.src,'dinvmic2026','');
     const qr='https://api.qrserver.com/v1/create-qr-code/?size=60x60&data='+encodeURIComponent(url);
     return`<tr>
       <td class="td-primary">${s.ico} ${s.label}</td>

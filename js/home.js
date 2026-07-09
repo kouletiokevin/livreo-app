@@ -1,4 +1,4 @@
-﻿/* ═══════════════════════════════════════
+/* ═══════════════════════════════════════
    DINVMIC — Module Accueil / Dashboard
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -392,7 +392,7 @@ async function voirAvis() {
 async function chargerKPIs(userId, profil) {
   const nbEnvoyes   = profil?.nb_colis_envoyes || 0;
   const nbLivraisons = profil?.nb_livraisons   || 0;
-  const note        = profil?.note_moyenne     || 0;
+  const note        = parseFloat(profil?.note_moyenne) || 0;
 
   const { data: gainsData } = await db.rpc('get_kpi_gains', { p_user_id: userId });
   const gains = parseFloat(gainsData || 0);

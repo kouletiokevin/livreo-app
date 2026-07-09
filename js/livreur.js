@@ -1,4 +1,4 @@
-﻿/* ═══════════════════════════════════════
+/* ═══════════════════════════════════════
    DINVMIC — Module Flow de livraison
    Version 2.0 — Mai 2026
 ═══════════════════════════════════════ */
@@ -223,7 +223,7 @@ function scanFrame(ref, dest, prix) {
 
   if (code) {
     stopCamera();
-    // Format QR DINVMIC : "KOLISGO|LVR-XXXX|secret|timestamp"
+    // Format QR DINVMIC : "DINVMIC|LVR-XXXX|secret|timestamp" (ancien préfixe KOLISGO accepté aussi)
     const parts        = code.data.split('|');
     const detectedCode = (parts[1] || code.data).trim().toUpperCase();
     _lastScannedQrSecret = parts[2] || null;

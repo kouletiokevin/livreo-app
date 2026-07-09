@@ -39,8 +39,10 @@ async function loadAffiliateCard() {
   }
 
   // ── Affilié actif : charger les stats ──────────────────
-  const baseUrl = window.location.origin;
-  const refLink = `${baseUrl}/?ref=${aff.code}`;
+  // origin + pathname : indispensable sur GitHub Pages (/livreo-app/)
+  const basePath = window.location.pathname.replace(/index\.html$/, '');
+  const baseUrl = window.location.origin + basePath;
+  const refLink = `${baseUrl}?ref=${encodeURIComponent(aff.code)}`;
 
   const [refRes, commRes] = await Promise.all([
     db.from('affiliate_referrals').select('id, created_at').eq('affiliate_id', aff.id),
@@ -62,11 +64,11 @@ async function loadAffiliateCard() {
         <div style="flex:1;background:#fff;border-radius:8px;padding:9px 12px;font-size:.7rem;color:var(--g600);font-weight:600;font-family:monospace;border:1px solid var(--g200);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${refLink}</div>
         <button onclick="copierLienAffil('${refLink}')" class="btn p" style="padding:8px 14px;font-size:.72rem;flex-shrink:0;">📋 Copier</button>
       </div>
-      <div style="margin-top:6px;font-size:.68rem;color:var(--muted);">Code : <strong>${aff.code}</strong> · Partagez ce lien pour gagner <strong>10%</strong> pendant <strong>6 mois</strong> par inscrit</div>
+      <div style="margin-top:6px;font-size:.68rem;color:var(--muted);">Code : <strong>${escapeHtml(aff.code)}</strong> · Partagez ce lien pour gagner <strong>10%</strong> pendant <strong>6 mois</strong> par inscrit</div>
     </div>
 
     <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <input id="affil-code-new" style="flex:1;font-size:.78rem;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--cream);font-family:monospace;" value="${aff.code}" placeholder="votre-code">
+      <input id="affil-code-new" style="flex:1;font-size:.78rem;padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--cream);font-family:monospace;" value="${escapeHtml(aff.code)}" placeholder="votre-code">
       <button onclick="saveAffilCode('${aff.id}')" class="btn s" style="flex-shrink:0;padding:9px 14px;font-size:.72rem;">Changer le code</button>
     </div>
 
@@ -89,10 +91,10 @@ async function loadAffiliateCard() {
       💰 Ce mois-ci : <strong style="color:var(--g600);">${thisMonth.toFixed(2)}€</strong> · Virements automatiques en fin de mois
     </div>
 
-    ${aff.payout_info ? `<div style="margin-top:10px;font-size:.7rem;color:var(--muted);padding:8px 12px;background:var(--g50);border-radius:8px;">💳 Paiement vers : <strong>${aff.payout_info}</strong> <button onclick="document.getElementById('affil-payout-wrap').style.display='block'" style="font-size:.65rem;color:var(--g500);background:none;border:none;cursor:pointer;text-decoration:underline;">Modifier</button></div>` : ''}
+    ${aff.payout_info ? `<div style="margin-top:10px;font-size:.7rem;color:var(--muted);padding:8px 12px;background:var(--g50);border-radius:8px;">💳 Paiement vers : <strong>${escapeHtml(aff.payout_info)}</strong> <button onclick="document.getElementById('affil-payout-wrap').style.display='block'" style="font-size:.65rem;color:var(--g500);background:none;border:none;cursor:pointer;text-decoration:underline;">Modifier</button></div>` : ''}
     <div id="affil-payout-wrap" style="margin-top:10px;${aff.payout_info ? 'display:none;' : ''}padding:10px;background:rgba(245,158,11,.07);border-radius:8px;border:1px dashed rgba(245,158,11,.3);">
       ${!aff.payout_info ? '<div style="font-size:.72rem;font-weight:700;color:#d97706;margin-bottom:6px;">⚠️ Ajoutez vos coordonnées pour recevoir vos commissions</div>' : ''}
-      <input id="affil-payout" style="width:100%;font-size:.75rem;padding:8px 12px;border-radius:8px;border:1.5px solid rgba(245,158,11,.3);background:#fff;margin-bottom:8px;" placeholder="IBAN, email PayPal ou numéro de compte" value="${aff.payout_info || ''}">
+      <input id="affil-payout" style="width:100%;font-size:.75rem;padding:8px 12px;border-radius:8px;border:1.5px solid rgba(245,158,11,.3);background:#fff;margin-bottom:8px;" placeholder="IBAN, email PayPal ou numéro de compte" value="${escapeHtml(aff.payout_info || '')}">
       <button onclick="saveAffilPayout('${aff.id}')" class="btn p" style="width:100%;font-size:.75rem;padding:9px;">💾 Sauvegarder</button>
     </div>
   `;
