@@ -71,7 +71,7 @@ body {
 /* ── NAV ── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-  height: var(--nav); background: rgba(247,244,239,.95);
+  height: var(--nav); background: rgba(245,248,250,.95);
   backdrop-filter: blur(18px); border-bottom: 1px solid var(--border);
   display: flex; align-items: center; padding: 0 16px; gap: 8px;
 }
@@ -111,7 +111,7 @@ body.no-botnav .content  { bottom: 0; }
 /* ── BOTTOM NAV ── */
 .bot-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 500;
-  height: var(--bot); background: rgba(247,244,239,.96);
+  height: var(--bot); background: rgba(245,248,250,.96);
   backdrop-filter: blur(18px); border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom);
 }
@@ -124,7 +124,7 @@ body.no-botnav .content  { bottom: 0; }
 .bni-icon { font-size: 1.25rem; line-height: 1; }
 .bni-lbl  { font-size: .62rem; font-weight: 700; color: var(--muted); letter-spacing: .2px; white-space: nowrap; }
 .bni.on .bni-lbl  { color: var(--g500); }
-.bni.on .bni-icon { filter: drop-shadow(0 0 5px rgba(34,168,87,.45)); }
+.bni.on .bni-icon { filter: drop-shadow(0 0 5px rgba(47,216,168,.45)); }
 .bni-pip  { position: absolute; top: 3px; right: 8px; width: 6px; height: 6px; background: var(--danger); border-radius: 50%; border: 1.5px solid var(--white); display: none; }
 
 /* ── SCREENS ── */
@@ -294,8 +294,8 @@ body.no-botnav .content  { bottom: 0; }
 .tli:last-child { margin-bottom: 0; }
 .tld      { position: absolute; left: -18px; top: 4px; width: 13px; height: 13px; border-radius: 50%; background: var(--border); border: 2px solid var(--white); box-shadow: 0 0 0 2px var(--border); }
 .tld.done { background: var(--g500); box-shadow: 0 0 0 3px var(--g100); }
-.tld.active { background: var(--g400); box-shadow: 0 0 0 4px rgba(34,168,87,.2); animation: pd 2s infinite; }
-@keyframes pd { 0%, 100% { box-shadow: 0 0 0 4px rgba(34,168,87,.2); } 50% { box-shadow: 0 0 0 7px rgba(34,168,87,.07); } }
+.tld.active { background: var(--g400); box-shadow: 0 0 0 4px rgba(47,216,168,.2); animation: pd 2s infinite; }
+@keyframes pd { 0%, 100% { box-shadow: 0 0 0 4px rgba(47,216,168,.2); } 50% { box-shadow: 0 0 0 7px rgba(47,216,168,.07); } }
 .tl-time  { font-size: .64rem; color: var(--muted2); font-weight: 600; margin-bottom: 1px; }
 .tl-txt   { font-size: .82rem; font-weight: 700; }
 .tl-txt.faded { color: var(--muted); font-weight: 400; }
@@ -606,3 +606,22 @@ body:not(.no-botnav) #partners-sticky { display: none !important; }
   .screen { max-width: 760px; margin-left: auto; margin-right: auto; }
 }
 @keyframes introOut{to{opacity:0;visibility:hidden;pointer-events:none}}
+
+
+/* ═══════════════════════════════════════
+   COLYA — icone train + affichage desktop
+═══════════════════════════════════════ */
+
+/* le bouton central "Envoyer" contient un SVG, pas un emoji */
+.bni-icon { display: flex; align-items: center; justify-content: center; height: 26px; }
+.bni-icon svg { width: 24px; height: 24px; display: block; }
+
+/* sur grand ecran : tout reste centre dans une colonne lisible */
+@media (min-width: 900px) {
+  nav {
+    padding-left:  max(16px, calc((100vw - 760px) / 2));
+    padding-right: max(16px, calc((100vw - 760px) / 2));
+  }
+  .bn-row { max-width: 760px; margin-left: auto; margin-right: auto; }
+  .screen { max-width: 760px; margin-left: auto; margin-right: auto; }
+}
