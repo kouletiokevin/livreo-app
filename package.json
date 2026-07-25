@@ -1,7 +1,7 @@
 {
-  "name": "dinvmic-app",
+  "name": "colya-app",
   "version": "1.0.0",
-  "description": "DINVMIC — Livraison collaborative par train",
+  "description": "Colya — Livraison collaborative par train",
   "main": "index.html",
   "scripts": {
     "build": "echo 'Static SPA - no build step'",

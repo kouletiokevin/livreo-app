@@ -5,5 +5,5 @@ Disallow: /admin/
 
 Sitemap: https://kouletiokevin.github.io/livreo-app/sitemap.xml
 
-# DINVMIC — Envoi de colis entre particuliers par train
+# Colya — Envoi de colis entre particuliers par train
 # contact: kevinaddict.fr@gmail.com
