@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   DINVMIC — Module Profil utilisateur
+   Colya — Module Profil utilisateur
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -136,7 +136,7 @@ async function ouvrirSetupMFA() {
   try {
     const { data, error } = await db.auth.mfa.enroll({
       factorType: 'totp',
-      friendlyName: 'DINVMIC'
+      friendlyName: 'Colya'
     });
     if (error) throw new Error(error.message);
 

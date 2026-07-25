@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   DINVMIC — Module Authentification
+   Colya — Module Authentification
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 

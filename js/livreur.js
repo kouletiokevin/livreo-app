@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   DINVMIC — Module Flow de livraison
+   Colya — Module Flow de livraison
    Version 2.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -223,7 +223,7 @@ function scanFrame(ref, dest, prix) {
 
   if (code) {
     stopCamera();
-    // Format QR DINVMIC : "DINVMIC|LVR-XXXX|secret|timestamp" (ancien préfixe KOLISGO accepté aussi)
+    // Format QR Colya : "Colya|LVR-XXXX|secret|timestamp" (ancien préfixe KOLISGO accepté aussi)
     const parts        = code.data.split('|');
     const detectedCode = (parts[1] || code.data).trim().toUpperCase();
     _lastScannedQrSecret = parts[2] || null;
@@ -310,7 +310,7 @@ async function doScan(ref, dest, prix) {
     if (destSuc) destSuc.style.display = 'block';
 
     if (Notification.permission === 'granted') {
-      new Notification('DINVMIC — Passage confirmé ✅', {
+      new Notification('Colya — Passage confirmé ✅', {
         body: `Colis ${ref} remis à ${dest}. Paiement déclenché automatiquement.`
       });
     }

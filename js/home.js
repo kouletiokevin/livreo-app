@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   DINVMIC — Module Accueil / Dashboard
+   Colya — Module Accueil / Dashboard
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -464,7 +464,7 @@ async function chargerRecus(userId) {
 
 async function voirTousRecus() {
   if (!user) return;
-  openSheet(_shHdr('🧾 Mes reçus DINVMIC') + `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">Chargement…</div>`);
+  openSheet(_shHdr('🧾 Mes reçus Colya') + `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">Chargement…</div>`);
   try {
     const { data } = await db.from('transactions')
       .select('id, montant, statut, created_at, type, colis(code_lvr, gare_depart, gare_arrivee)')
@@ -472,7 +472,7 @@ async function voirTousRecus() {
       .order('created_at', { ascending: false })
       .limit(50);
 
-    let html = _shHdr('🧾 Mes reçus DINVMIC');
+    let html = _shHdr('🧾 Mes reçus Colya');
     if (!data || !data.length) {
       html += _emptyMsg('Aucune transaction pour le moment');
     } else {
@@ -498,7 +498,7 @@ async function voirTousRecus() {
     }
     openSheet(html);
   } catch(e) {
-    openSheet(_shHdr('🧾 Mes reçus DINVMIC') + _emptyMsg('Impossible de charger'));
+    openSheet(_shHdr('🧾 Mes reçus Colya') + _emptyMsg('Impossible de charger'));
   }
 }
 
@@ -553,13 +553,13 @@ function telechargerRecu(txId) {
         <table>
           <tr><th>Description</th><th class="r">Montant</th></tr>
           <tr><td>Transport collaboratif de colis — réf. ${escapeHtml(ref)}${trajet !== '—' ? ' (' + trajet + ')' : ''}</td><td class="r">${e2(prixPasseur)} €</td></tr>
-          <tr><td>Frais de service DINVMIC (15%)</td><td class="r">${e2(commission)} €</td></tr>
+          <tr><td>Frais de service Colya (15%)</td><td class="r">${e2(commission)} €</td></tr>
           <tr><td class="r" style="font-weight:900;">Total payé TTC</td><td class="r tot">${e2(totalExped)} €</td></tr>
         </table>
         <div class="muted" style="margin-top:6px;">TVA non applicable, article 293 B du CGI — paiement via Stripe · statut : ${statutLbl}</div>
-        ${isPasseur ? `<div class="box" style="margin-top:12px;">En tant que <strong>passeur</strong>, vous avez perçu <strong>${e2(prixPasseur)} €</strong> pour cette livraison (revenu à déclarer). Commission DINVMIC prélevée : ${e2(commission)} €.</div>` : ''}
+        ${isPasseur ? `<div class="box" style="margin-top:12px;">En tant que <strong>passeur</strong>, vous avez perçu <strong>${e2(prixPasseur)} €</strong> pour cette livraison (revenu à déclarer). Commission Colya prélevée : ${e2(commission)} €.</div>` : ''}
       </div>
-      <div class="foot">DINVMIC est une plateforme d'intermédiation entre particuliers. Ce document atteste d'une transaction réalisée via la plateforme — à conserver pour votre comptabilité.<br>Document généré le ${new Date().toLocaleDateString('fr-FR')}.</div>
+      <div class="foot">Colya est une plateforme d'intermédiation entre particuliers. Ce document atteste d'une transaction réalisée via la plateforme — à conserver pour votre comptabilité.<br>Document généré le ${new Date().toLocaleDateString('fr-FR')}.</div>
       </body></html>`);
       win.document.close();
     }).catch(() => {

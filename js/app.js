@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════
-   DINVMIC — App Core
+   Colya — App Core
    Navigation, toast, sheet, PWA, Stripe
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
-// ── Migration localStorage (rebranding KolisGo → DINVMIC) ──
+// ── Migration localStorage (rebranding KolisGo → Colya) ──
 (function migrateStorageKeys() {
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {
@@ -412,7 +412,7 @@ function installPWA() {
   if (window._pwaPrompt) {
     window._pwaPrompt.prompt();
     window._pwaPrompt.userChoice.then(r => {
-      if (r.outcome === 'accepted') t('DINVMIC installé sur votre appareil ! 🎉', 's');
+      if (r.outcome === 'accepted') t('Colya installé sur votre appareil ! 🎉', 's');
       window._pwaPrompt = null;
       const btn = document.getElementById('pwa-install-btn');
       if (btn) btn.remove();
@@ -435,7 +435,7 @@ function acceptCookies() {
 }
 function refuserCookies() {
   // Les cookies essentiels (session auth) restent nécessaires au fonctionnement.
-  // "Refuser" = pas de cookies non-essentiels. DINVMIC n'en utilise pas.
+  // "Refuser" = pas de cookies non-essentiels. Colya n'en utilise pas.
   localStorage.setItem('cookie_consent', '0');
   const b = document.getElementById('cookie-banner');
   if (b) b.style.display = 'none';
@@ -459,7 +459,7 @@ if ('serviceWorker' in navigator) {
         window._pwaPrompt = e;
         const btn = document.createElement('div');
         btn.id = 'pwa-install-btn';
-        btn.innerHTML = `<div style="position:fixed;bottom:calc(var(--bot) + 12px);right:14px;z-index:1000;background:var(--ink);color:#fff;padding:10px 16px;border-radius:50px;font-size:.76rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.3);display:flex;align-items:center;gap:7px;" onclick="installPWA()">📲 Installer DINVMIC</div>`;
+        btn.innerHTML = `<div style="position:fixed;bottom:calc(var(--bot) + 12px);right:14px;z-index:1000;background:var(--ink);color:#fff;padding:10px 16px;border-radius:50px;font-size:.76rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.3);display:flex;align-items:center;gap:7px;" onclick="installPWA()">📲 Installer Colya</div>`;
         document.body.appendChild(btn);
         setTimeout(() => { if (btn.parentNode) btn.parentNode.removeChild(btn); }, 8000);
       });

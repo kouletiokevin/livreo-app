@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   DINVMIC — Module Messagerie
+   Colya — Module Messagerie
    Version 1.0 — Juin 2026
 ═══════════════════════════════════════ */
 

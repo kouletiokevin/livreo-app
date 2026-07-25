@@ -1,5 +1,5 @@
 ﻿/* ═══════════════════════════════════════
-   DINVMIC — Module Suivi colis
+   Colya — Module Suivi colis
    Version 1.0 — Mai 2026
 ═══════════════════════════════════════ */
 
@@ -128,7 +128,7 @@ async function loadQR(colis) {
     } catch (e) { /* fallback ci-dessous */ }
   }
   if (!secret) secret = crypto.randomUUID();
-  const qrText = `DINVMIC|${colis.code_lvr}|${secret}|${Date.now()}`;
+  const qrText = `Colya|${colis.code_lvr}|${secret}|${Date.now()}`;
   try {
     new QRCode(d, {
       text: qrText,

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   DINVMIC — Module Affiliation
+   Colya — Module Affiliation
    Version 1.0 — Juin 2026
 ═══════════════════════════════════════ */
 
@@ -23,7 +23,7 @@ async function loadAffiliateCard() {
       <div style="text-align:center;padding:18px;background:rgba(245,158,11,.06);border-radius:12px;border:1px dashed rgba(245,158,11,.3);">
         <div style="font-size:1.5rem;margin-bottom:8px;">⏳</div>
         <div style="font-size:.82rem;font-weight:800;color:#d97706;margin-bottom:4px;">Demande en cours de validation</div>
-        <div style="font-size:.72rem;color:var(--muted);">Votre accès au programme d'affiliation est en attente d'approbation par l'équipe DINVMIC.</div>
+        <div style="font-size:.72rem;color:var(--muted);">Votre accès au programme d'affiliation est en attente d'approbation par l'équipe Colya.</div>
       </div>`;
     return;
   }

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   DINVMIC — Booster de visibilité
+   Colya — Booster de visibilité
    Version 1.0 — Juin 2026
 
    Fonctionnement :

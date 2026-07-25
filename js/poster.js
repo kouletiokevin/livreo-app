@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-   DINVMIC — Module Poster un colis
+   Colya — Module Poster un colis
    Version 2.0 — Juin 2026
 ═══════════════════════════════════════ */
 
@@ -359,7 +359,7 @@ async function publishColis() {
     // 8. SMS destinataire
     if (typeof envoyerSMS === 'function') {
       envoyerSMS(rtel,
-        'Bonjour ' + rnom + ' ! Un colis vous est envoyé via DINVMIC. Votre code : ' + codeLvr + '. Suivez-le ici : https://kouletiokevin.github.io/livreo-app/?suivi=' + codeLvr + (colis.qr_secret ? '&k=' + encodeURIComponent(colis.qr_secret) : '')
+        'Bonjour ' + rnom + ' ! Un colis vous est envoyé via Colya. Votre code : ' + codeLvr + '. Suivez-le ici : https://kouletiokevin.github.io/livreo-app/?suivi=' + codeLvr + (colis.qr_secret ? '&k=' + encodeURIComponent(colis.qr_secret) : '')
       );
     }
 
