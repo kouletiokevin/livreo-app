@@ -1,13 +1,13 @@
 {
-  "name": "DINVMIC",
-  "short_name": "DINVMIC",
-  "description": "Envoyez vos colis par train entre particuliers — jusqu'a 45% moins cher que La Poste.",
+  "name": "Colya",
+  "short_name": "Colya",
+  "description": "Vos colis voyagent en train, confiés à des voyageurs vérifiés.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0e1a10",
-  "theme_color": "#0e1a10",
+  "background_color": "#10344F",
+  "theme_color": "#10344F",
   "orientation": "portrait",
   "categories": ["shopping", "travel", "lifestyle"],
   "icons": [
