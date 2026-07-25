@@ -1,13 +1,13 @@
 {
-  "appId": "fr.dinvmic.app",
-  "appName": "DINVMIC",
+  "appId": "fr.colya.app",
+  "appName": "Colya",
   "webDir": ".",
   "bundledWebRuntime": false,
   "server": {
     "androidScheme": "https"
   },
   "android": {
-    "backgroundColor": "#0e1a10",
+    "backgroundColor": "#10344F",
     "allowMixedContent": false,
     "captureInput": true,
     "webContentsDebuggingEnabled": false

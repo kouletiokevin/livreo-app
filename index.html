@@ -1,49 +1,48 @@
-﻿<!-- DINVMIC v1.0 — Mai 2026 -->
+﻿<!-- Colya v1.0 — Mai 2026 -->
 <!DOCTYPE html>
 <html lang="fr" prefix="og: https://ogp.me/ns#">
 <head>
 <meta charset="UTF-8">
-<base href="/livreo-app/">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob: 'unsafe-inline'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.stripe.com https://api.stripe.com https://cdn.jsdelivr.net https://nominatim.openstreetmap.org; object-src 'none'; base-uri 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <!-- ══ SEO PRIMAIRE ══ -->
-<title>DINVMIC — Envoyez vos colis par train entre particuliers</title>
-<meta name="description" content="DINVMIC — Envoyez vos colis par train grâce aux voyageurs qui font le même trajet. Simple, sécurisé, −45% moins cher que La Poste.">
-<meta name="keywords" content="dinvmic, colis train, envoyer colis particulier, livraison pas cher France, alternative La Poste, TGV colis, cocolis alternative, dinvmic">
-<meta name="author" content="DINVMIC">
+<title>Colya — vos colis voyagent en train</title>
+<meta name="description" content="Colya — Envoyez vos colis par train grâce aux voyageurs qui font le même trajet. Simple, sécurisé, −45% moins cher que La Poste.">
+<meta name="keywords" content="colya, colis train, envoyer colis particulier, livraison pas cher France, alternative La Poste, TGV colis, cocolis alternative, colya">
+<meta name="author" content="Colya">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="language" content="French">
 <meta name="geo.region" content="FR">
 <meta name="geo.placename" content="France">
-<link rel="canonical" href="https://kouletiokevin.github.io/livreo-app/">
+<link rel="canonical" href="https://colya.fr/">
 
 <!-- ══ OPEN GRAPH ══ -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="DINVMIC">
-<meta property="og:title" content="DINVMIC — Quelqu'un prend le train. Votre colis aussi.">
+<meta property="og:site_name" content="Colya">
+<meta property="og:title" content="Colya — Quelqu'un prend le train. Votre colis aussi.">
 <meta property="og:description" content="Envoyez vos colis par train entre particuliers. −45% vs La Poste. Sécurisé, simple, rapide.">
-<meta property="og:url" content="https://kouletiokevin.github.io/livreo-app/">
-<meta property="og:image" content="https://kouletiokevin.github.io/livreo-app/og-image.png">
+<meta property="og:url" content="https://colya.fr/">
+<meta property="og:image" content="https://colya.fr/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="fr_FR">
 
 <!-- ══ TWITTER CARD ══ -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="DINVMIC — Quelqu'un prend le train. Votre colis aussi.">
+<meta name="twitter:title" content="Colya — Quelqu'un prend le train. Votre colis aussi.">
 <meta name="twitter:description" content="Envoyez vos colis par train entre particuliers. −45% vs La Poste.">
-<meta name="twitter:image" content="https://kouletiokevin.github.io/livreo-app/og-image.png">
-<meta name="twitter:creator" content="@dinvmic_fr">
+<meta name="twitter:image" content="https://colya.fr/og-image.png">
+<meta name="twitter:creator" content="@colya_fr">
 
 <!-- ══ PWA ══ -->
-<meta name="theme-color" content="#0e1a10">
+<meta name="theme-color" content="#10344F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DINVMIC">
-<meta name="application-name" content="DINVMIC">
-<meta name="msapplication-TileColor" content="#0e1a10">
+<meta name="apple-mobile-web-app-title" content="Colya">
+<meta name="application-name" content="Colya">
+<meta name="msapplication-TileColor" content="#10344F">
 <link rel="manifest" href="manifest.json">
 
 <!-- ══ FAVICON ══ -->
@@ -57,9 +56,9 @@
   "@graph": [
     {
       "@type": "WebApplication",
-      "@id": "https://kouletiokevin.github.io/livreo-app/#app",
-      "name": "DINVMIC",
-      "url": "https://kouletiokevin.github.io/livreo-app/",
+      "@id": "https://colya.fr/#app",
+      "name": "Colya",
+      "url": "https://colya.fr/",
       "description": "Plateforme collaborative d'envoi de colis par train entre particuliers en France.",
       "slogan": "Quelqu'un prend le train. Votre colis aussi.",
       "applicationCategory": "UtilitiesApplication",
@@ -68,9 +67,9 @@
     },
     {
       "@type": "Organization",
-      "@id": "https://kouletiokevin.github.io/livreo-app/#org",
-      "name": "DINVMIC",
-      "url": "https://kouletiokevin.github.io/livreo-app/",
+      "@id": "https://colya.fr/#org",
+      "name": "Colya",
+      "url": "https://colya.fr/",
       "description": "Startup française d'envoi de colis par train",
       "foundingDate": "2026",
       "foundingLocation": "Paris, France",
@@ -80,11 +79,11 @@
     {
       "@type": "FAQPage",
       "mainEntity": [
-        { "@type": "Question", "name": "Comment fonctionne DINVMIC ?", "acceptedAnswer": { "@type": "Answer", "text": "Vous postez votre colis avec la gare de départ et d'arrivée. Un passeur qui fait le même trajet en train accepte de le transporter. À la livraison, il photographie la remise et scanne le QR Code du destinataire. Le paiement est libéré automatiquement." } },
+        { "@type": "Question", "name": "Comment fonctionne Colya ?", "acceptedAnswer": { "@type": "Answer", "text": "Vous postez votre colis avec la gare de départ et d'arrivée. Un passeur qui fait le même trajet en train accepte de le transporter. À la livraison, il photographie la remise et scanne le QR Code du destinataire. Le paiement est libéré automatiquement." } },
         { "@type": "Question", "name": "Est-ce sécurisé ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. Chaque passage est confirmé par QR Code unique, photo de remise obligatoire, et paiement sécurisé par escrow." } },
         { "@type": "Question", "name": "Combien ça coûte ?", "acceptedAnswer": { "@type": "Answer", "text": "Les prix varient de 2,50€ pour une lettre à 24€+ pour un grand colis. C'est en moyenne 45% moins cher que La Poste." } },
-        { "@type": "Question", "name": "Comment envoyer un colis pas cher ?", "acceptedAnswer": { "@type": "Answer", "text": "Avec DINVMIC, vous confiez votre colis a un voyageur qui prend deja le train sur votre trajet. Vous fixez librement le prix, souvent jusqu'a 45% moins cher que les transporteurs classiques." } },
-        { "@type": "Question", "name": "DINVMIC est-il une alternative a La Poste, Mondial Relay ou Colissimo ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. DINVMIC est une alternative collaborative pour envoyer un colis entre particuliers par train, generalement moins chere et plus rapide, avec remise chez l'expediteur ou en gare." } },
+        { "@type": "Question", "name": "Comment envoyer un colis pas cher ?", "acceptedAnswer": { "@type": "Answer", "text": "Avec Colya, vous confiez votre colis a un voyageur qui prend deja le train sur votre trajet. Vous fixez librement le prix, souvent jusqu'a 45% moins cher que les transporteurs classiques." } },
+        { "@type": "Question", "name": "Colya est-il une alternative a La Poste, Mondial Relay ou Colissimo ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui. Colya est une alternative collaborative pour envoyer un colis entre particuliers par train, generalement moins chere et plus rapide, avec remise chez l'expediteur ou en gare." } },
         { "@type": "Question", "name": "Peut-on envoyer un colis le jour meme ?", "acceptedAnswer": { "@type": "Answer", "text": "Oui, sur les grands axes desservis en TGV (Paris-Lyon, Paris-Marseille, Paris-Bordeaux, etc.), un passeur peut transporter votre colis le jour meme de son trajet." } },
         { "@type": "Question", "name": "Comment devenir passeur et gagner de l'argent ?", "acceptedAnswer": { "@type": "Answer", "text": "Inscrivez-vous, verifiez votre identite, puis acceptez des colis sur les trajets que vous faites deja en train. Vous etes remunere a chaque livraison confirmee par QR Code." } }
       ]
@@ -113,7 +112,7 @@
 <div id="toasts"></div>
 
 <!-- ════ SPLASH SCREEN ════ -->
-<div id="intro-anim" style="position:fixed;inset:0;z-index:99999;background:#0e1a10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:introOut .6s ease 1.5s forwards;">
+<div id="intro-anim" style="position:fixed;inset:0;z-index:99999;background:#10344F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:introOut .6s ease 1.5s forwards;">
   <svg width="90" height="90" viewBox="0 0 46 46" style="animation:kgIconIn .45s cubic-bezier(.34,1.56,.64,1) both;">
     <rect width="46" height="46" rx="12" fill="#1f9d57"/>
     <path d="M13 14 L27 23 L13 32" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0"><animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.25s" fill="freeze"/><animateTransform attributeName="transform" attributeType="XML" type="translate" values="-13 0;0 0" dur="0.5s" begin="0.25s" fill="freeze" calcMode="spline" keySplines="0.2 0.75 0.25 1"/><animate attributeName="opacity" values="1;0.3;1" dur="1s" begin="0.95s" repeatCount="indefinite"/></path><path d="M24 14 L33 23 L24 32" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0"><animate attributeName="opacity" values="0;0.6" dur="0.4s" begin="0.42s" fill="freeze"/><animateTransform attributeName="transform" attributeType="XML" type="translate" values="-13 0;0 0" dur="0.5s" begin="0.42s" fill="freeze" calcMode="spline" keySplines="0.2 0.75 0.25 1"/><animate attributeName="opacity" values="0.3;1;0.3" dur="1s" begin="0.95s" repeatCount="indefinite"/></path>
@@ -307,7 +306,7 @@
         </div>
       </div>
       <div class="how-card" style="margin-top:12px;">
-        <div class="s-lbl">🛡️ Protection DINVMIC</div>
+        <div class="s-lbl">🛡️ Protection Colya</div>
         <div style="font-size:.82rem;color:var(--muted);line-height:1.5;margin:2px 0 12px;">Votre colis et votre argent sont protégés à chaque étape.</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:12px;">
@@ -339,7 +338,7 @@
         <!-- Header colonnes -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-top:16px;margin-bottom:6px;padding:0 2px;">
           <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.35);">Type d'envoi</div>
-          <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--g300);text-align:center;">DINVMIC</div>
+          <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--g300);text-align:center;">Colya</div>
           <div style="font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.35);text-align:right;">La Poste</div>
         </div>
         <!-- Lignes comparaison -->
@@ -360,13 +359,13 @@
             <div style="text-align:right;font-size:.84rem;font-weight:700;color:rgba(255,255,255,.35);text-decoration:line-through;">12€</div>
           </div>
         </div>
-        <div style="margin-top:10px;font-size:.68rem;color:rgba(255,255,255,.3);text-align:center;">Prix moyens constatés sur DINVMIC · La Poste Colissimo au tarif guichet</div>
+        <div style="margin-top:10px;font-size:.68rem;color:rgba(255,255,255,.3);text-align:center;">Prix moyens constatés sur Colya · La Poste Colissimo au tarif guichet</div>
       </div>
       <!-- SEO CONTENT -->
       <div style="background:var(--white);border-radius:var(--rl);padding:20px;border:1.5px solid var(--border);">
         <h2 style="font-size:1.05rem;font-weight:900;letter-spacing:-.4px;margin:0 0 8px;">Envoyer un colis pas cher entre particuliers</h2>
-        <p style="font-size:.82rem;color:var(--muted);line-height:1.65;margin:0 0 14px;">DINVMIC est une alternative a La Poste, Mondial Relay et Colissimo : vos colis voyagent en train grace a des voyageurs (les passeurs) qui font deja le trajet. Resultat : une livraison souvent le jour meme et jusqu'a 45% moins chere. Vous fixez votre prix, l'expediteur choisit son passeur, et le paiement n'est debloque qu'a la remise, scan du QR Code a l'appui.</p>
-        <h3 style="font-size:.9rem;font-weight:800;margin:0 0 6px;">Pourquoi choisir DINVMIC ?</h3>
+        <p style="font-size:.82rem;color:var(--muted);line-height:1.65;margin:0 0 14px;">Colya est une alternative a La Poste, Mondial Relay et Colissimo : vos colis voyagent en train grace a des voyageurs (les passeurs) qui font deja le trajet. Resultat : une livraison souvent le jour meme et jusqu'a 45% moins chere. Vous fixez votre prix, l'expediteur choisit son passeur, et le paiement n'est debloque qu'a la remise, scan du QR Code a l'appui.</p>
+        <h3 style="font-size:.9rem;font-weight:800;margin:0 0 6px;">Pourquoi choisir Colya ?</h3>
         <ul style="font-size:.8rem;color:var(--muted);line-height:1.7;margin:0 0 14px;padding-left:18px;">
           <li><strong>Moins cher</strong> que les transporteurs classiques : prix libres fixes par la communaute.</li>
           <li><strong>Rapide</strong> : livraison le jour meme sur les grands axes en TGV.</li>
@@ -383,9 +382,9 @@
       </div>
 
       <div style="background:var(--white);border-radius:var(--rl);padding:18px;border:1.5px solid var(--border);text-align:center;">
-        <div style="font-size:.82rem;font-weight:800;margin-bottom:4px;">Rejoignez DINVMIC gratuitement</div>
+        <div style="font-size:.82rem;font-weight:800;margin-bottom:4px;">Rejoignez Colya gratuitement</div>
         <div style="font-size:.74rem;color:var(--muted);font-style:italic;margin-bottom:4px;">"Quelqu'un prend le train. Votre colis aussi."</div>
-        <div style="font-size:.72rem;color:var(--muted);margin-bottom:12px;">Expéditeur ou passeur, rejoignez la communauté DINVMIC.</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:12px;">Expéditeur ou passeur, rejoignez la communauté Colya.</div>
         <div style="display:flex;gap:8px;justify-content:center;">
           <button class="btn p" onclick="goNav('auth')">Créer un compte</button>
           <button class="btn s" onclick="goNav('auth')">Se connecter</button>
@@ -406,7 +405,7 @@
     <a id="admin-link" class="admin-banner" href="admin/" style="display:none;">
       <div style="font-size:1.4rem;">⚙️</div>
       <div>
-        <div style="font-size:.82rem;font-weight:800;color:#fff;">Administration DINVMIC</div>
+        <div style="font-size:.82rem;font-weight:800;color:#fff;">Administration Colya</div>
         <div style="font-size:.68rem;color:rgba(255,255,255,.5);margin-top:2px;">Tableau de bord administrateur →</div>
       </div>
     </a>
@@ -448,7 +447,7 @@
 
     <!-- IMPACT : economies + CO2 evite -->
     <div style="background:linear-gradient(135deg,var(--g50),var(--white));border:1.5px solid var(--g100);border-radius:var(--rl);padding:16px;margin-bottom:12px;">
-      <div style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--g600);margin-bottom:10px;">🌍 Mon impact DINVMIC</div>
+      <div style="font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--g600);margin-bottom:10px;">🌍 Mon impact Colya</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div style="text-align:center;background:var(--white);border:1px solid var(--g100);border-radius:12px;padding:12px 8px;">
           <div style="font-size:1.5rem;font-weight:900;color:var(--g500);letter-spacing:-.5px;" id="impact-savings">0 €</div>
@@ -833,7 +832,7 @@
       <div class="param-row" onclick="window.open('politique-confidentialite.html','_blank')"><div><div style="font-size:.82rem;font-weight:700;">Politique de confidentialité</div></div><span>›</span></div>
       <div class="param-row" onclick="ouvrirCentreAide()"><div><div style="font-size:.82rem;font-weight:700;">Centre d'aide</div></div><span>›</span></div>
       <div class="param-row" onclick="ouvrirSignalerProbleme()"><div><div style="font-size:.82rem;font-weight:700;">Signaler un problème</div></div><span>›</span></div>
-      <div class="param-row" onclick="t('Version 1.0.0 · DINVMIC','')"><div><div style="font-size:.82rem;font-weight:700;">Version de l'application</div><div style="font-size:.68rem;color:var(--muted);">1.0.0</div></div><span>›</span></div>
+      <div class="param-row" onclick="t('Version 1.0.0 · Colya','')"><div><div style="font-size:.82rem;font-weight:700;">Version de l'application</div><div style="font-size:.68rem;color:var(--muted);">1.0.0</div></div><span>›</span></div>
     </div>
   </div>
 
@@ -859,7 +858,7 @@
       <div style="text-align:center;margin-bottom:12px;">
         <svg width="64" height="64" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto;display:block;">
           <defs>
-            <linearGradient id="ab" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0e1a10"/><stop offset="100%" style="stop-color:#1e3322"/></linearGradient>
+            <linearGradient id="ab" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#10344F"/><stop offset="100%" style="stop-color:#1e3322"/></linearGradient>
             <linearGradient id="ag" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#3dcf72"/><stop offset="100%" style="stop-color:#1a8044"/></linearGradient>
           </defs>
           <circle cx="200" cy="200" r="190" fill="url(#ab)"/>
@@ -934,7 +933,7 @@
         <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;">
           <input type="checkbox" id="accept-cgu" style="margin-top:3px;width:16px;height:16px;cursor:pointer;">
           <label for="accept-cgu" style="font-size:.78rem;color:var(--muted);line-height:1.5;cursor:pointer;">
-            J'accepte les <a href="cgu.html" target="_blank" style="color:var(--g500);">CGU</a> et la <a href="politique-confidentialite.html" target="_blank" style="color:var(--g500);">politique de confidentialité</a> de DINVMIC
+            J'accepte les <a href="cgu.html" target="_blank" style="color:var(--g500);">CGU</a> et la <a href="politique-confidentialite.html" target="_blank" style="color:var(--g500);">politique de confidentialité</a> de Colya
           </label>
         </div>
         <button class="btn p full" id="reg-btn" onclick="doReg()">Créer mon compte gratuitement</button>
@@ -1605,11 +1604,11 @@ function ouvrirCentreAide() {
   const faqs = [
     { q: "Comment envoyer un colis ?", a: "Cliquez sur ➕ ou 'Poster un colis', renseignez la gare de destination, décrivez votre colis, choisissez le prix et publiez. Un passeur prendra contact avec vous dès qu'il accepte." },
     { q: "Comment devenir passeur ?", a: "Ouvrez 'Explorer les colis', trouvez une annonce sur votre trajet et cliquez sur 'Accepter'. Votre identité doit être vérifiée (Niveau 3) pour livrer." },
-    { q: "Quand suis-je payé ?", a: "Le paiement est libéré sur votre portefeuille DINVMIC dès que le destinataire scanne le QR Code et confirme la réception. Le retrait bancaire est disponible via 'Retirer des fonds'." },
+    { q: "Quand suis-je payé ?", a: "Le paiement est libéré sur votre portefeuille Colya dès que le destinataire scanne le QR Code et confirme la réception. Le retrait bancaire est disponible via 'Retirer des fonds'." },
     { q: "Que faire si mon colis n'arrive pas ?", a: "Ouvrez un litige depuis la page Suivi de votre colis. Notre équipe intervient sous 48h. Le paiement reste bloqué en escrow pendant toute la durée du litige." },
     { q: "Comment contacter le support ?", a: "Envoyez un email à kevinaddict.fr@gmail.com ou utilisez 'Signaler un problème' ci-dessous. Réponse garantie sous 24h ouvrées." },
     { q: "Comment modifier ou annuler une annonce ?", a: "Rendez-vous dans votre tableau de bord → Colis envoyés. Tant qu'aucun passeur n'a accepté, vous pouvez modifier ou supprimer l'annonce librement." },
-    { q: "Mes informations personnelles sont-elles sécurisées ?", a: "Oui. DINVMIC ne partage jamais vos données personnelles avec des tiers. Les paiements sont traités par Stripe (certifié PCI DSS). Consultez notre politique de confidentialité pour plus de détails." },
+    { q: "Mes informations personnelles sont-elles sécurisées ?", a: "Oui. Colya ne partage jamais vos données personnelles avec des tiers. Les paiements sont traités par Stripe (certifié PCI DSS). Consultez notre politique de confidentialité pour plus de détails." },
     { q: "Comment signaler un passeur problématique ?", a: "Ouvrez le profil du passeur depuis votre annonce et cliquez sur 'Signaler'. Vous pouvez aussi écrire à kevinaddict.fr@gmail.com avec les détails de l'incident." },
   ];
   openSheet(`
@@ -1683,7 +1682,7 @@ async function envoyerSignalement() {
 
   try {
     const email = user?.email || 'anonyme';
-    const sujet = `[Signalement DINVMIC] ${type}${ref ? ' — ' + ref : ''}`;
+    const sujet = `[Signalement Colya] ${type}${ref ? ' — ' + ref : ''}`;
     const corps = `De : ${email}\nType : ${type}\nRéf : ${ref || '—'}\n\n${desc}`;
     // Tentative d'envoi via Edge Function
     await callEdgeFunction('send-sms', {
@@ -1756,7 +1755,7 @@ function initNotifRealtime() {
 
 <!-- ════ BANNIÈRE COOKIES ════ -->
 <div id="cookie-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px;z-index:4000;box-shadow:0 4px 20px rgba(0,0,0,.3);">
-  <div style="font-size:.8rem;margin-bottom:10px;">🍪 DINVMIC utilise des cookies <strong>essentiels</strong> au fonctionnement (session, préférences). Aucun cookie publicitaire ou de suivi tiers. <a href="politique-confidentialite.html" style="color:var(--g400);font-size:.75rem;">En savoir plus</a></div>
+  <div style="font-size:.8rem;margin-bottom:10px;">🍪 Colya utilise des cookies <strong>essentiels</strong> au fonctionnement (session, préférences). Aucun cookie publicitaire ou de suivi tiers. <a href="politique-confidentialite.html" style="color:var(--g400);font-size:.75rem;">En savoir plus</a></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;">
     <button onclick="acceptCookies()" style="padding:8px 20px;background:var(--g500);color:#fff;border:none;border-radius:50px;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;">Accepter</button>
     <button onclick="refuserCookies()" style="padding:8px 20px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:50px;font-family:var(--sans);font-size:.78rem;font-weight:700;cursor:pointer;                                                                                                   

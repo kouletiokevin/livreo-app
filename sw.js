@@ -1,5 +1,5 @@
-/* DINVMIC — Service Worker v68 */
-const CACHE = 'dinvmic-v68';
+/* Colya — Service Worker v69 */
+const CACHE = 'colya-v69';
 const ASSETS = [
   './',
   './css/style.css',
@@ -69,11 +69,11 @@ self.addEventListener('fetch', e => {
 self.addEventListener('push', e => {
   if (!e.data) return;
   const data = e.data.json();
-  self.registration.showNotification(data.title || 'DINVMIC', {
+  self.registration.showNotification(data.title || 'Colya', {
     body: data.body || '',
     icon: './assets/icon-192.png',
     badge: './assets/icon-192.png',
-    tag: data.tag || 'dinvmic-notif',
+    tag: data.tag || 'colya-notif',
     data: data.url || './'
   });
 });
