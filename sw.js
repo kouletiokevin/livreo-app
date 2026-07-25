@@ -1,5 +1,5 @@
-/* Colya — Service Worker v71 */
-const CACHE = 'colya-v71';
+/* Colya — Service Worker v72 */
+const CACHE = 'colya-v72';
 const ASSETS = [
   './',
   './css/style.css',
