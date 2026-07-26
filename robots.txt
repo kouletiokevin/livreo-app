@@ -1,9 +1,9 @@
-﻿User-agent: *
+User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin/
 
-Sitemap: https://kouletiokevin.github.io/livreo-app/sitemap.xml
+Sitemap: https://colya.fr/sitemap.xml
 
 # Colya — Envoi de colis entre particuliers par train
 # contact: kevinaddict.fr@gmail.com
